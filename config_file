@@ -23,7 +23,8 @@ http {
   tcp_nopush   on;
   server_names_hash_bucket_size 128; # this seems to be required for some vhosts
 
-  server { # php/fastcgi
+  server
+  { # php/fastcgi
     listen       80;
     server_name  domain1.com www.domain1.com;
     access_log   logs/domain1.access.log  main;
