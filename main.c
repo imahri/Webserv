@@ -6,7 +6,7 @@
 /*   By: imahri <imahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 13:42:21 by imahri            #+#    #+#             */
-/*   Updated: 2023/11/01 16:42:56 by imahri           ###   ########.fr       */
+/*   Updated: 2023/11/09 09:51:54 by imahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,16 +58,10 @@ int main()
             break;
    }
 
-//    {
-//         perror("[-]Bind error");
-//         exit (1);
-//    }
    printf("[+]Bind to the port number: %d\n",port);
    listen(server_socket, 5);
    printf("Listening...\n");
    while (1) {
-        // addr_size = sizeof(client_addr);
-     //    printf("XXXX\n");
         client_socket = accept(server_socket,NULL, 0);
         // char *res = "HTTP/1.1 200 OK\nContent-Length: 10\nContent-Type: application/octet-stream\n\n";
         char *res = "HTTP/1.1 200 OK\nContent-Length: 10\nContent-Type: text/plain\n\n";

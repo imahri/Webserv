@@ -6,13 +6,13 @@
 #    By: imahri <imahri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/01 08:48:51 by imahri           ###   ########.fr        #
+#    Updated: 2023/11/09 09:59:26 by imahri           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 
-CC = cc
+CC = c++
 
 FLAGS =# -Wall -Wextra -Werror -std=c++98
 
@@ -33,7 +33,7 @@ ${OBJDIR}:
 ${NAME} : $(OBJ) $(HEADER)
 	@${CC} $(FLAGS) ${OBJ} -o $(NAME)
 
-$(OBJDIR)%.o : %.c $(HEADER)
+$(OBJDIR)%.o : %.cpp $(HEADER)
 	@$(CC) $(FLAGS) -c $< -o $@
 	@echo " _       ____________ _____ __________ _    __"
 	@echo "| |     / / ____/ __ ) ___// ____/ __ \ |  / /"
