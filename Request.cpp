@@ -23,14 +23,21 @@ int     Request::parseRequest(std::string buffer)
 	std::cout << "----------------start------------------------" << std::endl;
 	std::string line;
 
-    std::istringstream iss(buffer);
-
-	line = getNextToken(iss);
-	while (line.length())
+	std::vector<std::string> vecHeader = ft_split(buffer, "\r\n");
+	std::vector<std::string>::iterator itVec = vecHeader.begin();
+	for (; itVec != vecHeader.end(); itVec++)
 	{
-		std::cout << "|" <<  line << "|" << std::endl;
-		line = getNextToken(iss);
+		std::cout << "|" <<  *itVec << "|" << std::endl;
 	}
+	
+    // std::istringstream iss(buffer);
+
+	// line = getNextToken(iss);
+	// while (line.length())
+	// {
+	// 	std::cout << "|" <<  line << "|" << std::endl;
+	// 	line = getNextToken(iss);
+	// }
 	std::cout << "---------------end---------------------------" << std::endl;
     return (0);
 }
