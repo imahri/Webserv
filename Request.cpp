@@ -12,32 +12,95 @@
 
 #include "Request.hpp"
 
-int		Request::checkFirstLine(std::string check)
+int     Request::fillHeaderAndBody(std::string buffer)
 {
-	(void)check;
+	std::cout << "----------------start------------------------" << std::endl;
+
+	index = buffer.find('\n');
+	http = buffer.substr(0, index - 1);
+	std::cout << "Http|" <<  http << "|" << std::endl;
+
+	size_t oldIndex = index + 1;
+
+	index = buffer.find("\r\n\r\n");
+	for (; oldIndex < index; oldIndex++)
+		header += buffer[oldIndex];
+
+	for (oldIndex = index; oldIndex < buffer.size(); oldIndex++)
+		body += buffer[oldIndex];
+	
+	// std::cout << "header:|" << header << "|\n" << std::endl;
+	// std::cout << "body|" << body << std::endl;
+	std::cout << "---------------end---------------------------" << std::endl;
+
+    return (0);
+}
+
+int		Request::checkHttp()
+{
+	std::string		search = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
+	size_t			find;
+
+	std::vector<std::string> vec = ft_split(http, " \n\r\t");
+	std::vector<std::string>::iterator it = vec.begin();
+
+	if(vec.size() != 3)
+		return(statusCode = 400, 1);
+	
+	it = vec.begin();
+	methode = *it;
+	URI = *(it + 1);
+	httpVersion = *(it + 2);
+
+	if(methode != "POST" && methode != "GET" && methode != "DELETE")
+		return(statusCode = 400, 1);
+	else if(URI.size() > 2048)
+		return(statusCode = 414, 1);
+
+	for (size_t i = 0; i < URI.size(); i++)
+		if((find = search.find(URI[i])) == search.npos)
+			return(statusCode = 400, 1);
+
 	return(0);
 }
 
-int     Request::parseRequest(std::string buffer)
+int		Request::checkBody()
 {
-	std::cout << "----------------start------------------------" << std::endl;
-	std::string line;
-
-	std::vector<std::string> vecHeader = ft_split(buffer, "\r\n");
-	std::vector<std::string>::iterator itVec = vecHeader.begin();
-	for (; itVec != vecHeader.end(); itVec++)
-	{
-		std::cout << "|" <<  *itVec << "|" << std::endl;
-	}
-	
-    // std::istringstream iss(buffer);
-
-	// line = getNextToken(iss);
-	// while (line.length())
-	// {
-	// 	std::cout << "|" <<  line << "|" << std::endl;
-	// 	line = getNextToken(iss);
-	// }
-	std::cout << "---------------end---------------------------" << std::endl;
-    return (0);
+	if(body.size() > clientMaxBodySize)
+		return(statusCode = 413, 1);
+	return(0);
 }
+
+int		Request::checkHeader()
+{
+	std::vector<std::string> vec = ft_split(header, "\n\r");
+
+	for (std::vector<std::string>::iterator it = vec.begin();  it != vec.end(); it++)
+		std::cout << "it|" << *it << "|" << std::endl;
+	
+	return(0);
+}
+
+int		Request::getRequest(std::string buffer)
+{
+	if(fillHeaderAndBody(buffer))
+		return(1);
+	if(parseRequest())
+		return(1);
+	return(0);
+}
+
+int		Request::parseRequest()
+{
+	clientMaxBodySize = convertToBytes("3GB");
+
+	if(checkHttp())
+		return(1);
+	if(checkHeader())
+		return(1);
+	if(checkBody())
+		return(1);
+
+	return(0);
+}
+  

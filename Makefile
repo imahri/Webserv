@@ -6,7 +6,7 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/10 18:24:00 by eamghar           #+#    #+#              #
-#    Updated: 2023/11/09 20:21:42 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/10 13:05:47 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ FRM = rm -rf
 
 NAME = Webserv
 
-HEADER = Request.hpp\
+HEADER = *.hpp\
 
 SRC =	*.cpp\
 

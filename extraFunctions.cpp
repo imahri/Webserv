@@ -132,3 +132,39 @@ std::string& Request::ft_trim(std::string& s, std::string delimiter)
 
 	return s;
 }
+
+unsigned long long Request::convertToBytes(const std::string& sizeString)
+{
+    std::string numberString;
+    std::string unitString;
+
+    // Separate the number and unit parts of the string
+    for (std::size_t i = 0; i < sizeString.length(); ++i)
+    {
+        char ch = sizeString[i];
+        if (std::isdigit(ch))
+            numberString += ch;
+        else
+            unitString += ch;
+    }
+
+    // Convert the number part to an integer
+    unsigned long long size = std::strtoull(numberString.c_str(), NULL, 10);
+
+    // Convert the unit part to lowercase for easier comparison
+    for (std::size_t i = 0; i < unitString.length(); ++i)
+    {
+        char &ch = unitString[i];
+        ch = std::tolower(ch);
+    }
+
+    // Convert the size to bytes based on the specified unit
+    if (unitString == "gb" || unitString == "gigabytes")
+        size *= 1024ULL * 1024 * 1024;
+    else if (unitString == "mb" || unitString == "megabytes")
+        size *= 1024ULL * 1024;
+    else if (unitString == "kb" || unitString == "kilobytes")
+        size *= 1024ULL;
+
+    return size;
+}

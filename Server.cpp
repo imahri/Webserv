@@ -43,7 +43,7 @@ int    Request::createServer()
         std::cout << "Received request:\n" << buffer << std::endl;
 
         if(strlen(buffer))
-            this->parseRequest(buffer);
+            this->getRequest(buffer);
         else
             continue;
 
