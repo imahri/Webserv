@@ -29,7 +29,7 @@ int     Request::fillHeaderAndBody(std::string buffer)
 	for (oldIndex = index; oldIndex < buffer.size(); oldIndex++)
 		body += buffer[oldIndex];
 	
-	// std::cout << "header:|" << header << "|\n" << std::endl;
+	std::cout << "header:|" << header << "|\n" << std::endl;
 	// std::cout << "body|" << body << std::endl;
 	std::cout << "---------------end---------------------------" << std::endl;
 
@@ -76,7 +76,14 @@ int		Request::checkHeader()
 	std::vector<std::string> vec = ft_split(header, "\n\r");
 
 	for (std::vector<std::string>::iterator it = vec.begin();  it != vec.end(); it++)
-		std::cout << "it|" << *it << "|" << std::endl;
+	{
+		std::vector<std::string> vec = ft_split(*it, ':');
+		HeaderData[ft_trim(vec[0], ' ')] = ft_trim(vec[1], ' ');
+	}
+
+	std::map<std::string, std::string>::iterator itM = HeaderData.begin();
+	// for (; itM != HeaderData.end(); itM++)
+	// 	std::cout << "f|" << itM->first << "|s|" << itM->second << "|" << std::endl;
 	
 	return(0);
 }
