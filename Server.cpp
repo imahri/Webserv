@@ -40,7 +40,7 @@ int    Request::createServer()
             return(std::cerr <<"Error reading request." << std::endl, 1);
     
         //Print the received request
-        // std::cout << "Received request:\n" << buffer << std::endl;
+        std::cout << "Received request:\n" << buffer << std::endl;
 
         if(strlen(buffer))
             this->getRequest(buffer);

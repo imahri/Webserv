@@ -14,11 +14,8 @@
 
 int     Request::fillHeaderAndBody(std::string buffer)
 {
-	std::cout << "----------------start------------------------" << std::endl;
-
 	index = buffer.find('\n');
 	http = buffer.substr(0, index - 1);
-	std::cout << "Http|" <<  http << "|" << std::endl;
 
 	size_t oldIndex = index + 1;
 
@@ -28,11 +25,13 @@ int     Request::fillHeaderAndBody(std::string buffer)
 
 	for (oldIndex = index; oldIndex < buffer.size(); oldIndex++)
 		body += buffer[oldIndex];
-	
-	std::cout << "header:|" << header << "|\n" << std::endl;
-	// std::cout << "body|" << body << std::endl;
-	std::cout << "---------------end---------------------------" << std::endl;
 
+	std::vector<std::string> vec = ft_split(header, "\n\r");
+	for (std::vector<std::string>::iterator it = vec.begin();  it != vec.end(); it++)
+	{
+		std::vector<std::string> vec = ft_split(*it, ':');
+		HeaderData[ft_trim(vec[0], ' ')] = ft_trim(vec[1], ' ');
+	}
     return (0);
 }
 
@@ -73,18 +72,38 @@ int		Request::checkBody()
 
 int		Request::checkHeader()
 {
-	std::vector<std::string> vec = ft_split(header, "\n\r");
+	std::map<std::string, std::string>::iterator itM = HeaderData.begin();
 
-	for (std::vector<std::string>::iterator it = vec.begin();  it != vec.end(); it++)
+	int transferEncoding = 0,contentLength = 0;
+	for (; itM != HeaderData.end(); itM++)
 	{
-		std::vector<std::string> vec = ft_split(*it, ':');
-		HeaderData[ft_trim(vec[0], ' ')] = ft_trim(vec[1], ' ');
+		if(itM->second.size() == 0)
+			return(statusCode = 400, 1);
+
+		if(itM->first == "Transfer-Encoding" && itM->second != "chunked")
+			return(statusCode = 501, 1);
+
+		if(itM->first == "Transfer-Encoding")
+			transferEncoding = 1;
+		if(itM->first == "Content-Length")
+			contentLength = 1;
 	}
 
-	std::map<std::string, std::string>::iterator itM = HeaderData.begin();
-	// for (; itM != HeaderData.end(); itM++)
-	// 	std::cout << "f|" << itM->first << "|s|" << itM->second << "|" << std::endl;
+	if(transferEncoding == 0 && contentLength == 0 && methode == "POST")
+		return(statusCode = 400, 1);
 	
+	int		found = 0;
+	
+ 	for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); it++)
+    {
+        const Location& location = *it;
+		if(location.path == URI)
+			found = 1;
+        std::cout << std::endl;
+    }
+
+	if(found == 0)
+		return(statusCode = 404, 1);
 	return(0);
 }
 
@@ -94,8 +113,28 @@ int		Request::getRequest(std::string buffer)
 		return(1);
 	if(parseRequest())
 		return(1);
+	std::cout << "GOOD REQUEST" << std::endl;
 	return(0);
 }
+
+int		Request::GET()
+{
+	
+	return(0);
+}
+
+int		Request::POST()
+{
+
+	return(0);
+}
+
+int		Request::DELETE()
+{
+
+	return(0)	;
+}
+
 
 int		Request::parseRequest()
 {
@@ -107,7 +146,13 @@ int		Request::parseRequest()
 		return(1);
 	if(checkBody())
 		return(1);
-
+	if(GET())
+		return(1);
+	if(POST())
+		return(1);
+	if(DELETE())
+		return(1);
+	// std::cout << header << "\n------>\n" << body << std::endl;
 	return(0);
 }
   
