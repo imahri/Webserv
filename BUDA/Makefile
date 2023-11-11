@@ -6,7 +6,7 @@
 #    By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/10 13:15:11 by ytaqsi           ###   ########.fr        #
+#    Updated: 2023/11/10 14:53:13 by ytaqsi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = webserv
 
 CC = c++
 
-FLAGS =# -Wall -Wextra -Werror -std=c++98
+FLAGS = -g -fsanitize=address # -Wall -Wextra -Werror -std=c++98 
 
 HEADER =    includes/webserv.hpp \
 			includes/color.hpp \

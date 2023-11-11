@@ -6,7 +6,7 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/10 13:13:51 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/10 17:28:34 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,40 +200,132 @@ void	Webserv::fillServerList()
 	std::vector <std::string>	pars(ft_split(finalLine, "\n{};"));
 	std::vector <std::string>	finalParams;
 	std::vector <std::string>	params;
-	
+
 	for (size_t i = 0;i < pars.size(); i++)
 		finalParams.push_back(ft_trim(pars[i], " \t"));
-	
-	std::vector < std::vector < std::string > > serverss;
-	
-	 for (size_t i = 0; i < finalParams.size(); ++i) 
-	 {
-        if (finalParams[i] == "server") 
-		{
-            std::vector<std::string> data;
 
-            for (++i; i < finalParams.size(); ++i) 
-			{
-                if (finalParams[i] == "server") 
-				{
-                    --i; 
-                    break;
-                }
-                data.push_back(finalParams[i]);
-            }
-            serverss.push_back(data);
-        }
-    }
-	
-	 for (size_t i = 0; i < serverss.size(); ++i) 
-	 {
-        for (size_t j = 0; j < serverss[i].size(); ++j) 
+	for (size_t i = 0; i < finalParams.size(); ++i) 
+	{
+		if (finalParams[i] == "server") 
 		{
-            std::cout << serverss[i][j] << '\n';
-        }
-		std::cout << "=======================" <<std::endl;
-    }
-	
-	
-	
+		std::vector<std::string> data;
+
+		for (++i; i < finalParams.size(); ++i) 
+		{
+			if (finalParams[i] == "server") 
+			{
+				--i; 
+				break;
+			}
+				data.push_back(finalParams[i]);
+			}
+			this->servers.push_back(data);
+		}
+	}
 }
+
+int		Webserv::getLocationsNumber(int index)
+{
+	int	cp = 0;
+
+	if (index < 1 || index > servers.size())
+		return -1;
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		if (i == index - 1)
+		{
+			for (size_t j = 0; j < servers[i].size(); j++)
+			{
+				if (ft_split(servers[i][j])[0] == "location")
+				{
+					cp++;
+				}
+			}
+		}
+	}
+	return cp;
+}
+std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::getLocationData(int serverIndex, int locationIndex)
+{
+	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
+	
+	if (getLocationsNumber(serverIndex) < 1)
+		return locationData;
+	int	cp = 0;
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		if (i == serverIndex - 1)
+		{
+			for (size_t j = 0; j < servers[i].size(); j++)
+			{
+				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == "location")
+				{
+					if (cp == locationIndex - 1)
+					{
+						while (j < servers[i].size())
+						{
+							std::vector < std::string > line = ft_split(servers[i][j]);
+							std::vector < std::string > values (line.begin() + 1, line.end());
+							locationData.push_back(std::make_pair(line[0], values));
+							j++;
+							if (ft_split(servers[i][j])[0] == "location")
+								break;
+						}
+						
+					}
+					cp++;
+				}
+			}
+		}
+	}
+	return locationData;
+
+}
+
+std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::serverData(int index)
+{
+	std::vector < std::pair <std::string, std::vector < std::string > > > serverData;
+	if (index < 1 || index > servers.size())
+		return serverData;
+	
+	int	cp = 0;
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		if (i == index - 1)
+		{
+			for (size_t j = 0; j < servers[i].size(); j++)
+			{
+				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == "listen" || line[0] == "server_name" || line[0] == "autoindex")
+				{
+					std::vector < std::string > values (line.begin() + 1, line.end());
+					serverData.push_back(std::make_pair(line[0], values));
+				}
+			}
+		}
+	}
+	return serverData;
+}
+
+std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPages(int index)
+{
+	std::vector <  std::pair < std::string, std::string > > errorPages;
+	if (index < 1 || index > servers.size())
+		return errorPages;
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		if (i == index - 1)
+		{
+			for (size_t j = 0; j < servers[i].size(); j++)
+			{
+				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == "error_page")
+					errorPages.push_back(std::make_pair(line[1], line[2]));
+			}
+		}
+	}
+	return errorPages;
+}
+
+

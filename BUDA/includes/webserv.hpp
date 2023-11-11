@@ -6,7 +6,7 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/10 10:44:00 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/10 17:32:27 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,26 +36,33 @@ struct parsingStruct
 	bool close_bracket;
 };
 
-struct Location
-{
-	std::string name;
-	std::vector < std::pair < std::string, std::vector<std::string > > > locationData;
-};
+// struct Location
+// {
+// 	std::string name;
+// 	std::vector < std::pair < std::string, std::vector<std::string > > > locationData;
+// };
 
-struct Server
-{
-	std::vector < std::pair < std::string, std::vector<std::string > > > serverData;
-	std::vector < Location > locations;
-};
+// struct Server
+// {
+// 	std::vector < std::pair < std::string, std::vector<std::string > > > serverData;
+// 	std::vector < Location > locations;
+// };
 
 class Webserv
 {
 	private:
-		std::vector < Server > servers;
+		// std::vector < Server > servers;
+		std::vector < std::vector < std::string > > servers;
 		std::ifstream configFile;
 		std::string fileName;
 
 	public:
 		bool	parsing(int ac, char **av);
 		void	fillServerList();
+
+
+		int																		getLocationsNumber(int serverIndex);
+		std::vector < std::pair <std::string, std::vector < std::string > > >	getLocationData(int serverIndex, int locationIndex);
+		std::vector < std::pair <std::string, std::vector < std::string > > >	serverData(int index);
+		std::vector <  std::pair < std::string, std::string > >					getServerErrorPages(int index);
 };
