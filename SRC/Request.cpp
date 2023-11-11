@@ -51,7 +51,7 @@ int		Request::checkHttp()
 	URI = *(it + 1);
 	httpVersion = *(it + 2);
 
-	if(methode != "POST" && methode != "GET" && methode != "DELETE")
+	if((methode != "POST" && methode != "GET" && methode != "DELETE") || (httpVersion != "HTTP/1.1"))
 		return(statusCode = 400, 1);
 	else if(URI.size() > 2048)
 		return(statusCode = 414, 1);
@@ -72,11 +72,7 @@ int		Request::checkBody()
 
 int		Request::checkLocations()
 {
-	// std::vector < std::string> it = Server.getLocationSpecificData(1,1,"methods");
-	// for (size_t i = 0; i < it.size(); i++)
-	// 	std::cout << "-->" << it[i]<< std::endl;
-
-	int		uriFound = 0;
+	int		uriFound = 0, methodeFound = 0;
 
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
 	for (size_t i = 1; i < Server.getLocationsNumber(1); i++)
@@ -91,12 +87,20 @@ int		Request::checkLocations()
 	}
 	if(uriFound == 0)
 		return(statusCode = 404, 1);
-	
 
 	std::vector < std::pair <std::string, std::string > > data = Server.getLocationSpecificDatas(1, locationIndex, "redirect");
 	std::cout << "SIZE: " << data.size() << std::endl;
 	for (size_t j = 0; j < data.size(); j++)
 		return(statusCode = std::atoi(data[j].first.c_str()), 1);
+
+
+	std::vector < std::string> it = Server.getLocationSpecificData(1,locationIndex,"methods");
+	for (size_t i = 0; i < it.size(); i++)
+		if(methode == it[i])
+			methodeFound = 1;
+
+	if(methodeFound == 0)
+		return(statusCode = 405, 1);
 
 	return(0);
 }
