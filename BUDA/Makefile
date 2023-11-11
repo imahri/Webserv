@@ -5,14 +5,22 @@
 #                                                     +:+ +:+         +:+      #
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/08/10 18:24:00 by eamghar           #+#    #+#              #
-#    Updated: 2023/11/10 21:56:10 by eamghar          ###   ########.fr        #
+#    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
+#    Updated: 2023/11/11 12:29:37 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = c++
 
-CFLAGS = -Wall -Werror -Wextra -std=c++98
+FLAGS = -g -fsanitize=address # -Wall -Wextra -Werror -std=c++98 
+
+HEADER =    includes/webserv.hpp \
+			includes/color.hpp \
+
+SRC =	main\
+		string_utils\
+
+OBJDIR = OBJDIR/
 
 FRM = rm -rf
 
