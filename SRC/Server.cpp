@@ -7,8 +7,8 @@ int    Request::createServer(Webserv &webserv)
 	//-------------------------------------------------------------------------------------------------
 
 
-	this->wbsrv = webserv;
-	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = wbsrv.getLocationData(1, 1);
+	Server = webserv;
+	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = Server.getLocationData(1, 1);
 	for (std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it = locationData.begin(); it != locationData.end(); ++it)
 	{
 		std::cout << it->first << std::endl;
@@ -63,7 +63,7 @@ int    Request::createServer(Webserv &webserv)
             return(std::cerr <<"Error reading request." << std::endl, 1);
     
         //Print the received request
-        std::cout << "Received request:\n" << buffer << std::endl;
+        std::cout << "Received request:" << buffer << std::endl;
 
         if(strlen(buffer))
             this->getRequest(buffer);

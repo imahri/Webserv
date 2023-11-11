@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/11 17:20:23 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/11 18:51:32 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,6 @@
 
 #include "webserv.hpp"
 
-struct Location
-{
-    std::string path;
-    std::string root;
-    std::vector<std::string> methods;
-    std::string uploadDir;
-    std::string cgiPhp;
-    std::string cgiPy;
-    std::string redirect;
-};
-
 class Request
 {
     private:
@@ -53,8 +42,7 @@ class Request
         size_t                              index;
         size_t                              statusCode;
         unsigned long long                  clientMaxBodySize;
-        std::vector<Location>               locations;
-		Webserv								wbsrv;
+		Webserv								Server;
         
     public:
         Request();
@@ -72,6 +60,8 @@ class Request
         int                                 GET();
         int                                 POST();
         int                                 DELETE();
+        int                                 checkLocations();
+
 
         
         //extra functions

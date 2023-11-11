@@ -70,6 +70,35 @@ int		Request::checkBody()
 	return(0);
 }
 
+int		Request::checkLocations()
+{
+	// std::vector < std::pair <std::string, std::string > > data = Server.getLocationSpecificDatas(1,1,"redirect");
+	// for (size_t i = 0; i < data.size(); i++)
+	// 	std::cout << data[i].first << "   " << data[i].second << std::endl;	std::cout << "11" << std::endl;
+
+
+	std::vector < std::string> it = Server.getLocationSpecificData(1,1,"path");
+	for (size_t i = 0; i < it.size(); i++)
+		std::cout << "-->" << it[i]<< std::endl;
+
+
+	// 	int		found = 0;
+	
+ 	// for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); it++)
+    // {
+    //     const Location& location = *it;
+	// 	if(location.path == URI)
+	// 		found = 1;
+    //     std::cout << std::endl;
+    // }
+
+	// if(found == 0)
+	// 	return(statusCode = 404, 1);
+	
+
+	return(0);
+}
+
 int		Request::checkHeader()
 {
 	std::map<std::string, std::string>::iterator itM = HeaderData.begin();
@@ -85,34 +114,25 @@ int		Request::checkHeader()
 
 		if(itM->first == "Transfer-Encoding")
 			transferEncoding = 1;
+
 		if(itM->first == "Content-Length")
 			contentLength = 1;
 	}
 
 	if(transferEncoding == 0 && contentLength == 0 && methode == "POST")
 		return(statusCode = 400, 1);
-	
-	int		found = 0;
-	
- 	for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); it++)
-    {
-        const Location& location = *it;
-		if(location.path == URI)
-			found = 1;
-        std::cout << std::endl;
-    }
 
-	if(found == 0)
-		return(statusCode = 404, 1);
+	if(checkLocations())
+		return(1);
 	return(0);
 }
 
 int		Request::getRequest(std::string buffer)
 {
 	if(fillHeaderAndBody(buffer))
-		return(1);
+		return(std::cout << "BAD REQUEST" << std::endl,1);
 	if(parseRequest())
-		return(1);
+		return(std::cout << "BAD REQUEST" << std::endl,1);
 	std::cout << "GOOD REQUEST" << std::endl;
 	return(0);
 }
@@ -152,7 +172,6 @@ int		Request::parseRequest()
 		return(1);
 	if(DELETE())
 		return(1);
-	// std::cout << header << "\n------>\n" << body << std::endl;
 	return(0);
 }
   

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/11 18:09:28 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/11 18:51:29 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,18 @@
 
 #include "Request.hpp"
 
-// std::vector<std::string> ft_split(std::string &s, std::string delimiter);
-// std::vector<std::string> ft_split(std::string &s, char c);
-// std::vector<std::string> ft_split(std::string &s);
-
-// std::string ft_trim(std::string s, std::string delimiter);
-// std::string &ft_trim(std::string &s, char c);
-
 bool ft_isAllSpace(std::string &s);
+
+struct Location
+{
+    std::string path;
+    std::string root;
+    std::vector<std::string> methods;
+    std::string uploadDir;
+    std::string cgiPhp;
+    std::string cgiPy;
+    std::string redirect;
+};
 
 struct parsingStruct
 {
