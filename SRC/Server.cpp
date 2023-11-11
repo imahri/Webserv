@@ -12,7 +12,7 @@ int    Request::createServer(Webserv &webserv)
     // Set up server address
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8080);  // Use the desired port number
+    serverAddress.sin_port = htons(6969);  // Use the desired port number
     serverAddress.sin_addr.s_addr = INADDR_ANY;
 
     // Bind the socket to the server address
@@ -23,7 +23,7 @@ int    Request::createServer(Webserv &webserv)
     if (listen(serverSocket, 5) == -1)
         return(std::cerr <<"Error while listening." << std::endl, 1);
 
-    std::cout << "Server started. Listening on port 8080..." << std::endl;
+    std::cout << "Server started. Listening on port 6969..." << std::endl;
 
     while (true)
     {
@@ -42,10 +42,13 @@ int    Request::createServer(Webserv &webserv)
             return(std::cerr <<"Error reading request." << std::endl, 1);
     
         //Print the received request
-        std::cout << "Received request:" << buffer << std::endl;
+        std::cout << "Received request:\n" << buffer << std::endl;
 
         if(strlen(buffer))
+        {
             this->getRequest(buffer);
+            std::cout << statusCode << std::endl;
+        }
         else
             continue;
 

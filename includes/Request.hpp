@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/11 18:51:32 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/11 21:46:11 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Request
         size_t                              statusCode;
         unsigned long long                  clientMaxBodySize;
 		Webserv								Server;
+        size_t                              locationIndex;
         
     public:
         Request();

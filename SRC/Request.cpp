@@ -72,35 +72,31 @@ int		Request::checkBody()
 
 int		Request::checkLocations()
 {
-	// std::vector < std::pair <std::string, std::string > > data = Server.getLocationSpecificDatas(1,1,"redirect");
-	// for (size_t i = 0; i < data.size(); i++)
-	// 	std::cout << data[i].first << "   " << data[i].second << std::endl;	std::cout << "11" << std::endl;
+	// std::vector < std::string> it = Server.getLocationSpecificData(1,1,"methods");
+	// for (size_t i = 0; i < it.size(); i++)
+	// 	std::cout << "-->" << it[i]<< std::endl;
 
+	int		uriFound = 0;
 
-	std::vector < std::string> it = Server.getLocationSpecificData(1,1,"methods");
-	for (size_t i = 0; i < it.size(); i++)
-		std::cout << "-->" << it[i]<< std::endl;
-
+	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
 	for (size_t i = 1; i < Server.getLocationsNumber(1); i++)
 	{
-		std::vector < std::pair <std::string, std::vector < std::string > > > locationData = Server.getLocationData(1, i);
-		std::cout << "Path: "<< locationData[0].second[0] << std::endl;
+		locationData = Server.getLocationData(1, i);
+		if(URI == locationData[0].second[0])
+		{
+			uriFound = 1;
+			locationIndex = i;
+		}
+		// std::cout << "Path: "<< locationData[0].second[0] << std::endl;
 	}
+	if(uriFound == 0)
+		return(statusCode = 404, 1);
 	
-	
-	// 	int		found = 0;
-	
- 	// for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); it++)
-    // {
-    //     const Location& location = *it;
-	// 	if(location.path == URI)
-	// 		found = 1;
-    //     std::cout << std::endl;
-    // }
 
-	// if(found == 0)
-	// 	return(statusCode = 404, 1);
-	
+	std::vector < std::pair <std::string, std::string > > data = Server.getLocationSpecificDatas(1, locationIndex, "redirect");
+	std::cout << "SIZE: " << data.size() << std::endl;
+	for (size_t j = 0; j < data.size(); j++)
+		return(statusCode = std::atoi(data[j].first.c_str()), 1);
 
 	return(0);
 }
@@ -136,9 +132,9 @@ int		Request::checkHeader()
 int		Request::getRequest(std::string buffer)
 {
 	if(fillHeaderAndBody(buffer))
-		return(std::cout << "BAD REQUEST" << std::endl,1);
+		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
 	if(parseRequest())
-		return(std::cout << "BAD REQUEST" << std::endl,1);
+		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
 	std::cout << "GOOD REQUEST" << std::endl;
 	return(0);
 }
@@ -165,6 +161,7 @@ int		Request::DELETE()
 int		Request::parseRequest()
 {
 	clientMaxBodySize = convertToBytes("3GB");
+	locationIndex = 0;
 
 	if(checkHttp())
 		return(1);
