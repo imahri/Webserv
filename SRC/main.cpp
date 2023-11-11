@@ -24,13 +24,18 @@ int main(int ac, char **av)
 	// 	std::cout << "--------------------------" <<std::endl;
 	// }
 
-	std::vector < std::string > data = wbs.getLocationSpecificData(1,1,"methods");
+	// std::vector < std::string > data = wbs.getLocationSpecificData(1,1,"methods");
 
+	// for (size_t i = 0; i < data.size(); i++)
+	// {
+	// 	std::cout << data[i] << std::endl;
+	// }
+	
+	std::vector < std::pair <std::string, std::string > > data = wbs.getLocationSpecificDatas(1,1,"error_page");
 	for (size_t i = 0; i < data.size(); i++)
 	{
-		std::cout << data[i] << std::endl;
+		std::cout << data[i].first << "   " << data[i].second << std::endl;
 	}
-	
 
     //CHEESY
     // Request     rq;

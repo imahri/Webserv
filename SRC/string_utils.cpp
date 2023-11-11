@@ -6,7 +6,7 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/11 17:52:20 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/11 18:26:10 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,6 +301,23 @@ std::vector < std::string >	Webserv::getLocationSpecificData(size_t serverIndex,
 	}
 	return std::vector<std::string>();
 }
+
+std::vector < std::pair <std::string, std::string > > Webserv::getLocationSpecificDatas(size_t serverIndex, size_t locationIndex, std::string dataToSearch)
+{
+	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = getLocationData(serverIndex, locationIndex);
+	std::vector < std::pair <std::string, std::string > > data;
+	
+	std::cout << "------------------" <<std::endl;
+	for (size_t i = 0; i < locationData.size(); i++)
+	{
+		if (locationData[i].first == dataToSearch)
+		{
+        	data.push_back(std::make_pair(locationData[i].second[0], locationData[i].second[1]));
+		}
+	}
+	return data;
+}
+
 
 
 std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::serverData(size_t index)
