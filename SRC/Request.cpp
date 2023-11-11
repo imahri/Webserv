@@ -89,10 +89,8 @@ int		Request::checkLocations()
 		return(statusCode = 404, 1);
 
 	std::vector < std::pair <std::string, std::string > > data = Server.getLocationSpecificDatas(1, locationIndex, "redirect");
-	std::cout << "SIZE: " << data.size() << std::endl;
 	for (size_t j = 0; j < data.size(); j++)
 		return(statusCode = std::atoi(data[j].first.c_str()), 1);
-
 
 	std::vector < std::string> it = Server.getLocationSpecificData(1,locationIndex,"methods");
 	for (size_t i = 0; i < it.size(); i++)
@@ -145,7 +143,17 @@ int		Request::getRequest(std::string buffer)
 
 int		Request::GET()
 {
+    struct stat fileStat;
+
+	std::vector < std::string> it = Server.getLocationSpecificData(1, locationIndex, "root");
+	for (size_t i = 0; i < it.size(); i++)
+		std::cout << "Size: " << it.size() << it[i] << std::endl;
 	
+    // Check if the given path exists
+    if (stat(it[1].c_str(), &fileStat) == 0)
+        printf("The directory or file exists.\n");
+	else
+        printf("The directory or file does not exist.\n");
 	return(0);
 }
 
