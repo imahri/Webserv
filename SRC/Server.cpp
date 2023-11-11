@@ -1,7 +1,30 @@
 #include "../includes/Request.hpp"
 
-int    Request::createServer()
+int    Request::createServer(Webserv &webserv)
 {
+
+
+	//-------------------------------------------------------------------------------------------------
+
+
+	this->wbsrv = webserv;
+	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = wbsrv.getLocationData(1, 1);
+	for (std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it = locationData.begin(); it != locationData.end(); ++it)
+	{
+		std::cout << it->first << std::endl;
+		for (std::vector<std::string>::iterator innerIt = it->second.begin(); innerIt != it->second.end(); ++innerIt) 
+		{
+			std::cout << *innerIt << " ";
+		}
+		std::cout << std::endl;
+		std::cout << "--------------------------" <<std::endl;
+	}
+
+
+
+
+	//-------------------------------------------------------------------------------------------------
+
     // Create a socket
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1)

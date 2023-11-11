@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/11 12:53:52 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/11 17:17:05 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,17 @@ struct parsingStruct
 class Webserv
 {
 	private:
-		// std::vector < Server > servers;
 		std::vector < std::vector < std::string > > servers;
 		std::ifstream configFile;
 		std::string fileName;
 
 	public:
-		bool	parsing(int ac, char **av);
-		void	fillServerList();
+
+		Webserv(){};
+		Webserv(const Webserv& copy);
+		Webserv&	operator = (const Webserv& copy);
+		bool		parsing(int ac, char **av);
+		void		fillServerList();
 
 
 		int																		getLocationsNumber(size_t serverIndex);

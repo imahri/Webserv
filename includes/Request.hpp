@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/11 12:55:36 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/11 17:20:23 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class Request
         size_t                              statusCode;
         unsigned long long                  clientMaxBodySize;
         std::vector<Location>               locations;
-
+		Webserv								wbsrv;
         
     public:
         Request();
@@ -62,7 +62,7 @@ class Request
         Request &operator=(const Request &other);
         ~Request();
         
-        int                                 createServer();
+        int                                 createServer(Webserv &Webserv);
         int                                 getRequest(std::string buffer);
         int                                 fillHeaderAndBody(std::string buffer);
         int                                 parseRequest();
