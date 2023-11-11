@@ -6,29 +6,21 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/11 12:29:37 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/11 12:48:47 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = c++
 
-FLAGS = -g -fsanitize=address # -Wall -Wextra -Werror -std=c++98 
-
-HEADER =    includes/webserv.hpp \
-			includes/color.hpp \
-
-SRC =	main\
-		string_utils\
-
-OBJDIR = OBJDIR/
+CFLAGS = -Wall -Werror -Wextra -std=c++98
 
 FRM = rm -rf
 
 NAME = Webserv
 
-HEADER = *.hpp\
+HEADER = includes/*.hpp\
 
-SRC =	*.cpp\
+SRC =	SRC/*.cpp\
 
 all: $(NAME)
 

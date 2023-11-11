@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/10 17:28:34 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/11 12:55:16 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/webserv.hpp"
+#include "../includes/Request.hpp"
 
 std::vector<std::string> ft_split(std::string& s, std::string delimiter)
 {
@@ -121,7 +121,7 @@ bool	Webserv::parsing(int ac, char **av)
 	std::string					line;
 	std::vector <std::string>	pars;
 	std::vector <parsingStruct>	parsLast;
-	int	j = 0;
+	size_t	j = 0;
 
 	while (std::getline(configFile, line))
 	{
@@ -224,7 +224,7 @@ void	Webserv::fillServerList()
 	}
 }
 
-int		Webserv::getLocationsNumber(int index)
+int		Webserv::getLocationsNumber(size_t index)
 {
 	int	cp = 0;
 
@@ -245,13 +245,13 @@ int		Webserv::getLocationsNumber(int index)
 	}
 	return cp;
 }
-std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::getLocationData(int serverIndex, int locationIndex)
+std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::getLocationData(size_t serverIndex, size_t locationIndex)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
 	
 	if (getLocationsNumber(serverIndex) < 1)
 		return locationData;
-	int	cp = 0;
+	size_t	cp = 0;
 	for (size_t i = 0; i < this->servers.size(); i++)
 	{
 		if (i == serverIndex - 1)
@@ -283,13 +283,12 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 
 }
 
-std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::serverData(int index)
+std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::serverData(size_t index)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > serverData;
 	if (index < 1 || index > servers.size())
 		return serverData;
 	
-	int	cp = 0;
 	for (size_t i = 0; i < this->servers.size(); i++)
 	{
 		if (i == index - 1)
@@ -308,7 +307,7 @@ std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::s
 	return serverData;
 }
 
-std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPages(int index)
+std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPages(size_t index)
 {
 	std::vector <  std::pair < std::string, std::string > > errorPages;
 	if (index < 1 || index > servers.size())

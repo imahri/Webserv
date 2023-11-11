@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/10 17:32:27 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/11 12:53:52 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,14 @@
 #include <string>
 #include <sstream>
 
-std::vector<std::string> ft_split(std::string &s, std::string delimiter);
-std::vector<std::string> ft_split(std::string &s, char c);
-std::vector<std::string> ft_split(std::string &s);
+#include "Request.hpp"
 
-std::string ft_trim(std::string s, std::string delimiter);
-std::string &ft_trim(std::string &s, char c);
+// std::vector<std::string> ft_split(std::string &s, std::string delimiter);
+// std::vector<std::string> ft_split(std::string &s, char c);
+// std::vector<std::string> ft_split(std::string &s);
+
+// std::string ft_trim(std::string s, std::string delimiter);
+// std::string &ft_trim(std::string &s, char c);
 
 bool ft_isAllSpace(std::string &s);
 
@@ -35,18 +37,6 @@ struct parsingStruct
 	bool open_bracket;
 	bool close_bracket;
 };
-
-// struct Location
-// {
-// 	std::string name;
-// 	std::vector < std::pair < std::string, std::vector<std::string > > > locationData;
-// };
-
-// struct Server
-// {
-// 	std::vector < std::pair < std::string, std::vector<std::string > > > serverData;
-// 	std::vector < Location > locations;
-// };
 
 class Webserv
 {
@@ -61,8 +51,8 @@ class Webserv
 		void	fillServerList();
 
 
-		int																		getLocationsNumber(int serverIndex);
-		std::vector < std::pair <std::string, std::vector < std::string > > >	getLocationData(int serverIndex, int locationIndex);
-		std::vector < std::pair <std::string, std::vector < std::string > > >	serverData(int index);
-		std::vector <  std::pair < std::string, std::string > >					getServerErrorPages(int index);
+		int																		getLocationsNumber(size_t serverIndex);
+		std::vector < std::pair <std::string, std::vector < std::string > > >	getLocationData(size_t serverIndex, size_t locationIndex);
+		std::vector < std::pair <std::string, std::vector < std::string > > >	serverData(size_t index);
+		std::vector <  std::pair < std::string, std::string > >					getServerErrorPages(size_t index);
 };
