@@ -6,7 +6,7 @@
 #    By: imahri <imahri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/10/26 15:30:36 by imahri           ###   ########.fr        #
+#    Updated: 2023/11/09 09:59:26 by imahri           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = webserv
 
 CC = c++
 
-FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS =# -Wall -Wextra -Werror -std=c++98
 
 HEADER =	includes/webserv.hpp \
 			includes/color.hpp \

@@ -50,7 +50,7 @@ def send_emails(email_to):
 smtp_port = 587
 smtp_server = "smtp.gmail.com"
 email_from = "flokihunterxhunter@gmail.com"
-email_to = ["bennamrouchex@gmail.com"]
+email_to = ["mohamedismailhamdani@gmail.com"]
 password = "qllaaayztjocgyiq"
 subject = "Webserv"
 
