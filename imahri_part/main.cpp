@@ -6,7 +6,7 @@
 /*   By: imahri <imahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 09:55:30 by imahri            #+#    #+#             */
-/*   Updated: 2023/11/10 21:59:51 by imahri           ###   ########.fr       */
+/*   Updated: 2023/11/11 22:41:03 by imahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-// using namespace std;
 
 int main() {
     const char *ip = "0.0.0.0";
@@ -68,6 +67,5 @@ int main() {
         std::cout << ">> CLIENT: " << clientSocket << std::endl;
         std::cout << "[+] Client connected" << std::endl;
     }
-
     return 0;
 }

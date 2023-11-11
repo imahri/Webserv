@@ -6,7 +6,7 @@
 /*   By: imahri <imahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 13:42:21 by imahri            #+#    #+#             */
-/*   Updated: 2023/11/01 11:48:11 by imahri           ###   ########.fr       */
+/*   Updated: 2023/11/11 22:54:06 by imahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int main()
     server_addr.sin_zero[7]='\0';
 
    int opt = 1;
-//    setsockopt(server_socket,SOL_SOCKET, SO_REUSEADDR,&opt, (opt));
+   setsockopt(server_socket,SOL_SOCKET, SO_REUSEADDR,&opt, (opt));
    n = bind(server_socket, (struct sockaddr*)&server_addr,sizeof(server_addr));
    if (n < 0)
    {
