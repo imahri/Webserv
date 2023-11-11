@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/11 18:26:10 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/11 19:46:50 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,13 +224,13 @@ void	Webserv::fillServerList()
 	}
 }
 
-int	Webserv::getServersNumber()
+size_t	Webserv::getServersNumber()
 {
 	return (int)this->servers.size();
 }
 
 
-int		Webserv::getLocationsNumber(size_t index)
+size_t		Webserv::getLocationsNumber(size_t index)
 {
 	int	cp = 0;
 

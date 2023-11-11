@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/11 18:51:29 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/11 19:46:34 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ class Webserv
 		void		fillServerList();
 
 
-		int																		getServersNumber();
-		int																		getLocationsNumber(size_t serverIndex);
+		size_t																		getServersNumber();
+		size_t																		getLocationsNumber(size_t serverIndex);
 		std::vector < std::string >												getLocationSpecificData(size_t serverIndex, size_t locationIndex, std::string data);
 		std::vector < std::pair <std::string,std::string > >					getLocationSpecificDatas(size_t serverIndex, size_t locationIndex, std::string data);
 		std::vector < std::pair <std::string, std::vector < std::string > > >	getLocationData(size_t serverIndex, size_t locationIndex);

@@ -77,11 +77,17 @@ int		Request::checkLocations()
 	// 	std::cout << data[i].first << "   " << data[i].second << std::endl;	std::cout << "11" << std::endl;
 
 
-	std::vector < std::string> it = Server.getLocationSpecificData(1,1,"path");
+	std::vector < std::string> it = Server.getLocationSpecificData(1,1,"methods");
 	for (size_t i = 0; i < it.size(); i++)
 		std::cout << "-->" << it[i]<< std::endl;
 
-
+	for (size_t i = 1; i < Server.getLocationsNumber(1); i++)
+	{
+		std::vector < std::pair <std::string, std::vector < std::string > > > locationData = Server.getLocationData(1, i);
+		std::cout << "Path: "<< locationData[0].second[0] << std::endl;
+	}
+	
+	
 	// 	int		found = 0;
 	
  	// for (std::vector<Location>::const_iterator it = locations.begin(); it != locations.end(); it++)
