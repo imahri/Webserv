@@ -6,7 +6,7 @@
 /*   By: imahri <imahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 09:55:30 by imahri            #+#    #+#             */
-/*   Updated: 2023/11/09 09:58:58 by imahri           ###   ########.fr       */
+/*   Updated: 2023/11/10 21:59:51 by imahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 // using namespace std;
 
 int main() {
-    const char *ip = "127.0.0.1";
+    const char *ip = "0.0.0.0";
     int port = 3000;
     int serverSocket;
     int clientSocket;
@@ -53,7 +53,7 @@ int main() {
     }
 
     std::cout << "[+] Bound to port number: " << port << std::endl;
-    listen(serverSocket, 5);
+    listen(serverSocket, 1);
     std::cout << "Listening..." << std::endl;
 
     while (true) {
