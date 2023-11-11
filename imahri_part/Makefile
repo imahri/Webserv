@@ -6,52 +6,30 @@
 #    By: imahri <imahri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/09 09:59:26 by imahri           ###   ########.fr        #
+#    Updated: 2023/11/11 23:28:24 by imahri           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = webserv
-
 CC = c++
 
-FLAGS =# -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Werror -Wextra -std=c++98
 
-HEADER =	includes/webserv.hpp \
-			includes/color.hpp \
+FRM = rm -rf
 
-SRC =	main\
+NAME = Webserv
 
-OBJDIR = OBJDIR/
+HEADER = includes/*.hpp\
 
-OBJ = $(addprefix $(OBJDIR), $(addsuffix .o, $(SRC)))
+SRC =	SRC/*.cpp\
 
-all : ${OBJDIR} ${NAME}
+all: $(NAME)
 
-${OBJDIR}:
-	@mkdir -p $(OBJDIR)
+$(NAME): $(SRC) $(HEADER)
+	$(CC) $(CFLAGS) $(SRC) -o $(NAME)
 
-${NAME} : $(OBJ) $(HEADER)
-	@${CC} $(FLAGS) ${OBJ} -o $(NAME)
+clean:
+	$(FRM) $(NAME)
 
-$(OBJDIR)%.o : %.cpp $(HEADER)
-	@$(CC) $(FLAGS) -c $< -o $@
-	@echo " _       ____________ _____ __________ _    __"
-	@echo "| |     / / ____/ __ ) ___// ____/ __ \ |  / /"
-	@echo "| | /| / / __/ / __  \__ \/ __/ / /_/ / | / / "
-	@echo "| |/ |/ / /___/ /_/ /__/ / /___/ _, _/| |/ /  "
-	@echo "|__/|__/_____/_____/____/_____/_/ |_| |___/   "
+fclean: clean
 
-clean :
-	@rm -rf $(OBJDIR)
-	@echo "    ____  ____  _   ________"
-	@echo "   / __ \/ __ \/ | / / ____/"
-	@echo "  / / / / / / /  |/ / __/   "
-	@echo " / /_/ / /_/ / /|  / /___   "
-	@echo "/_____/\____/_/ |_/_____/   "
-
-fclean : clean
-	@rm -f ${NAME}
-
-re : fclean all
-
-.PHONY : all clean fclean re
+re: fclean all
