@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/11 12:55:16 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/11 17:52:20 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,6 +224,12 @@ void	Webserv::fillServerList()
 	}
 }
 
+int	Webserv::getServersNumber()
+{
+	return (int)this->servers.size();
+}
+
+
 int		Webserv::getLocationsNumber(size_t index)
 {
 	int	cp = 0;
@@ -245,6 +251,7 @@ int		Webserv::getLocationsNumber(size_t index)
 	}
 	return cp;
 }
+
 std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::getLocationData(size_t serverIndex, size_t locationIndex)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
@@ -282,6 +289,19 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 	return locationData;
 
 }
+
+std::vector < std::string >	Webserv::getLocationSpecificData(size_t serverIndex, size_t locationIndex, std::string data)
+{
+	std::vector < std::pair <std::string, std::vector < std::string > > > locationData (getLocationData(serverIndex, locationIndex));
+
+	for (size_t i = 0; i < locationData.size(); i++)
+	{
+		if (locationData[i].first == data)
+			return locationData[i].second;
+	}
+	return std::vector<std::string>();
+}
+
 
 std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::serverData(size_t index)
 {

@@ -7,6 +7,8 @@ int main(int ac, char **av)
 	wbs.parsing(ac, av);
 	wbs.fillServerList();
 
+	// std::cout << wbs.getServersNumber() << std::endl;
+
 	// // std::cout << webServ.getLocationsNumber(0) << std::endl;
 
 
@@ -21,12 +23,21 @@ int main(int ac, char **av)
 	// 	std::cout << std::endl;
 	// 	std::cout << "--------------------------" <<std::endl;
 	// }
+
+	std::vector < std::string > data = wbs.getLocationSpecificData(1,1,"methods");
+
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		std::cout << data[i] << std::endl;
+	}
+	
+
     //CHEESY
-    Request     rq;
+    // Request     rq;
 
 	
-    if(rq.createServer(wbs))
-        return(1);
+    // if(rq.createServer(wbs))
+    //     return(1);
 
     return 0;
 }
