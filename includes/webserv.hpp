@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/12 12:38:39 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/12 13:33:36 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,11 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <dirent.h>
 
 #include "Request.hpp"
 
 bool ft_isAllSpace(std::string &s);
-
-struct Location
-{
-    std::string path;
-    std::string root;
-    std::vector<std::string> methods;
-    std::string uploadDir;
-    std::string cgiPhp;
-    std::string cgiPy;
-    std::string redirect;
-};
 
 struct parsingStruct
 {

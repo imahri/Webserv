@@ -151,7 +151,7 @@ int		Request::GetFile()
 
 int		Request::GetDirectory()
 {
-
+	
 	return(0);
 }
 
