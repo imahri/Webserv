@@ -6,17 +6,18 @@
 /*   By: imahri <imahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 09:55:30 by imahri            #+#    #+#             */
-/*   Updated: 2023/11/11 22:41:03 by imahri           ###   ########.fr       */
+/*   Updated: 2023/11/12 04:29:36 by imahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include <netinet/in.h>
-#include <string.h>
+#include <cstring>
+#include <cstdlib>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <sys/socket.h>
-
+#include <sys/types.h>
+#include <poll.h>
 
 int main() {
     const char *ip = "0.0.0.0";
@@ -55,17 +56,39 @@ int main() {
     listen(serverSocket, 1);
     std::cout << "Listening..." << std::endl;
 
-    while (true) {
-        clientSocket = accept(serverSocket, NULL, 0);
+    // clientSocket = -1;
+    struct pollfd fds[1];
+    fds[0].fd = serverSocket;
+    fds[0].events = POLLIN;
+    // fds[1].fd = clientSocket;
+    // fds[1].events = POLLIN;
 
-        const char *response = "HTTP/1.1 200 OK\nContent-Length: 10\nContent-Type: text/plain\n\n";
-        const char *message = "hacker men";
+    while (true)
+    {
+        int ret = poll(fds, 1, -1);
+        if (clientSocket < 0) {
+            perror("[-] Accept error");
+            continue;
+        }
+        if (fds[0].revents & POLLIN) 
+        {
+            int clientSocket = accept(serverSocket, NULL, 0);
+            if (clientSocket < 0) 
+            {
+                perror("[-] Accept error");
+                continue;
+            }
+            std::cout << "[+] Client connected" << std::endl;
 
-        send(clientSocket, response, strlen(response), 0);
-        send(clientSocket, message, strlen(message), 0);
+            const char *response = "HTTP/1.1 200 OK\nContent-Length: 10\nContent-Type: text/plain\n\n";
+            const char *message = "hacker men";
 
-        std::cout << ">> CLIENT: " << clientSocket << std::endl;
-        std::cout << "[+] Client connected" << std::endl;
+            send(clientSocket, response, strlen(response), 0);
+            send(clientSocket, message, strlen(message), 0);
+
+            std::cout << ">> CLIENT: " << clientSocket << std::endl;
+            close(clientSocket);
+        }
     }
     return 0;
 }
