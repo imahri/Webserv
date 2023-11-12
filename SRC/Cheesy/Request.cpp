@@ -83,7 +83,6 @@ int		Request::checkLocations()
 			uriFound = 1;
 			locationIndex = i;
 		}
-		// std::cout << "Path: "<< locationData[0].second[0] << std::endl;
 	}
 	if(uriFound == 0)
 		return(statusCode = 404, 1);
@@ -103,10 +102,21 @@ int		Request::checkLocations()
 	return(0);
 }
 
+int		Request::parseChuncked()
+{
+
+	std::cout << "-----------------------HEADER-------------------" << std::endl;
+	std::cout << header << std::endl;
+	std::cout << "-----------------------BODY-------------------" << std::endl;
+	std::cout << body << std::endl;
+	return(0);
+}
+
 int		Request::checkHeader()
 {
 	std::map<std::string, std::string>::iterator itM = HeaderData.begin();
 
+	bool isChuncked = false;
 	int transferEncoding = 0,contentLength = 0;
 	for (; itM != HeaderData.end(); itM++)
 	{
@@ -115,6 +125,9 @@ int		Request::checkHeader()
 
 		if(itM->first == "Transfer-Encoding" && itM->second != "chunked")
 			return(statusCode = 501, 1);
+
+		if(itM->first == "Transfer-Encoding" && itM->second == "chunked")
+			isChuncked = true;
 
 		if(itM->first == "Transfer-Encoding")
 			transferEncoding = 1;
@@ -126,14 +139,16 @@ int		Request::checkHeader()
 	if(transferEncoding == 0 && contentLength == 0 && methode == "POST")
 		return(statusCode = 400, 1);
 
-	if(checkLocations())
-		return(1);
+	// if(checkLocations())
+	// 	return(1);
+
+	if(isChuncked == true)
+		parseChuncked();
 	return(0);
 }
 
 int		Request::getRequest(std::string buffer)
 {
-	directoy = 0;
 	if(fillHeaderAndBody(buffer))
 		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
 	if(parseRequest())
@@ -148,23 +163,14 @@ int		Request::GetFile()
 	return(0);
 }
 
-
 int		Request::GetDirectory()
 {
 	
 	return(0);
 }
 
-
-void		saloua(void *p)
-{
-(void)p;
-}
-
 int		Request::GET()
 {
-
-
     struct stat fileStat;
 
 	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");
@@ -177,9 +183,9 @@ int		Request::GET()
     if (stat(URI.c_str(), &fileStat) == 0)
 	{
         if (S_ISDIR(fileStat.st_mode))
-            directoy = 1;
+            directory = 1;
         else if (S_ISREG(fileStat.st_mode))
-            directoy = 0;
+            directory = 0;
         else
 			return(statusCode = 301, 1);
     }
@@ -214,6 +220,7 @@ int		Request::parseRequest()
 {
 	clientMaxBodySize = convertToBytes("3GB");
 	locationIndex = 0;
+	directory = -1;
 
 	if(checkHttp())
 		return(1);

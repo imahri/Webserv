@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/12 13:25:17 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/12 19:57:21 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Request
 		Webserv								Server;
         size_t                              locationIndex;
         std::string                         LocationRoot;
-        int                                 directoy;
+        int                                 directory;
         
     public:
         Request();
@@ -71,9 +71,9 @@ class Request
         int                                 checkLocations();
         int                                 GetFile();
         int                                 GetDirectory();
+        int                                 parseChuncked();
 
 
-        
         //extra functions
         unsigned long long                  convertToBytes(const std::string& sizeString);
         std::string                         getNextToken(std::istringstream &iss);
@@ -85,9 +85,6 @@ class Request
         std::vector<std::string>            ft_split(std::string& s);
         std::string&                        ft_trim(std::string& s, char c);
         std::string&                        ft_trim(std::string& s, std::string delimiter);
-
-
-
 };
 
 #endif
