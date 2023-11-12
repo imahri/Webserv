@@ -133,6 +133,7 @@ int		Request::checkHeader()
 
 int		Request::getRequest(std::string buffer)
 {
+	directoy = 0;
 	if(fillHeaderAndBody(buffer))
 		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
 	if(parseRequest())
@@ -141,17 +142,52 @@ int		Request::getRequest(std::string buffer)
 	return(0);
 }
 
+int		Request::GetFile()
+{
+
+	return(0);
+}
+
+
+int		Request::GetDirectory()
+{
+
+	return(0);
+}
+
 int		Request::GET()
 {
     struct stat fileStat;
 
-	//Check if directory or file exists
 	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");
     if (stat(it[0].c_str(), &fileStat) != 0)
 		return(statusCode = 404, 1);
 
-	//Check if its a directory or a file 
+	std::cout << "URI:" << URI << std::endl;
+	LocationRoot = it[0];
 
+
+    // Get file/directory information
+    if (stat(URI.c_str(), &fileStat) == 0)
+	{
+        if (S_ISDIR(fileStat.st_mode))
+            directoy = 1;
+        else if (S_ISREG(fileStat.st_mode))
+            directoy = 0;
+        else
+			return(statusCode = 301, 1);
+    }
+	else
+		return(statusCode = 404, 1);
+
+	if(URI[URI.size() - 1] == '/')
+	{
+		if(GetDirectory())
+			return(1);
+	}
+	else
+		if(GetFile())
+			return(1);
 
 	return(0);
 }

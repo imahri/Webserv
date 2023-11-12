@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/11 23:32:02 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/12 13:25:17 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ class Request
         unsigned long long                  clientMaxBodySize;
 		Webserv								Server;
         size_t                              locationIndex;
+        std::string                         LocationRoot;
+        int                                 directoy;
         
     public:
         Request();
@@ -67,6 +69,8 @@ class Request
         int                                 POST();
         int                                 DELETE();
         int                                 checkLocations();
+        int                                 GetFile();
+        int                                 GetDirectory();
 
 
         

@@ -54,8 +54,9 @@ int    Request::createServer(Webserv &webserv)
 
         if(strlen(buffer))
         {
+            statusCode = 0;
             this->getRequest(buffer);
-            std::cout << statusCode << std::endl;
+            std::cout << "StatusCode: " << statusCode << std::endl;
         }
         else
             continue;
