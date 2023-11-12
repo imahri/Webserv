@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/11 19:46:50 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/12 12:38:33 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,7 +290,7 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 
 }
 
-std::vector < std::string >	Webserv::getLocationSpecificData(size_t serverIndex, size_t locationIndex, std::string data)
+std::vector < std::string >	Webserv::getLocationSingle(size_t serverIndex, size_t locationIndex, std::string data)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData (getLocationData(serverIndex, locationIndex));
 
@@ -302,7 +302,7 @@ std::vector < std::string >	Webserv::getLocationSpecificData(size_t serverIndex,
 	return std::vector<std::string>();
 }
 
-std::vector < std::pair <std::string, std::string > > Webserv::getLocationSpecificDatas(size_t serverIndex, size_t locationIndex, std::string dataToSearch)
+std::vector < std::pair <std::string, std::string > > Webserv::getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string dataToSearch)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = getLocationData(serverIndex, locationIndex);
 	std::vector < std::pair <std::string, std::string > > data;

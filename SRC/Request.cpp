@@ -88,11 +88,11 @@ int		Request::checkLocations()
 	if(uriFound == 0)
 		return(statusCode = 404, 1);
 
-	std::vector < std::pair <std::string, std::string > > data = Server.getLocationSpecificDatas(1, locationIndex, "redirect");
+	std::vector < std::pair <std::string, std::string > > data = Server.getLocationMultiple(1, locationIndex, "redirect");
 	for (size_t j = 0; j < data.size(); j++)
 		return(statusCode = std::atoi(data[j].first.c_str()), 1);
 
-	std::vector < std::string> it = Server.getLocationSpecificData(1,locationIndex,"methods");
+	std::vector < std::string> it = Server.getLocationSingle(1,locationIndex,"methods");
 	for (size_t i = 0; i < it.size(); i++)
 		if(methode == it[i])
 			methodeFound = 1;
@@ -145,15 +145,14 @@ int		Request::GET()
 {
     struct stat fileStat;
 
-	std::vector < std::string> it = Server.getLocationSpecificData(1, locationIndex, "root");
-	for (size_t i = 0; i < it.size(); i++)
-		std::cout << "Size: " << it.size() << it[i] << std::endl;
-	
-    // Check if the given path exists
-    if (stat(it[1].c_str(), &fileStat) == 0)
-        printf("The directory or file exists.\n");
-	else
-        printf("The directory or file does not exist.\n");
+	//Check if directory or file exists
+	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");
+    if (stat(it[0].c_str(), &fileStat) != 0)
+		return(statusCode = 404, 1);
+
+	//Check if its a directory or a file 
+
+
 	return(0);
 }
 
@@ -165,10 +164,9 @@ int		Request::POST()
 
 int		Request::DELETE()
 {
-
+	
 	return(0)	;
 }
-
 
 int		Request::parseRequest()
 {
