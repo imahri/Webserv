@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/12 13:33:36 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/12 21:15:54 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,12 @@ class Webserv
 		std::vector < std::pair <std::string, std::vector < std::string > > >	getLocationData(size_t serverIndex, size_t locationIndex);
 		std::vector < std::pair <std::string, std::vector < std::string > > >	serverData(size_t index);
 		std::vector <  std::pair < std::string, std::string > >					getServerErrorPages(size_t index);
+		bool																	isValidPort(const std::string& port);
+		bool																	isValidIPAddress(const std::string& ipAddress);
+		bool																	isDirectory( const std::string& path);
+		bool																	isFile( const std::string& path);
+		bool																	isValideAutoIndex(const std::string& autoindex);
+		bool																	isValideUploadDir(const std::string& uploadDir);
+		bool																	isValideRoot(const std::string& root);
+		bool																	isValideClientBodyMaxSize(const std::string& clientBodyMaxSize);
 };
