@@ -6,11 +6,11 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/12 12:38:33 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/12 17:20:18 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Request.hpp"
+#include "../../includes/Request.hpp"
 
 std::vector<std::string> ft_split(std::string& s, std::string delimiter)
 {

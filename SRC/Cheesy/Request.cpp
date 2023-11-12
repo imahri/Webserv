@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Request.hpp"
+#include "../../includes/Request.hpp"
 
 int     Request::fillHeaderAndBody(std::string buffer)
 {
@@ -155,8 +155,16 @@ int		Request::GetDirectory()
 	return(0);
 }
 
+
+void		saloua(void *p)
+{
+(void)p;
+}
+
 int		Request::GET()
 {
+
+
     struct stat fileStat;
 
 	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");
@@ -166,8 +174,6 @@ int		Request::GET()
 	std::cout << "URI:" << URI << std::endl;
 	LocationRoot = it[0];
 
-
-    // Get file/directory information
     if (stat(URI.c_str(), &fileStat) == 0)
 	{
         if (S_ISDIR(fileStat.st_mode))
