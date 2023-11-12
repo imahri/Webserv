@@ -3,12 +3,18 @@
 int		Request::GetFile()
 {
 
+	
+
 	return(0);
 }
 
 int		Request::GetDirectory()
 {
 	
+	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "index");
+	std::cout << "Index" << std::endl;
+	for (size_t i = 0; i < it.size(); i++)
+		std::cout << "HNA--> " << it[i] << std::endl;
 	return(0);
 }
 
@@ -20,7 +26,6 @@ int		Request::GET()
     if (stat(it[0].c_str(), &fileStat) != 0)
 		return(statusCode = 404, 1);
 
-	std::cout << "URI:" << URI << std::endl;
 	LocationRoot = it[0];
 
     if (stat(URI.c_str(), &fileStat) == 0)
