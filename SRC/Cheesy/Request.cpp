@@ -142,8 +142,10 @@ int		Request::checkHeader()
 	if(isChuncked == true)
 		parseChuncked();
 
-	if(checkLocations())
-		return(1);
+	if(URI == "/")
+		locationIndex = -1;
+	// else if(checkLocations())
+	// 	return(1);
 	return(0);
 }
 
@@ -179,14 +181,14 @@ int		Request::parseRequest()
 		return(1);
 	if(checkHeader())
 		return(1);
-	if(checkBody())
-		return(1);
-	if(GET())
-		return(1);
-	if(POST())
-		return(1);
-	if(DELETE())
-		return(1);
+	// if(checkBody())
+	// 	return(1);
+	// if(GET())
+	// 	return(1);
+	// if(POST())
+	// 	return(1);
+	// if(DELETE())
+	// 	return(1);
 	return(0);
 }
   

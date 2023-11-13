@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/12 19:57:21 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/13 18:47:32 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ class Request
         size_t                              statusCode;
         unsigned long long                  clientMaxBodySize;
 		Webserv								Server;
-        size_t                              locationIndex;
+        int                                 locationIndex;
         std::string                         LocationRoot;
         int                                 directory;
         

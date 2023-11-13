@@ -3,23 +3,37 @@
 int		Request::GetFile()
 {
 
-	
-
 	return(0);
 }
 
 int		Request::GetDirectory()
 {
-	
 	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "index");
-	std::cout << "Index" << std::endl;
-	for (size_t i = 0; i < it.size(); i++)
-		std::cout << "HNA--> " << it[i] << std::endl;
+	if(it.size())
+	{
+
+	}
+	else
+	{
+		// std::vector < std::pair <std::string, std::vector < std::string > > > VEC	 = Server.serverData(1);
+		// std::vector < std::pair <std::string, std::vector < std::string > > >::iterator	 iter = VEC.begin();
+
+		std::cout << "----------------------GETDIR----------------------------" << std::endl;
+
+		// for (; iter != VEC.end(); iter++)
+		// {
+		// 	std::cout << "FIRST-->|" << iter->first << std::endl;
+		// 	std::vector < std::string >::iterator itSecond = iter->second.begin();
+		// 	for (; itSecond != iter->second.end(); itSecond++)
+		// 		std::cout << "Second-->|" << *itSecond << std::endl;
+		// }
+	}
+
 	return(0);
 }
 
 int		Request::GET()
-{
+	{
     struct stat fileStat;
 
 	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");
