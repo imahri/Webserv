@@ -10,6 +10,18 @@ int main(int ac, char **av)
         wbs.fillServerList();
 
 		wbs.finalParsing();
+
+
+		// std::vector < std::pair < std::string, std::string > >	data = wbs.getServerErrorPages(2);
+		// std::vector < std::pair < std::string, std::string > >::iterator it =	data.begin();
+		
+		// for (; it != data.end(); it++)
+		// {
+		// 	std::cout << it->first << "   " << it->second << std::endl;
+			
+		// }
+		
+
         //CHEESY
         // Request     rq;
 

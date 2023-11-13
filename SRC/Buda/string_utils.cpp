@@ -6,7 +6,7 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/13 16:50:24 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/13 16:57:37 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,7 +332,9 @@ std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::s
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
-				if (line[0] == "listen" || line[0] == "server_name" || line[0] == "autoindex")
+				if (line[0] == "location" || line[0] == "server")
+					break;
+				if (line[0] == "listen" || line[0] == "server_name" || line[0] == "autoindex" || line[0] == "upload_dir" || line[0] == "root" || line[0] == "client_body_max_size")
 				{
 					std::vector < std::string > values (line.begin() + 1, line.end());
 					serverData.push_back(std::make_pair(line[0], values));
