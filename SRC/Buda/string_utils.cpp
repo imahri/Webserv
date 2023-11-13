@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/12 17:20:18 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/13 16:50:24 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,7 +307,6 @@ std::vector < std::pair <std::string, std::string > > Webserv::getLocationMultip
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = getLocationData(serverIndex, locationIndex);
 	std::vector < std::pair <std::string, std::string > > data;
 	
-	std::cout << "------------------" <<std::endl;
 	for (size_t i = 0; i < locationData.size(); i++)
 	{
 		if (locationData[i].first == dataToSearch)
@@ -364,4 +363,22 @@ std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPa
 	return errorPages;
 }
 
+std::string Webserv::getServerDataSingle (size_t serverIndex, std::string data)
+{
+	if (serverIndex < 1 || serverIndex > servers.size())
+		return NULL;
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		if (i == serverIndex - 1)
+		{
+			for (size_t j = 0; j < servers[i].size(); j++)
+			{
+				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == data)
+					return line[1];
+			}
+		}
+	}
+	return NULL;
+}
 

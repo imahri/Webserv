@@ -9,12 +9,13 @@ int main(int ac, char **av)
         wbs.parsing(ac, av);
         wbs.fillServerList();
 
+		wbs.finalParsing();
         //CHEESY
-        Request     rq;
+        // Request     rq;
 
         
-        if(rq.createServer(wbs))
-            return(1);
+        // if(rq.createServer(wbs))
+        //     return(1);
 
     }
     catch(const std::exception& e)
