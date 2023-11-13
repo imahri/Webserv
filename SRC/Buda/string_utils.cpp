@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/12 17:20:18 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/13 16:57:37 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,7 +307,6 @@ std::vector < std::pair <std::string, std::string > > Webserv::getLocationMultip
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = getLocationData(serverIndex, locationIndex);
 	std::vector < std::pair <std::string, std::string > > data;
 	
-	std::cout << "------------------" <<std::endl;
 	for (size_t i = 0; i < locationData.size(); i++)
 	{
 		if (locationData[i].first == dataToSearch)
@@ -333,7 +332,9 @@ std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::s
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
-				if (line[0] == "listen" || line[0] == "server_name" || line[0] == "autoindex")
+				if (line[0] == "location" || line[0] == "server")
+					break;
+				if (line[0] == "listen" || line[0] == "server_name" || line[0] == "autoindex" || line[0] == "upload_dir" || line[0] == "root" || line[0] == "client_body_max_size")
 				{
 					std::vector < std::string > values (line.begin() + 1, line.end());
 					serverData.push_back(std::make_pair(line[0], values));
@@ -364,4 +365,22 @@ std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPa
 	return errorPages;
 }
 
+std::string Webserv::getServerDataSingle (size_t serverIndex, std::string data)
+{
+	if (serverIndex < 1 || serverIndex > servers.size())
+		return NULL;
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		if (i == serverIndex - 1)
+		{
+			for (size_t j = 0; j < servers[i].size(); j++)
+			{
+				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == data)
+					return line[1];
+			}
+		}
+	}
+	return NULL;
+}
 
