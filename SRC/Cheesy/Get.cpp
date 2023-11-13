@@ -33,7 +33,7 @@ int		Request::GetDirectory()
 }
 
 int		Request::GET()
-	{
+{
     struct stat fileStat;
 
 	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");

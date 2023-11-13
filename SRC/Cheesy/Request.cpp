@@ -84,21 +84,24 @@ int		Request::checkLocations()
 			locationIndex = i;
 		}
 	}
-	if(uriFound == 0)
+	if(uriFound == 0 && URI != "/")
 		return(statusCode = 404, 1);
+	
+	if(locationIndex != 0)//location found
+	{
+		std::vector < std::pair <std::string, std::string > > data = Server.getLocationMultiple(1, locationIndex, "redirect");
+		for (size_t j = 0; j < data.size(); j++)
+			return(statusCode = std::atoi(data[j].first.c_str()), 1);
 
-	std::vector < std::pair <std::string, std::string > > data = Server.getLocationMultiple(1, locationIndex, "redirect");
-	for (size_t j = 0; j < data.size(); j++)
-		return(statusCode = std::atoi(data[j].first.c_str()), 1);
+		std::vector < std::string> it = Server.getLocationSingle(1,locationIndex,"methods");
+		for (size_t i = 0; i < it.size(); i++)
+			if(methode == it[i])
+				methodeFound = 1;
 
-	std::vector < std::string> it = Server.getLocationSingle(1,locationIndex,"methods");
-	for (size_t i = 0; i < it.size(); i++)
-		if(methode == it[i])
-			methodeFound = 1;
-
-	if(methodeFound == 0)
-		return(statusCode = 405, 1);
-
+		if(methodeFound == 0)
+			return(statusCode = 405, 1);
+	}
+	//location not found so iam going to use the servers stuff
 	return(0);
 }
 
@@ -142,10 +145,8 @@ int		Request::checkHeader()
 	if(isChuncked == true)
 		parseChuncked();
 
-	if(URI == "/")
-		locationIndex = -1;
-	// else if(checkLocations())
-	// 	return(1);
+	if(checkLocations())
+		return(1);
 	return(0);
 }
 
@@ -181,10 +182,10 @@ int		Request::parseRequest()
 		return(1);
 	if(checkHeader())
 		return(1);
-	// if(checkBody())
-	// 	return(1);
-	// if(GET())
-	// 	return(1);
+	if(checkBody())
+		return(1);
+	if(GET())
+		return(1);
 	// if(POST())
 	// 	return(1);
 	// if(DELETE())
