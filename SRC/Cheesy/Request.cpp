@@ -85,7 +85,10 @@ int		Request::checkLocations()
 		}
 	}
 	if(uriFound == 0 && URI != "/")
+	{
+		puts("here3");
 		return(statusCode = 404, 1);
+	}
 	
 	if(locationIndex != 0)//location found
 	{
