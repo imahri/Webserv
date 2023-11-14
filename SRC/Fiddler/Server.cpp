@@ -70,5 +70,7 @@ int    Request::createServer(Webserv &webserv)
         std::cout << ">> CLIENT: " << clientSocket << std::endl;
         std::cout << "[+] Client connected" << std::endl;
     }
+    close(serverSocket);
+    close(clientSocket);
     return 0;
 }

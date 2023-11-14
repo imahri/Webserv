@@ -93,7 +93,7 @@ int		Request::checkLocations()
 		for (size_t j = 0; j < data.size(); j++)
 			return(statusCode = std::atoi(data[j].first.c_str()), 1);
 
-		std::vector < std::string> it = Server.getLocationSingle(1,locationIndex,"methods");
+		std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "methods");
 		for (size_t i = 0; i < it.size(); i++)
 			if(methode == it[i])
 				methodeFound = 1;
@@ -101,7 +101,7 @@ int		Request::checkLocations()
 		if(methodeFound == 0)
 			return(statusCode = 405, 1);
 	}
-	//location not found so iam going to use the servers stuff
+	//location not found so iam going to use the server's stuff
 	return(0);
 }
 
@@ -184,12 +184,19 @@ int		Request::parseRequest()
 		return(1);
 	if(checkBody())
 		return(1);
-	if(GET())
+	if(methode == "GET")
+	{
+		if(GET())
+			return(1);
+	}
+	else if(methode == "POST")
+	{
+		if(POST())
+			return(1);
+	}
+	else if(DELETE())
 		return(1);
-	// if(POST())
-	// 	return(1);
-	// if(DELETE())
-	// 	return(1);
+
 	return(0);
 }
   
