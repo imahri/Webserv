@@ -121,16 +121,23 @@ int    Request::createServer(Webserv &webserv)
         std::cout << "Received request:\n" << buffer << std::endl;
 
         if(strlen(buffer))
+        {
+            statusCode = 0;
             this->getRequest(buffer);
+            std::cout << "StatusCode: " << statusCode << std::endl;
+        }
         else
             continue;
 
+
         // Send a response back to the client
         // const char *response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Hello, World!</h1>";
-        ssize_t bytesSent = send(clientSocket, Response.c_str(), strlen(Response.c_str()), 0);
+        ssize_t bytesSent = send(clientSocket, ResponseHeaders.c_str(), strlen(ResponseHeaders.c_str()), 0);
         if (bytesSent == -1)
             return(std::cerr << "Error sending response." << std::endl, 1);
-
+        bytesSent = send(clientSocket, ResponseBody.c_str(), strlen(ResponseBody.c_str()), 0);
+        if (bytesSent == -1)
+            return(std::cerr << "Error sending response." << std::endl, 1);
         // Close the client socket
         close(clientSocket);
     }

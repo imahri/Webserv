@@ -2,16 +2,45 @@
 
 int		Request::GetFile()
 {
+	if(locationIndex == 0)
+		return(1);
+	else
+	{
+		std::vector < std::pair <std::string, std::string > > srv = Server.getLocationMultiple(1, locationIndex, "cgi");
+		if(srv.size())
+		{
+			//Run CGI on requested file
+			// std::vector < std::pair <std::string, std::string > >::iterator srvIT = srv.begin();
+		}
+		else
+		{
+			ResponseHeaders = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+			std::fstream configFile;
+			std::string fileName = RequestPath + File, str;
 
+			ResponseBody.clear();
+			configFile.open(fileName);
+			if (!configFile)
+				return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
+			while (std::getline(configFile, str))
+				ResponseBody += str;
+		}
+		// Loca
+	}
 	return(0);
 }
 
 int		Request::GetDirectory()
 {
-	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "index");
+	std::vector < std::string> it;
+	if(locationIndex != 0)
+		it = Server.getLocationSingle(1, locationIndex, "index");
 	if(it.size())//If index files are present
 	{
-		
+		puts("HERE-------------");
+		File = it[0];
+		if(GetFile())
+			return(1);
 	}
 	else//else check autoindex
 	{
@@ -20,17 +49,18 @@ int		Request::GetDirectory()
 			return(statusCode = 403, 1);
 		else if(str == "on")
 		{
-			Response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+			ResponseHeaders = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
 			
 			std::fstream configFile;
-			std::string fileName = "/Users/eamghar/Desktop/Webserv/SRC/Cheesy/index.html";
-			std::string str;
+			std::string fileName = "/Users/eamghar/Desktop/Webserv/SRC/Cheesy/index.html", str;
+
+			ResponseBody.clear();
 
 			configFile.open(fileName);
 			if (!configFile)
 				return (std::cerr << "Unable to open the file " << std::endl, 1);
 			while (std::getline(configFile, str))
-				Response += str;
+				ResponseBody += str;
 		}
 	}
 	return(0);
@@ -50,9 +80,7 @@ int		Request::GET()
 			RequestPath = LocationRoot;	
 	}
 	else
-		LocationRoot = Server.getServerDataSingle(1, "root");
-
-	std::cout << "DIR: " << LocationRoot << std::endl;
+		RequestPath = Server.getServerDataSingle(1, "root") + URI;
 	if (stat(RequestPath.c_str(), &fileStat) == 0)
 	{
 		if (S_ISDIR(fileStat.st_mode))
@@ -82,6 +110,7 @@ int		Request::GET()
 	else
 	{
 		std::cout << "File" << std::endl;
+		File = URI;
 		if(GetFile())
 			return(1);
 	}

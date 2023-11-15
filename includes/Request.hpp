@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/15 11:28:58 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/15 16:22:25 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ class Request
     	std::string                         methode;
     	std::string                         URI;
     	std::string                         RequestPath;
-    	std::string                         Response;
+    	std::string                         ResponseHeaders;
+    	std::string                         ResponseBody;
         size_t                              index;
         size_t                              statusCode;
         unsigned long long                  clientMaxBodySize;
@@ -53,6 +54,7 @@ class Request
         int                                 locationIndex;
         std::string                         LocationRoot;
         int                                 directory;
+        std::string                         File;
         
     public:
         Request();
