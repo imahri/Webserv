@@ -9,19 +9,30 @@ int		Request::GetFile()
 int		Request::GetDirectory()
 {
 	std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "index");
-	if(it.size())
+	if(it.size())//If index files are present
 	{
 		
 	}
-	else
+	else//else check autoindex
 	{
 		std::string str = Server.getServerDataSingle(1, "autoindex");
 		if(str == "off")
 			return(statusCode = 403, 1);
-		// else
+		else if(str == "on")
+		{
+			Response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+			
+			std::fstream configFile;
+			std::string fileName = "/Users/eamghar/Desktop/Webserv/SRC/Cheesy/index.html";
+			std::string str;
 
+			configFile.open(fileName);
+			if (!configFile)
+				return (std::cerr << "Unable to open the file " << std::endl, 1);
+			while (std::getline(configFile, str))
+				Response += str;
+		}
 	}
-
 	return(0);
 }
 
