@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/16 12:05:58 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/16 17:51:55 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,12 @@
 #include <cstring>
 #include <unistd.h>
 #include <sys/stat.h> 
+#include <dirent.h>
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+
 
 
 #include <algorithm>

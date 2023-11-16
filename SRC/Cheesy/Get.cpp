@@ -29,6 +29,8 @@ int		Request::GetFile()
 	return(0);
 }
 
+/// @brief 
+/// @return 
 int		Request::GetDirectory()
 {
 	std::vector < std::string> it;
@@ -49,16 +51,36 @@ int		Request::GetDirectory()
 		else if(str == "on")
 		{
 			ResponseHeaders = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-			
 			std::fstream configFile;
-			std::string fileName = "/Users/eamghar/Desktop/Webserv/SRC/Cheesy/index.html", str;
-
+			std::string fileName = RequestPath + File, str;
 			ResponseBody.clear();
 
-			configFile.open(fileName);
-			if (!configFile)
-				return (std::cerr << "Unable to open the file " << std::endl, 1);
-			while (std::getline(configFile, str))
+			DIR *dir;
+			struct dirent *entry;
+
+			// Open the directory
+			dir = opendir(fileName.c_str());
+			if (dir == NULL)
+			{
+				std::cout << "Failed to open directory." << std::endl;
+				return 1;
+			}
+
+
+			// Read directory entries
+			while ((entry = readdir(dir)) != NULL)
+			{
+				std::cout << "FILES:" << entry->d_name << std::endl;
+			}
+
+			// Close the directory
+			closedir(dir);
+
+
+			// configFile.open(fileName);
+			// if (!configFile)
+			// 	return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
+			// while (std::getline(configFile, str))
 				ResponseBody += str;
 		}
 	}
