@@ -123,7 +123,7 @@ int		Request::checkHeader()
 	std::map<std::string, std::string>::iterator itM = HeaderData.begin();
 
 	bool isChuncked = false;
-	int transferEncoding = 0,contentLength = 0;
+	int transferEncoding = 0, contentLength = 0;
 	for (; itM != HeaderData.end(); itM++)
 	{
 		if(itM->second.size() == 0)
@@ -160,12 +160,6 @@ int		Request::getRequest(std::string buffer)
 	if(parseRequest())
 		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
 	std::cout << "GOOD REQUEST" << std::endl;
-	return(0);
-}
-
-int		Request::POST()
-{
-
 	return(0);
 }
 

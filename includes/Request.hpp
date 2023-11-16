@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/15 16:22:25 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/16 12:05:58 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ class Request
         std::string                         LocationRoot;
         int                                 directory;
         std::string                         File;
+        std::string                         UploadDir;
         
     public:
         Request();
@@ -76,6 +77,11 @@ class Request
         int                                 GetFile();
         int                                 GetDirectory();
         int                                 parseChuncked();
+        int                                 Upload();
+        int                                 CheckRessource();
+        int                                 GetRessource();
+        int                                 PostFile();
+        int                                 PostDir();
 
 
         //extra functions

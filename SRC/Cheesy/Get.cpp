@@ -25,7 +25,6 @@ int		Request::GetFile()
 			while (std::getline(configFile, str))
 				ResponseBody += str;
 		}
-		// Loca
 	}
 	return(0);
 }
@@ -93,14 +92,13 @@ int		Request::GET()
 			return(statusCode = 404, 1);
 		}
 	}
-	// else
-	// {
-	// 	puts("here2");
-	// 	return(statusCode = 404, 1);
-	// }
+	else
+		return(statusCode = 404, 1);
 
 	std::cout << "GET PATH:" << RequestPath << " DIR: " << directory << std::endl;
 
+	if(directory == 1 && (URI[URI.size() - 1] != '/' || URI != "/"))
+		return(statusCode = 301, 1);
 	if(URI[URI.size() - 1] == '/' || URI == "/")
 	{
 		std::cout << "DIR" << std::endl;
