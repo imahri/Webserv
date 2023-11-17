@@ -11,21 +11,7 @@ int main(int ac, char **av)
         wbs.fillServerList();
 		wbs.fillResponseTypes();
 
-		// std::string result = wbs.getServerDataSingle(1, "autoindex");
-		// std::cout << result << std::endl;
 		std::cout << ( wbs.finalConfigFileParsing() ? "true" : "false" ) << std::endl;
-		// std::cout << wbs.checkForLocation(1, "/assets") << std::endl;
-
-
-		// std::vector < std::pair < std::string, std::string > >	data = wbs.getServerErrorPages(2);
-		// std::vector < std::pair < std::string, std::string > >::iterator it =	data.begin();
-		
-		// for (; it != data.end(); it++)
-		// {
-		// 	std::cout << it->first << "   " << it->second << std::endl;
-			
-		// }
-		
 
         //CHEESY
         Request     rq;

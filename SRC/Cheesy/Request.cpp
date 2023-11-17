@@ -70,13 +70,64 @@ int		Request::checkBody()
 	return(0);
 }
 
-
-
 int		Request::GetCorrectLocation()
 {
+	std::string str;
+	locationIndex = 0;
+	locationIndex = Server.checkForLocation(ServerIndex, URI);
 	if(locationIndex == 0)
 	{
+		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
+			Loc.autoindex = true;
+		else
+			Loc.autoindex = false;
 
+		Loc.CheckIndex = false;
+        Loc.CheckCGI = false;
+        Loc.CheckRedirect = false;
+        Loc.upload_dir = Server.getServerDataSingle(ServerIndex, "upload_dir");
+        Loc.root = Server.getServerDataSingle(ServerIndex, "root");
+        Loc.client_body_max_size = Server.getServerDataSingle(ServerIndex, "client_body_max_size");
+	}
+	else
+	{
+		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
+			Loc.autoindex = true;
+		else
+			Loc.autoindex = false;
+
+        Loc.index = Server.getLocationSingle(ServerIndex, locationIndex, "index");
+		if(Loc.index.size())
+			Loc.CheckIndex = true;
+		else
+			Loc.CheckIndex = false;
+
+		Loc.methodes = Server.getLocationSingle(ServerIndex, locationIndex, "methods");
+		if(Loc.methodes.size())
+			Loc.CheckIndex = true;
+		else
+			Loc.CheckIndex = false;
+
+		Loc.cgi = Server.getLocationMultiple(ServerIndex, locationIndex, "cgi");
+		if(Loc.cgi.size())
+			Loc.CheckCGI = true;
+		else
+			Loc.CheckCGI = false;
+
+		Loc.redirect = Server.getLocationMultiple(ServerIndex, locationIndex, "redirect");
+		if(Loc.redirect.size())
+			Loc.CheckRedirect = true;
+		else
+			Loc.CheckRedirect = false;
+
+		std::vector < std::string >	it = Server.getLocationSingle(ServerIndex, locationIndex, "upload_dir");
+        Loc.upload_dir = *it.begin();
+
+		it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
+        Loc.root = *it.begin();
+
+		it = Server.getLocationSingle(ServerIndex, locationIndex, "client_body_max_size");
+        Loc.client_body_max_size = *it.begin();
 	}
 	return(0);
 }

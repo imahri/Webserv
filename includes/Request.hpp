@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/17 16:01:04 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/17 22:38:53 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 
 #include "webserv.hpp"
 
-typedef struct loc
+typedef struct L
 {
         bool autoindex;
         bool CheckIndex;
@@ -73,7 +73,8 @@ class Request
         int                                 directory;
         std::string                         File;
         std::string                         UploadDir;
-        
+        size_t                              ServerIndex;
+        LOCATION                            Loc;
     public:
         Request();
         Request(const Request &obj);
