@@ -70,6 +70,17 @@ int		Request::checkBody()
 	return(0);
 }
 
+
+
+int		Request::GetCorrectLocation()
+{
+	if(locationIndex == 0)
+	{
+
+	}
+	return(0);
+}
+
 int		Request::checkLocations()
 {
 	int		uriFound = 0, methodeFound = 0;
@@ -84,11 +95,11 @@ int		Request::checkLocations()
 			locationIndex = i;
 		}
 	}
-	if(uriFound == 0 && URI != "/")
-	{
-		puts("here3");
-		return(statusCode = 404, 1);
-	}
+	// if(uriFound == 0)
+	// {
+	// 	puts("here3");
+	// 	return(statusCode = 404, 1);
+	// }
 	
 	if(locationIndex != 0)//location found
 	{

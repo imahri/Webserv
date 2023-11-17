@@ -59,7 +59,7 @@ int		Request::GetDirectory()
 			// Open the directory
 			dir = opendir(fileName.c_str());
 			if (dir == NULL)
-				return (statusCode = 404, std::cout << "Failed to open directory." << std::endl, 1);
+				return (puts("hnanananan"),statusCode = 404, std::cout << "Failed to open directory." << std::endl, 1);
 
 			// Read directory entries
 			std::string link;
@@ -100,6 +100,7 @@ int		Request::GET()
 	}
 	else
 		RequestPath = Server.getServerDataSingle(1, "root") + URI;
+	// std::cout << ""
 	if (stat(RequestPath.c_str(), &fileStat) == 0)
 	{
 		if (S_ISDIR(fileStat.st_mode))
@@ -113,7 +114,7 @@ int		Request::GET()
 		}
 	}
 	else
-		return(statusCode = 404, 1);
+		return(puts("henwnnwnewnewn"), statusCode = 404, 1);
 
 	std::cout << "GET PATH:" << RequestPath << " DIR: " << directory << std::endl;
 

@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/16 17:51:55 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/17 15:38:52 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,27 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-
-
 #include <algorithm>
 #include <map>
 #include <vector>
 
 #include "webserv.hpp"
+
+typedef struct loc
+{
+        bool autoindex;
+        bool CheckIndex;
+        bool CheckCGI;
+        bool CheckRedirect;
+        
+        std::string upload_dir;
+        std::string root;
+        std::vector <std::string> index;
+        std::vector <std::string> methodes;
+        std::string client_body_max_size;
+        std::vector < std::pair <std::string , std::string > > cgi;
+        std::vector < std::pair <std::string , std::string > > redirect;
+} LOCATION;
 
 class Request
 {
@@ -84,6 +98,7 @@ class Request
         int                                 GetRessource();
         int                                 PostFile();
         int                                 PostDir();
+        int                                 GetCorrectLocation();
 
 
         //extra functions
