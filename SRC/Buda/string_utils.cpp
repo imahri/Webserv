@@ -6,90 +6,81 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/13 16:57:37 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/17 13:01:18 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Request.hpp"
 
-std::vector<std::string> ft_split(std::string& s, std::string delimiter)
-{
-	std::vector<std::string> arr;
-	std::string current;
-	size_t size = s.size();
+// std::vector<std::string> ft_split(std::string& s, std::string delimiter)
+// {
+// 	std::vector<std::string> arr;
+// 	std::string current;
+// 	size_t size = s.size();
+// 	for (size_t i = 0; i < size; i++) 
+// 	{
+// 		while (delimiter.find(s[i]) != std::string::npos)
+// 			i++;
+// 		while (i < size && delimiter.find(s[i]) == std::string::npos)
+// 			current += s[i++];
+// 		if (!current.empty()) 
+// 		{
+// 			arr.push_back(current);
+// 			current.clear();
+// 		}
+// 	}
+// 	return arr;
+// }
 
-	for (size_t i = 0; i < size; i++) 
-	{
-		while (delimiter.find(s[i]) != std::string::npos)
-			i++;
-		while (i < size && delimiter.find(s[i]) == std::string::npos)
-			current += s[i++];
-		if (!current.empty()) 
-		{
-			arr.push_back(current);
-			current.clear();
-		}
-	}
-	return arr;
-}
+// std::vector<std::string> ft_split(std::string& s, char c)
+// {
+// 	std::vector<std::string> arr;
+// 	std::string			line;
+// 	std::istringstream	iss(s);
+// 	while (std::getline(iss, line, c))
+// 		arr.push_back(line);
+// 	return arr;
+// }
 
-std::vector<std::string> ft_split(std::string& s, char c)
-{
-	std::vector<std::string> arr;
-	std::string			line;
-	std::istringstream	iss(s);
-	
-	while (std::getline(iss, line, c))
-		arr.push_back(line);
-	return arr;
-}
+// std::vector<std::string> ft_split(std::string& s)
+// {
+// 	std::vector<std::string> arr;
+// 	std::string			line;
+// 	std::istringstream	iss(s);
+// 	while (iss >> line)
+// 		arr.push_back(line);
+// 	return arr;
+// }
 
-std::vector<std::string> ft_split(std::string& s)
-{
-	std::vector<std::string> arr;
-	std::string			line;
-	std::istringstream	iss(s);
-	
-	while (iss >> line)
-		arr.push_back(line);
-	return arr;
-}
+// std::string ft_trim(std::string& s, char c)
+// {
+// 	size_t i = 0;
+// 	while (i < s.size() && s[i] == c) 
+// 		s.erase(i, 1);
+// 	i = s.size() - 1;
+// 	if (i == std::string::npos)
+// 		return s;
+// 	while (i >= 0 && s[i] == c) 
+// 	{
+// 		s.erase(i, 1);
+// 		i--; 
+// 	}
+// 	return s;
+// }
 
-std::string& ft_trim(std::string& s, char c)
-{
-	size_t i = 0;
-	while (i < s.size() && s[i] == c) 
-		s.erase(i, 1);
-
-	i = s.size() - 1;
-	if (i == std::string::npos)
-		return s;
-	while (i >= 0 && s[i] == c) 
-	{
-		s.erase(i, 1);
-		i--; 
-	}
-
-	return s;
-}
-
-std::string ft_trim(std::string s, std::string delimiter)
-{
-	size_t i = 0;
-
-    
-    while (i < s.size() && delimiter.find(s[i]) != std::string::npos)
-        s.erase(i, 1);
-
-    i = s.size();
-    while (i > 0 && delimiter.find(s[i - 1]) != std::string::npos)
-    {
-        i--;
-        s.erase(i, 1);
-    }
-
-	return s;
-}
+// std::string ft_trim(std::string s, std::string delimiter)
+// {
+// 	size_t i = 0;
+//     while (i < s.size() && delimiter.find(s[i]) != std::string::npos)
+//         s.erase(i, 1);
+//     i = s.size();
+//     while (i > 0 && delimiter.find(s[i - 1]) != std::string::npos)
+//     {
+//         i--;
+//         s.erase(i, 1);
+//     }
+// 	return s;
+// }
 
 bool	ft_isAllSpace(std::string& s)
 {
@@ -132,7 +123,7 @@ bool	Webserv::parsing(int ac, char **av)
 		{
 			if (pars.size() != 2 || pars[0] != "server" || pars[1] != "{")
 			{
-				std::cerr << "Error in the server config" << std::endl;
+				std::cerr << "Error in the server config " << std::endl;
 				return false;
 			}
 			parsingStruct parsingData = {"server", true, false};
@@ -142,7 +133,7 @@ bool	Webserv::parsing(int ac, char **av)
 		{
 			if (pars.back() != "{")
 			{
-				std::cerr << "Error in the server location config" << fileName << std::endl;
+				std::cerr << "Error in the server location config " << fileName << std::endl;
 				return false;
 			}
 			parsingStruct parsingData = {"location", true, false};
@@ -179,7 +170,7 @@ void	Webserv::fillServerList()
 	this->configFile.open(fileName);
 	if (!this->configFile)
 	{
-		std::cerr << "Unable to open the file |" << fileName << std::endl;
+		std::cerr << "Unable to open the file " << fileName << std::endl;
 		return ;
 	}
 
@@ -222,6 +213,9 @@ void	Webserv::fillServerList()
 			this->servers.push_back(data);
 		}
 	}
+	pars.clear();
+	finalParams.clear();
+	params.clear();
 }
 
 size_t	Webserv::getServersNumber()
@@ -377,10 +371,39 @@ std::string Webserv::getServerDataSingle (size_t serverIndex, std::string data)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
 				if (line[0] == data)
+				{
+					if (line[0] == "listen" && line[1].find(':') == std::string::npos)
+						return "localhost " + line[1];
 					return line[1];
+				}
 			}
 		}
 	}
 	return NULL;
 }
 
+int Webserv::checkForLocation (size_t serverIndex , const std::string& s)
+{
+	if (serverIndex < 1 || serverIndex > servers.size())
+		return -1;
+	int cp = 0;
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		if (i == serverIndex - 1)
+		{
+			for (size_t j = 0; j < servers[i].size(); j++)
+			{
+				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == "location" )
+				{
+					cp++;
+					if (line[1] == s)
+						return cp;
+				}
+				line.clear();
+			}
+			
+		}
+	}
+	return -1;
+}

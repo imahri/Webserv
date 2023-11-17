@@ -6,9 +6,10 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/17 15:38:52 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/17 16:01:04 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
@@ -107,11 +108,12 @@ class Request
         int                                 checkDigit(std::string str);
         int                                 checkWhiteSpace(std::string str);
         int                                 checkNumbers(std::string str);
-        std::vector<std::string>            ft_split(std::string &s, std::string delimiter);
-        std::vector<std::string>            ft_split(std::string& s, char c);
-        std::vector<std::string>            ft_split(std::string& s);
-        std::string&                        ft_trim(std::string& s, char c);
-        std::string&                        ft_trim(std::string& s, std::string delimiter);
 };
+
+		std::vector<std::string>            ft_split(std::string &s, std::string delimiter);
+		std::vector<std::string>            ft_split(std::string& s, char c);
+		std::vector<std::string>            ft_split(std::string& s);
+		std::string&							ft_trim(std::string& s, char c);
+		std::string&							ft_trim(std::string& s, std::string delimiter);
 
 #endif
