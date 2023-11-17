@@ -122,6 +122,7 @@ int    Request::createServer(Webserv &webserv)
 
         if(strlen(buffer))
         {
+            ServerIndex = 1;
             statusCode = 0;
             this->getRequest(buffer);
             std::cout << "StatusCode: " << statusCode << std::endl;

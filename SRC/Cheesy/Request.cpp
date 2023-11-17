@@ -137,28 +137,24 @@ int		Request::checkLocations()
 	int		uriFound = 0, methodeFound = 0;
 
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
-	for (size_t i = 1; i < Server.getLocationsNumber(1); i++)
+	for (size_t i = 1; i < Server.getLocationsNumber(ServerIndex); i++)
 	{
-		locationData = Server.getLocationData(1, i);
+		locationData = Server.getLocationData(ServerIndex, i);
 		if(URI == locationData[0].second[0])
 		{
 			uriFound = 1;
 			locationIndex = i;
 		}
 	}
-	// if(uriFound == 0)
-	// {
-	// 	puts("here3");
-	// 	return(statusCode = 404, 1);
-	// }
+
 	
 	if(locationIndex != 0)//location found
 	{
-		std::vector < std::pair <std::string, std::string > > data = Server.getLocationMultiple(1, locationIndex, "redirect");
+		std::vector < std::pair <std::string, std::string > > data = Server.getLocationMultiple(ServerIndex, locationIndex, "redirect");
 		for (size_t j = 0; j < data.size(); j++)
 			return(statusCode = std::atoi(data[j].first.c_str()), 1);
 
-		std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "methods");
+		std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "methods");
 		for (size_t i = 0; i < it.size(); i++)
 			if(methode == it[i])
 				methodeFound = 1;
@@ -223,12 +219,6 @@ int		Request::getRequest(std::string buffer)
 		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
 	std::cout << "GOOD REQUEST" << std::endl;
 	return(0);
-}
-
-int		Request::DELETE()
-{
-	
-	return(0)	;
 }
 
 int		Request::parseRequest()

@@ -48,7 +48,7 @@ int     Request::GetRessource()
 
 int     Request::PostFile()
 {
-    std::vector < std::pair <std::string, std::string > > srv = Server.getLocationMultiple(1, locationIndex, "cgi");
+    std::vector < std::pair <std::string, std::string > > srv = Server.getLocationMultiple(ServerIndex, locationIndex, "cgi");
     if(srv.size())
     {
         //Run CGI on requested file
@@ -64,7 +64,7 @@ int     Request::PostDir()
 {
     std::vector < std::string> it;
 	if(locationIndex != 0)
-		it = Server.getLocationSingle(1, locationIndex, "index");
+		it = Server.getLocationSingle(ServerIndex, locationIndex, "index");
 	if(it.size())//If index files are present
 	{
 		File = it[0];
@@ -81,7 +81,7 @@ int		Request::POST()
 {
     if(locationIndex != 0)//LOCATION
     {
-        std::vector < std::string >	vec =  Server.getLocationSingle(1, locationIndex, "upload_dir");
+        std::vector < std::string >	vec =  Server.getLocationSingle(ServerIndex, locationIndex, "upload_dir");
         if(vec.size())//IF SUPPORT UPLOAD
         {
             UploadDir = *vec.begin();
@@ -90,7 +90,7 @@ int		Request::POST()
         }
         else
         {
-            std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");
+            std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
             LocationRoot = it[0];
             if(URI != "/")
                 RequestPath = LocationRoot + URI;
@@ -102,7 +102,7 @@ int		Request::POST()
     }
     else//SERVER
     {
-        std::string str =  Server.getServerDataSingle(1, "upload_dir");
+        std::string str =  Server.getServerDataSingle(ServerIndex, "upload_dir");
         if(str.size())//IF SUPPORT UPLOAD
         {
             UploadDir = str;
@@ -111,7 +111,7 @@ int		Request::POST()
         }
         else
         {
-		    RequestPath = Server.getServerDataSingle(1, "root") + URI;
+		    RequestPath = Server.getServerDataSingle(ServerIndex, "root") + URI;
             if(CheckRessource())
                 return(1);
         }

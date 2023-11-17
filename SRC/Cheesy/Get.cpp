@@ -6,7 +6,7 @@ int		Request::GetFile()
 		return(1);
 	else
 	{
-		std::vector < std::pair <std::string, std::string > > srv = Server.getLocationMultiple(1, locationIndex, "cgi");
+		std::vector < std::pair <std::string, std::string > > srv = Server.getLocationMultiple(ServerIndex, locationIndex, "cgi");
 		if(srv.size())
 		{
 			//Run CGI on requested file
@@ -33,7 +33,7 @@ int		Request::GetDirectory()
 {
 	std::vector < std::string> it;
 	if(locationIndex != 0)
-		it = Server.getLocationSingle(1, locationIndex, "index");
+		it = Server.getLocationSingle(ServerIndex, locationIndex, "index");
 	if(it.size())//If index files are present
 	{
 		puts("HERE-------------");
@@ -43,7 +43,7 @@ int		Request::GetDirectory()
 	}
 	else//else check autoindex
 	{
-		std::string str = Server.getServerDataSingle(1, "autoindex");
+		std::string str = Server.getServerDataSingle(ServerIndex, "autoindex");
 		if(str == "off")
 			return(statusCode = 403, 1);
 		else if(str == "on")
@@ -91,7 +91,7 @@ int		Request::GET()
 
 	if(locationIndex != 0)// if found in location
 	{
-		std::vector < std::string> it = Server.getLocationSingle(1, locationIndex, "root");
+		std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
 		LocationRoot = it[0];
 		if(URI != "/")
 			RequestPath = LocationRoot + URI;
@@ -99,7 +99,7 @@ int		Request::GET()
 			RequestPath = LocationRoot;	
 	}
 	else
-		RequestPath = Server.getServerDataSingle(1, "root") + URI;
+		RequestPath = Server.getServerDataSingle(ServerIndex, "root") + URI;
 	// std::cout << ""
 	if (stat(RequestPath.c_str(), &fileStat) == 0)
 	{
