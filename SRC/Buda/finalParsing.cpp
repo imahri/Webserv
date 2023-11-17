@@ -6,7 +6,7 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 15:53:49 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/17 12:07:05 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/17 15:32:11 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,21 +147,90 @@ bool checkServerData(std::vector<std::string> &data)
 
 bool Webserv::finalConfigFileParsing()
 {
-	// std::vector<std::string> data;
 	for (size_t i = 0; i < servers.size(); i++)
 	{
 		for (size_t j = 0; j < servers[i].size(); j++)
 		{
-			std::cout << servers[i][j] << std::endl;
+			// std::cout << servers[i][j] << std::endl;
+			
 			std::vector<std::string> line = ft_split(servers[i][j]);
 			if (line[0] == "location" && line.size() != 2)
 				return false;
-			// data.push_back(servers[i][j]);
 			if(!checkServerData(line))
 				return line.clear(), false;
 			line.clear();
+			
+		}
+	}
+	int	listenCp;
+	int	autoIndexCp;
+	int	rootCp;
+	int	maxSizeCp;
+	int	uploadDirCp;
+	
+	int	locationRoot;
+	int	locationMethods;
+	int	locationMaxSize;
+	int	locationIndex;
+	int	locationuploadDir;
+	std::cout << "---------------_____-----------------------.>>> " << servers.size() << std::endl;
+	for (size_t i = 0; i < servers.size(); i++)
+	{
+		listenCp = 0;
+		autoIndexCp = 0;
+		rootCp = 0;
+		maxSizeCp = 0;
+		uploadDirCp = 0;
+		for (size_t j = 0; j < servers[i].size(); j++)
+		{
+			std::vector<std::string> line = ft_split(servers[i][j]);
+			if (line[0] == "listen")
+				listenCp++;
+			if (line[0] == "autoindex")
+				autoIndexCp++;
+			if (line[0] == "root")
+				rootCp++;
+			if (line[0] == "client_body_max_size")
+				maxSizeCp++;
+			if (line[0] == "upload_dir")
+				uploadDirCp++;
+			if (line[0] == "location")
+			{
+				std::cout << servers[i][j] << std::endl;
+				line.clear();
+				locationRoot = 0;
+				locationMethods = 0;
+				locationMaxSize = 0;
+				locationIndex = 0;
+				locationuploadDir = 0;
+				j++;
+				while (j < servers[i].size())
+				{
+					line = ft_split(servers[i][j]);
+					if (line[0] == "root")
+						locationRoot++;
+					if (line[0] == "index")
+						locationIndex++;
+					if (line[0] == "methods")
+						locationMethods++;
+					if (line[0] == "client_body_max_size")
+						locationMaxSize++;
+					if (line[0] == "upload_dir")
+						locationuploadDir++;
+					if (line[0] == "location")
+						break;
+					j++;
+				}
+				if (locationRoot != 1 || locationIndex > 1 || locationMethods != 1 || locationMaxSize != 1 || locationuploadDir > 1 )
+					return false;
+			}
+			line.clear();
+		}
+		if (listenCp < 1 || autoIndexCp != 1 || rootCp != 1 || maxSizeCp != 1 || uploadDirCp > 1)
+		{
+			std::cout << "\nlistenCp " << listenCp << "\nautoIndexCp " << autoIndexCp << "\nrootCp " << rootCp << "\nmaxSizeCp " << maxSizeCp << "\nuploadDirCp " << uploadDirCp << std::endl;
+			return false;
 		}
 	}
 	return true;
-
 }
