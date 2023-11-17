@@ -6,10 +6,15 @@ int main(int ac, char **av)
     {   
         //BUDA
         Webserv wbs;
-        wbs.parsing(ac, av);
+       	if (!wbs.parsing(ac, av))
+			return 0;
         wbs.fillServerList();
+		wbs.fillResponseTypes();
 
-		wbs.finalParsing();
+		// std::string result = wbs.getServerDataSingle(1, "autoindex");
+		// std::cout << result << std::endl;
+		// std::cout << ( wbs.finalConfigFileParsing() ? "true" : "false" ) << std::endl;
+		std::cout << wbs.checkForLocation(1, "/assets") << std::endl;
 
 
 		// std::vector < std::pair < std::string, std::string > >	data = wbs.getServerErrorPages(2);

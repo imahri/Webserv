@@ -6,23 +6,22 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 15:20:14 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/13 15:58:12 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/15 16:41:42 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Request.hpp"
 #include "../../includes/webserv.hpp"
 
-bool Webserv::isValidPort(const std::string& port)
-
+bool isValidPort(const std::string& port)
 {
 	std::istringstream ss(port);
 	int portNumber;
 	ss >> portNumber;
-	return !ss.fail() && portNumber >= 0 && portNumber <= 65535;
+	return (!ss.fail() && ss.eof() && portNumber >= 0 && portNumber <= 65535);
 }
 
-bool Webserv::isValidIPAddress(const std::string& ipAddress)
+bool isValidIPAddress(const std::string& ipAddress)
 {
 	std::istringstream ss(ipAddress);
 	std::string octet;
@@ -40,7 +39,7 @@ bool Webserv::isValidIPAddress(const std::string& ipAddress)
 	return (octets.size() == 4);
 }
 
-bool Webserv::isDirectory( const std::string& path)
+bool isDirectory( const std::string& path)
 {
 	
 	struct stat fileInfo;
@@ -49,7 +48,7 @@ bool Webserv::isDirectory( const std::string& path)
 	return S_ISDIR(fileInfo.st_mode);
 }
 
-bool Webserv::isFile( const std::string& path)
+bool isFile( const std::string& path)
 {
 	struct stat fileInfo;
 	if (stat(path.c_str(), &fileInfo) != 0)
@@ -57,23 +56,23 @@ bool Webserv::isFile( const std::string& path)
 	return S_ISREG(fileInfo.st_mode);
 }
 
-bool Webserv::isValideAutoIndex(const std::string& autoindex)
+bool isValideAutoIndex(const std::string& autoindex)
 {
-	if (autoindex != "on" || autoindex != "off")
+	if (autoindex != "on" && autoindex != "off")
 		return false;
 	return true;
 }
 
-bool Webserv::isValideUploadDir(const std::string& uploadDir)
+bool isValideUploadDir(const std::string& uploadDir)
 {
 	return isDirectory(uploadDir);
 }
-bool Webserv::isValideRoot(const std::string& root)
+bool isValideRoot(const std::string& root)
 {
 	return isDirectory(root);
 }
 
-bool Webserv::isValideClientBodyMaxSize(const std::string& clientBodyMaxSize)
+bool isValideClientBodyMaxSize(const std::string& clientBodyMaxSize)
 {
 	int cp = 0;
 
@@ -98,18 +97,8 @@ bool Webserv::isValideClientBodyMaxSize(const std::string& clientBodyMaxSize)
 	return true;
 }
 
-bool Webserv::isValideErrorPage			(const std::string &err, const std::string &errPage)
-{
 
-	std::vector<std::string>::iterator it = std::find(httpStatusCodes.begin(), httpStatusCodes.end(), err);
-	
-	if (it == httpStatusCodes.end() || !isFile(errPage))
-		return false;
-	
-	return true;
-}
-
-bool Webserv::isValideLocationPath(const std::string &uri)
+bool isValideLocationPath(const std::string &uri)
 {
 	std::string::const_iterator it = uri.begin();
 
@@ -130,7 +119,7 @@ bool Webserv::isValideLocationPath(const std::string &uri)
 	return true;
 }
 
-bool Webserv::isValideLocationMethods(const std::string &method)
+bool isValideLocationMethods(const std::string &method)
 {
 	if (method != "POST" && method != "DELETE" && method != "GET")
 		return false;
@@ -138,7 +127,7 @@ bool Webserv::isValideLocationMethods(const std::string &method)
 }
 
 
-bool Webserv::isValideLocationCGI (const std::string &cgi, const std::string &cgiFile)
+bool isValideLocationCGI (const std::string &cgi, const std::string &cgiFile)
 {
 	if (cgi != "py" && cgi != "php")
 		return false;
@@ -148,15 +137,26 @@ bool Webserv::isValideLocationCGI (const std::string &cgi, const std::string &cg
 	return true;
 }
 
-bool Webserv::isValideLocationRedirect(const std::string &nbr, const std::string &page)
-{
+// bool isValideLocationRedirect(const std::string &nbr, const std::string &page)
+// {
 
-	std::vector<std::string>::iterator it = std::find(httpStatusCodes.begin(), httpStatusCodes.end(), nbr);
+// 	std::vector<std::string>::iterator it = std::find(httpStatusCodes.begin(), httpStatusCodes.end(), nbr);
 	
-	if (it == httpStatusCodes.end() || !isFile(page))
+// 	if (it == httpStatusCodes.end() || !isFile(page))
+// 		return false;
+	
+// 	return true;
+// }
+
+
+bool isValideErrorPage			(const std::string &err, const std::string &errPage)
+{
+	Webserv w;
+	std::vector<std::string> codes = w.getHttpStatusCodes();
+	std::vector<std::string>::iterator it = std::find(codes.begin(), codes.end(), err);
+	
+	if (it == codes.end() || !isFile(errPage))
 		return false;
 	
 	return true;
 }
-
-

@@ -55,7 +55,7 @@ int   Request::checkNumbers(std::string str)
     return(0);
 }
 
-std::vector<std::string> Request::ft_split(std::string &s, std::string delimiter)
+std::vector<std::string> ft_split(std::string &s, std::string delimiter)
 {
 	std::vector<std::string> arr;
 	std::string current;
@@ -76,7 +76,7 @@ std::vector<std::string> Request::ft_split(std::string &s, std::string delimiter
 	return arr;
 }
 
-std::vector<std::string> Request::ft_split(std::string& s, char c)
+std::vector<std::string> ft_split(std::string& s, char c)
 {
 	std::vector<std::string> arr;
 	std::string			line;
@@ -87,7 +87,7 @@ std::vector<std::string> Request::ft_split(std::string& s, char c)
 	return arr;
 }
 
-std::vector<std::string> Request::ft_split(std::string& s)
+std::vector<std::string> ft_split(std::string& s)
 {
 	std::vector<std::string> arr;
 	std::string			line;
@@ -98,7 +98,7 @@ std::vector<std::string> Request::ft_split(std::string& s)
 	return arr;
 }
 
-std::string& Request::ft_trim(std::string& s, char c)
+std::string& ft_trim(std::string& s, char c)
 {
 	size_t i = 0;
 	while (i < s.size() && s[i] == c) 
@@ -116,7 +116,7 @@ std::string& Request::ft_trim(std::string& s, char c)
 	return s;
 }
 
-std::string& Request::ft_trim(std::string& s, std::string delimiter)
+std::string& ft_trim(std::string& s, std::string delimiter)
 {
 	size_t i = 0;
 	while (i < s.size() && delimiter.find(s[i]) != std::string::npos) 
