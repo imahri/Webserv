@@ -125,6 +125,7 @@ int    Request::createServer(Webserv &webserv)
             statusCode = 0;
             this->getRequest(buffer);
             std::cout << "StatusCode: " << statusCode << std::endl;
+            std::cout << "--------------------END OF REQUEST-----------------------" << std::endl;
         }
         else
             continue;

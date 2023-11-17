@@ -29,8 +29,6 @@ int		Request::GetFile()
 	return(0);
 }
 
-/// @brief 
-/// @return 
 int		Request::GetDirectory()
 {
 	std::vector < std::string> it;
@@ -61,15 +59,15 @@ int		Request::GetDirectory()
 			// Open the directory
 			dir = opendir(fileName.c_str());
 			if (dir == NULL)
-			{
-				std::cout << "Failed to open directory." << std::endl;
-				return 1;
-			}
-
+				return (statusCode = 404, std::cout << "Failed to open directory." << std::endl, 1);
 
 			// Read directory entries
+			std::string link;
+			ResponseBody = "<h1>Name</h1>";
 			while ((entry = readdir(dir)) != NULL)
 			{
+				link = fileName + entry->d_name;
+				ResponseBody += "<a class=\"icon dir\" href=\"" + link + "\">" + entry->d_name + "</a><br>";
 				std::cout << "FILES:" << entry->d_name << std::endl;
 			}
 
@@ -81,7 +79,7 @@ int		Request::GetDirectory()
 			// if (!configFile)
 			// 	return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
 			// while (std::getline(configFile, str))
-				ResponseBody += str;
+				// ResponseBody += str;
 		}
 	}
 	return(0);
