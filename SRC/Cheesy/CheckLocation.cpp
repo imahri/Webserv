@@ -77,8 +77,8 @@ int		Request::checkLocations()
         for (; it != Loc.redirect.end(); it++)
         {
 			ResponseHeaders = "HTTP/1.1 302 OK\r\nContent-Type: text/html\r\n\r\n";
-			ResponseBody = "<h1>" + it->first + "</h1>";
-			ResponseBody += "<a class=\"icon dir\" href=\"" + it->second + "\">" + "Redirect to" + it->second + "</a><br>";
+			// ResponseBody = "<h1>" + it->first + "</h1>";
+			ResponseBody += "<meta http-equiv=\"Refresh\" content=\"0; url='" + it->second + "'\" />";
 			return(statusCode = std::atoi(it->first.c_str()), 1);
         }
     }
@@ -97,3 +97,5 @@ int		Request::checkLocations()
 	
 	return(0);
 }
+
+//"<a class=\"icon dir\" href=\"" + it->second + "\">" + "Redirect to" + it->second + "</a><br>";
