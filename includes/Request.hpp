@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/17 22:38:53 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/18 18:24:05 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,17 @@ typedef struct L
         bool CheckIndex;
         bool CheckCGI;
         bool CheckRedirect;
+        bool CheckMethods;
         
-        std::string upload_dir;
-        std::string root;
-        std::vector <std::string> index;
-        std::vector <std::string> methodes;
-        std::string client_body_max_size;
-        std::vector < std::pair <std::string , std::string > > cgi;
-        std::vector < std::pair <std::string , std::string > > redirect;
-} LOCATION;
+        std::string                                             upload_dir;
+        std::string                                             root;
+        std::vector <std::string>                               index;
+        std::vector <std::string>                               methodes;
+        size_t                                                  client_body_max_size;
+        std::vector < std::pair <std::string , std::string > >  cgi;
+        std::vector < std::pair <std::string , std::string > >  redirect;
+        
+}  LOCATION;
 
 class Request
 {
@@ -66,7 +68,6 @@ class Request
     	std::string                         ResponseBody;
         size_t                              index;
         size_t                              statusCode;
-        unsigned long long                  clientMaxBodySize;
 		Webserv								Server;
         int                                 locationIndex;
         std::string                         LocationRoot;
@@ -75,6 +76,8 @@ class Request
         std::string                         UploadDir;
         size_t                              ServerIndex;
         LOCATION                            Loc;
+
+        
     public:
         Request();
         Request(const Request &obj);
@@ -104,17 +107,17 @@ class Request
 
 
         //extra functions
-        unsigned long long                  convertToBytes(const std::string& sizeString);
+        size_t                              convertToCharacters(std::string sizeString);
         std::string                         getNextToken(std::istringstream &iss);
         int                                 checkDigit(std::string str);
         int                                 checkWhiteSpace(std::string str);
         int                                 checkNumbers(std::string str);
 };
 
-		std::vector<std::string>            ft_split(std::string &s, std::string delimiter);
-		std::vector<std::string>            ft_split(std::string& s, char c);
-		std::vector<std::string>            ft_split(std::string& s);
-		std::string&							ft_trim(std::string& s, char c);
-		std::string&							ft_trim(std::string& s, std::string delimiter);
+        std::vector<std::string>            ft_split(std::string &s, std::string delimiter);
+        std::vector<std::string>            ft_split(std::string& s, char c);
+        std::vector<std::string>            ft_split(std::string& s);
+        std::string                         &ft_trim(std::string& s, char c);
+        std::string                         ft_trim(std::string s, std::string delimiter);
 
 #endif

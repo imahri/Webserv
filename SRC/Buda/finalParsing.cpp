@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   finalParsing.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 15:53:49 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/17 15:32:11 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/18 15:58:47 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,9 +150,7 @@ bool Webserv::finalConfigFileParsing()
 	for (size_t i = 0; i < servers.size(); i++)
 	{
 		for (size_t j = 0; j < servers[i].size(); j++)
-		{
-			// std::cout << servers[i][j] << std::endl;
-			
+		{	
 			std::vector<std::string> line = ft_split(servers[i][j]);
 			if (line[0] == "location" && line.size() != 2)
 				return false;
@@ -173,7 +171,7 @@ bool Webserv::finalConfigFileParsing()
 	int	locationMaxSize;
 	int	locationIndex;
 	int	locationuploadDir;
-	std::cout << "---------------_____-----------------------.>>> " << servers.size() << std::endl;
+	// std::cout << "---------------_____-----------------------.>>> " << servers.size() << std::endl;
 	for (size_t i = 0; i < servers.size(); i++)
 	{
 		listenCp = 0;
@@ -196,7 +194,7 @@ bool Webserv::finalConfigFileParsing()
 				uploadDirCp++;
 			if (line[0] == "location")
 			{
-				std::cout << servers[i][j] << std::endl;
+				// std::cout << servers[i][j] << std::endl;
 				line.clear();
 				locationRoot = 0;
 				locationMethods = 0;
@@ -228,7 +226,7 @@ bool Webserv::finalConfigFileParsing()
 		}
 		if (listenCp < 1 || autoIndexCp != 1 || rootCp != 1 || maxSizeCp != 1 || uploadDirCp > 1)
 		{
-			std::cout << "\nlistenCp " << listenCp << "\nautoIndexCp " << autoIndexCp << "\nrootCp " << rootCp << "\nmaxSizeCp " << maxSizeCp << "\nuploadDirCp " << uploadDirCp << std::endl;
+			// std::cout << "\nlistenCp " << listenCp << "\nautoIndexCp " << autoIndexCp << "\nrootCp " << rootCp << "\nmaxSizeCp " << maxSizeCp << "\nuploadDirCp " << uploadDirCp << std::endl;
 			return false;
 		}
 	}

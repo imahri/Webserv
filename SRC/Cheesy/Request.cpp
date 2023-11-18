@@ -65,104 +65,9 @@ int		Request::checkHttp()
 
 int		Request::checkBody()
 {
-	if(body.size() > clientMaxBodySize)
+	std::cout << "body SIZE: " << body.size() << "|CLIENT SIZE: " << Loc.client_body_max_size << std::endl;
+	if(body.size() > Loc.client_body_max_size)
 		return(statusCode = 413, 1);
-	return(0);
-}
-
-int		Request::GetCorrectLocation()
-{
-	std::string str;
-	locationIndex = 0;
-	locationIndex = Server.checkForLocation(ServerIndex, URI);
-	if(locationIndex == 0)
-	{
-		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
-			Loc.autoindex = true;
-		else
-			Loc.autoindex = false;
-
-		Loc.CheckIndex = false;
-        Loc.CheckCGI = false;
-        Loc.CheckRedirect = false;
-        Loc.upload_dir = Server.getServerDataSingle(ServerIndex, "upload_dir");
-        Loc.root = Server.getServerDataSingle(ServerIndex, "root");
-        Loc.client_body_max_size = Server.getServerDataSingle(ServerIndex, "client_body_max_size");
-	}
-	else
-	{
-		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
-			Loc.autoindex = true;
-		else
-			Loc.autoindex = false;
-
-        Loc.index = Server.getLocationSingle(ServerIndex, locationIndex, "index");
-		if(Loc.index.size())
-			Loc.CheckIndex = true;
-		else
-			Loc.CheckIndex = false;
-
-		Loc.methodes = Server.getLocationSingle(ServerIndex, locationIndex, "methods");
-		if(Loc.methodes.size())
-			Loc.CheckIndex = true;
-		else
-			Loc.CheckIndex = false;
-
-		Loc.cgi = Server.getLocationMultiple(ServerIndex, locationIndex, "cgi");
-		if(Loc.cgi.size())
-			Loc.CheckCGI = true;
-		else
-			Loc.CheckCGI = false;
-
-		Loc.redirect = Server.getLocationMultiple(ServerIndex, locationIndex, "redirect");
-		if(Loc.redirect.size())
-			Loc.CheckRedirect = true;
-		else
-			Loc.CheckRedirect = false;
-
-		std::vector < std::string >	it = Server.getLocationSingle(ServerIndex, locationIndex, "upload_dir");
-        Loc.upload_dir = *it.begin();
-
-		it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
-        Loc.root = *it.begin();
-
-		it = Server.getLocationSingle(ServerIndex, locationIndex, "client_body_max_size");
-        Loc.client_body_max_size = *it.begin();
-	}
-	return(0);
-}
-
-int		Request::checkLocations()
-{
-	int		uriFound = 0, methodeFound = 0;
-
-	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
-	for (size_t i = 1; i < Server.getLocationsNumber(ServerIndex); i++)
-	{
-		locationData = Server.getLocationData(ServerIndex, i);
-		if(URI == locationData[0].second[0])
-		{
-			uriFound = 1;
-			locationIndex = i;
-		}
-	}
-
-	
-	if(locationIndex != 0)//location found
-	{
-		std::vector < std::pair <std::string, std::string > > data = Server.getLocationMultiple(ServerIndex, locationIndex, "redirect");
-		for (size_t j = 0; j < data.size(); j++)
-			return(statusCode = std::atoi(data[j].first.c_str()), 1);
-
-		std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "methods");
-		for (size_t i = 0; i < it.size(); i++)
-			if(methode == it[i])
-				methodeFound = 1;
-
-		if(methodeFound == 0)
-			return(statusCode = 405, 1);
-	}
-	//location not found so iam going to use the server's stuff
 	return(0);
 }
 
@@ -203,11 +108,8 @@ int		Request::checkHeader()
 	if(transferEncoding == 0 && contentLength == 0 && methode == "POST")
 		return(statusCode = 400, 1);
 
-	if(isChuncked == true)
-		parseChuncked();
-
-	if(checkLocations())
-		return(1);
+	// if(isChuncked == true)
+	// 	parseChuncked();
 	return(0);
 }
 
@@ -223,28 +125,31 @@ int		Request::getRequest(std::string buffer)
 
 int		Request::parseRequest()
 {
-	clientMaxBodySize = convertToBytes("3GB");
 	locationIndex = 0;
 	directory = -1;
-
+	ResponseHeaders.clear();
+	ResponseBody.clear();
+ 
 	if(checkHttp())
 		return(1);
 	if(checkHeader())
 		return(1);
+	if(checkLocations())
+		return(1);
 	if(checkBody())
 		return(1);
-	if(methode == "GET")
-	{
-		if(GET())
-			return(1);
-	}
-	else if(methode == "POST")
-	{
-		if(POST())
-			return(1);
-	}
-	else if(DELETE())
-		return(1);
+	// if(methode == "GET")
+	// {
+	// 	if(GET())
+	// 		return(1);
+	// }
+	// else if(methode == "POST")
+	// {
+	// 	if(POST())
+	// 		return(1);
+	// }
+	// else if(DELETE())
+	// 	return(1);
 
 	return(0);
 }
