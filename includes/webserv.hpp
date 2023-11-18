@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/17 12:13:42 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/18 21:29:56 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,17 @@ struct parsingStruct
 	bool close_bracket;
 };
 
-
 class Webserv
 {
 	private:
 		std::vector < std::vector < std::string > >				servers;
-		std::map < std::string, std::vector < std::string > >	responseTypes;
 		std::vector<std::string> httpStatusCodes;
 		std::ifstream configFile;
 		std::string fileName;
 
 	public:
 
+		std::map < std::string, std::vector < std::string > >	responseTypes;
 		Webserv();
 		Webserv(const Webserv& copy);
 		Webserv&	operator = (const Webserv& copy);

@@ -77,7 +77,6 @@ int		Request::checkLocations()
         for (; it != Loc.redirect.end(); it++)
         {
 			ResponseHeaders = "HTTP/1.1 302 OK\r\nContent-Type: text/html\r\n\r\n";
-			// ResponseBody = "<h1>" + it->first + "</h1>";
 			ResponseBody += "<meta http-equiv=\"Refresh\" content=\"0; url='" + it->second + "'\" />";
 			return(statusCode = std::atoi(it->first.c_str()), 1);
         }
@@ -94,8 +93,18 @@ int		Request::checkLocations()
 	}
 
 
+	// std::cout << "TESTING BUDA'S SHIT" << std::endl;
+
+	// std::map < std::string, std::vector < std::string > >::iterator	it = Server.responseTypes.begin();
 	
+	// Server.responseTypes.lower_bound
+	// for (; it != Server.responseTypes.end(); it++)
+	// {
+	// 	std::cout << "first: " << it->first << std::endl;
+	// 	for (std::vector < std::string >::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
+	// 		std::cout << "second: " << *it2 << std::endl;
+	// }
+	
+	// std::cout << "END OF TESTING BUDA'S SHIT" << std::endl;
 	return(0);
 }
-
-//"<a class=\"icon dir\" href=\"" + it->second + "\">" + "Redirect to" + it->second + "</a><br>";

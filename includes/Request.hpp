@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/18 18:24:05 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/18 23:45:36 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@
 
 typedef struct L
 {
-        bool autoindex;
-        bool CheckIndex;
-        bool CheckCGI;
-        bool CheckRedirect;
-        bool CheckMethods;
+        bool                                                    autoindex;
+        bool                                                    CheckIndex;
+        bool                                                    CheckCGI;
+        bool                                                    CheckRedirect;
+        bool                                                    CheckMethods;
         
         std::string                                             upload_dir;
         std::string                                             root;
@@ -104,6 +104,7 @@ class Request
         int                                 PostFile();
         int                                 PostDir();
         int                                 GetCorrectLocation();
+        int                                 GenerateResponse();
 
 
         //extra functions
