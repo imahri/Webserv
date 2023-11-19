@@ -6,81 +6,11 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/17 13:01:18 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/19 18:13:39 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Request.hpp"
-
-// std::vector<std::string> ft_split(std::string& s, std::string delimiter)
-// {
-// 	std::vector<std::string> arr;
-// 	std::string current;
-// 	size_t size = s.size();
-// 	for (size_t i = 0; i < size; i++) 
-// 	{
-// 		while (delimiter.find(s[i]) != std::string::npos)
-// 			i++;
-// 		while (i < size && delimiter.find(s[i]) == std::string::npos)
-// 			current += s[i++];
-// 		if (!current.empty()) 
-// 		{
-// 			arr.push_back(current);
-// 			current.clear();
-// 		}
-// 	}
-// 	return arr;
-// }
-
-// std::vector<std::string> ft_split(std::string& s, char c)
-// {
-// 	std::vector<std::string> arr;
-// 	std::string			line;
-// 	std::istringstream	iss(s);
-// 	while (std::getline(iss, line, c))
-// 		arr.push_back(line);
-// 	return arr;
-// }
-
-// std::vector<std::string> ft_split(std::string& s)
-// {
-// 	std::vector<std::string> arr;
-// 	std::string			line;
-// 	std::istringstream	iss(s);
-// 	while (iss >> line)
-// 		arr.push_back(line);
-// 	return arr;
-// }
-
-// std::string ft_trim(std::string& s, char c)
-// {
-// 	size_t i = 0;
-// 	while (i < s.size() && s[i] == c) 
-// 		s.erase(i, 1);
-// 	i = s.size() - 1;
-// 	if (i == std::string::npos)
-// 		return s;
-// 	while (i >= 0 && s[i] == c) 
-// 	{
-// 		s.erase(i, 1);
-// 		i--; 
-// 	}
-// 	return s;
-// }
-
-// std::string ft_trim(std::string s, std::string delimiter)
-// {
-// 	size_t i = 0;
-//     while (i < s.size() && delimiter.find(s[i]) != std::string::npos)
-//         s.erase(i, 1);
-//     i = s.size();
-//     while (i > 0 && delimiter.find(s[i - 1]) != std::string::npos)
-//     {
-//         i--;
-//         s.erase(i, 1);
-//     }
-// 	return s;
-// }
 
 bool	ft_isAllSpace(std::string& s)
 {
@@ -109,11 +39,18 @@ bool	Webserv::parsing(int ac, char **av)
 		return false;
 	}
 
+	if (configFile.peek() == std::ifstream::traits_type::eof()) 
+	{
+		std::cout << "File is empty" << std::endl;
+		configFile.close();
+		return false;
+	}
 	std::string					line;
 	std::vector <std::string>	pars;
 	std::vector <parsingStruct>	parsLast;
 	size_t	j = 0;
-
+	bool serverScope = false;
+	bool locationScope = false;
 	while (std::getline(configFile, line))
 	{
 		if (line.empty() || ft_isAllSpace(line) || (!line.empty() && ft_trim(line, ' ')[0] == '#'))
@@ -128,6 +65,7 @@ bool	Webserv::parsing(int ac, char **av)
 			}
 			parsingStruct parsingData = {"server", true, false};
 			parsLast.push_back(parsingData);
+			serverScope = true;
 		}
 		else if (!pars[0].empty() && pars[0] == "location")
 		{
@@ -138,31 +76,70 @@ bool	Webserv::parsing(int ac, char **av)
 			}
 			parsingStruct parsingData = {"location", true, false};
 			parsLast.push_back(parsingData);
+			if (serverScope)
+				locationScope = true;
 		}
 		else if (pars.size() == 1 && !pars.front().empty() && pars.front() == "}" && j < parsLast.size())
+		{
 			parsLast[j++].close_bracket = true;
+			if (serverScope && locationScope)
+				locationScope = false;
+			else if (!locationScope && serverScope)
+				serverScope = false;
+		}
 		else if (!pars.back().empty() && !pars[0].empty() 
 			&& pars[0] != "server" && pars[0] != "location" &&  pars.back().back() != ';')
 		{
 			std::cerr << "Error ; missing" << std::endl;
 			return false;
 		}
+		
+		if (!locationScope && !serverScope && pars.front() != "}" && !line.empty())
+		{
+			std::cerr << "Error somthing out of scope on " << "\033[0;31m"  << line << "\033[0m" << std::endl;
+			return false;
+		}
 	}
+
 	for (size_t i = 0; i < parsLast.size(); i++)
 	{
 		if (parsLast[i].open_bracket == false || parsLast[i].close_bracket == false)
 		{
-			{
-				std::cerr << "Error { or } missing" << fileName << std::endl;
-				return false;
-			}
+			std::cerr << "Error { or } missing" << fileName << std::endl;
+			return false;
 		}
 	}
 	configFile.close();
 	return true;
 }
 
-void	Webserv::fillServerList()
+bool	checkOther(const std::string& val)
+{
+
+	std::vector <std::string> data;
+
+	data.push_back("server");
+	data.push_back("methods");
+	data.push_back("index");
+	data.push_back("listen");
+	data.push_back("autoindex");
+	data.push_back("upload_dir");
+	data.push_back("root");
+	data.push_back("client_body_max_size");
+	data.push_back("error_page");
+	data.push_back("location");
+	data.push_back("cgi");
+	data.push_back("redirect");
+	data.push_back("}");
+	std::vector <std::string>::iterator it = std::find(data.begin(), data.end(), val);
+
+	if (it == data.end())
+		return false;
+	
+	return true;
+}
+
+bool	Webserv::fillServerList()
 {
 	std::string					line;
 	std::string					finalLine;
@@ -171,7 +148,7 @@ void	Webserv::fillServerList()
 	if (!this->configFile)
 	{
 		std::cerr << "Unable to open the file " << fileName << std::endl;
-		return ;
+		return false;
 	}
 
 	while (std::getline(configFile, line))
@@ -180,11 +157,15 @@ void	Webserv::fillServerList()
 		if ((trimedLine[0] != '#' && trimedLine.find('#') != std::string::npos))
 		{
 			std::cout << "Error corrupted file" << std::endl;
-			return; 
+			return false; 
 		}
 		if (line.empty() || ft_isAllSpace(line) || (!line.empty() && trimedLine[0] == '#'))
 			continue;
-		
+		if (!checkOther(ft_split(line, " \t")[0]))
+		{
+			std::cout << "Error on " << "\033[0;31m"  << line << "\033[0m"  << std::endl;
+			return false; 
+		}
 		finalLine += trimedLine;
 	}
 
@@ -199,23 +180,24 @@ void	Webserv::fillServerList()
 	{
 		if (finalParams[i] == "server") 
 		{
-		std::vector<std::string> data;
+			std::vector<std::string> data;
 
-		for (++i; i < finalParams.size(); ++i) 
-		{
-			if (finalParams[i] == "server") 
+			for (++i; i < finalParams.size(); ++i) 
 			{
-				--i; 
-				break;
+				if (finalParams[i] == "server") 
+				{
+					--i; 
+					break;
+				}
+					data.push_back(finalParams[i]);
+				}
+				this->servers.push_back(data);
 			}
-				data.push_back(finalParams[i]);
-			}
-			this->servers.push_back(data);
-		}
 	}
 	pars.clear();
 	finalParams.clear();
 	params.clear();
+	return true;
 }
 
 size_t	Webserv::getServersNumber()
@@ -273,7 +255,6 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 							if (ft_split(servers[i][j])[0] == "location")
 								break;
 						}
-						
 					}
 					cp++;
 				}

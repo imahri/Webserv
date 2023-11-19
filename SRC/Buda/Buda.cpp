@@ -6,7 +6,7 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 15:20:14 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/15 16:41:42 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/18 13:08:33 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,13 +149,13 @@ bool isValideLocationCGI (const std::string &cgi, const std::string &cgiFile)
 // }
 
 
-bool isValideErrorPage			(const std::string &err, const std::string &errPage)
+bool isValideErrorPage			(const std::string &err)
 {
 	Webserv w;
 	std::vector<std::string> codes = w.getHttpStatusCodes();
 	std::vector<std::string>::iterator it = std::find(codes.begin(), codes.end(), err);
 	
-	if (it == codes.end() || !isFile(errPage))
+	if (it == codes.end())
 		return false;
 	
 	return true;

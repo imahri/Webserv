@@ -6,7 +6,7 @@
 /*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 15:53:49 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/17 15:32:11 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/18 15:35:04 by ytaqsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ bool checkServerData(std::vector<std::string> &data)
 		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
 		return false;
 	}	
-	if (data[0] == "error_page" && (data.size() != 3 || !isValideErrorPage(data[1], data[2])))
+	if (data[0] == "error_page" && (data.size() != 3 || !isValideErrorPage(data[1])))
 	{
 		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
 		return false;
@@ -150,16 +150,13 @@ bool Webserv::finalConfigFileParsing()
 	for (size_t i = 0; i < servers.size(); i++)
 	{
 		for (size_t j = 0; j < servers[i].size(); j++)
-		{
-			// std::cout << servers[i][j] << std::endl;
-			
+		{	
 			std::vector<std::string> line = ft_split(servers[i][j]);
 			if (line[0] == "location" && line.size() != 2)
 				return false;
 			if(!checkServerData(line))
 				return line.clear(), false;
-			line.clear();
-			
+			line.clear();	
 		}
 	}
 	int	listenCp;
@@ -173,7 +170,6 @@ bool Webserv::finalConfigFileParsing()
 	int	locationMaxSize;
 	int	locationIndex;
 	int	locationuploadDir;
-	std::cout << "---------------_____-----------------------.>>> " << servers.size() << std::endl;
 	for (size_t i = 0; i < servers.size(); i++)
 	{
 		listenCp = 0;
@@ -196,7 +192,6 @@ bool Webserv::finalConfigFileParsing()
 				uploadDirCp++;
 			if (line[0] == "location")
 			{
-				std::cout << servers[i][j] << std::endl;
 				line.clear();
 				locationRoot = 0;
 				locationMethods = 0;
@@ -218,17 +213,24 @@ bool Webserv::finalConfigFileParsing()
 					if (line[0] == "upload_dir")
 						locationuploadDir++;
 					if (line[0] == "location")
+					{
+						--j;
 						break;
+					}
+					line.clear();
 					j++;
 				}
 				if (locationRoot != 1 || locationIndex > 1 || locationMethods != 1 || locationMaxSize != 1 || locationuploadDir > 1 )
+				{
+					std::cout << "Error in " << "\033[0;31m"  << "the location config" << "\033[0m"  << std::endl;
 					return false;
+				}
 			}
 			line.clear();
 		}
 		if (listenCp < 1 || autoIndexCp != 1 || rootCp != 1 || maxSizeCp != 1 || uploadDirCp > 1)
 		{
-			std::cout << "\nlistenCp " << listenCp << "\nautoIndexCp " << autoIndexCp << "\nrootCp " << rootCp << "\nmaxSizeCp " << maxSizeCp << "\nuploadDirCp " << uploadDirCp << std::endl;
+			std::cout << "Error in " << "\033[0;31m"  << "the server config" << "\033[0m"  << std::endl;
 			return false;
 		}
 	}
