@@ -103,11 +103,24 @@ std::string intToString(int number)
 
 int     Request::GenerateResponse()
 {
-    // ResponseHeaders = 
+    ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+
+    std::time_t currentTime = std::time(0);
+    std::string str = (std::ctime(&currentTime));
+    ResponseHeaders += "Date: " + str + " GMT\r\n";
+
+    ResponseHeaders += "Content-Type: text/html\r\n";
+
     if(statusCode >= 400 && statusCode <= 600)
     {
-        ResponseHeaders = "HTTP/1.1" + intToString(statusCode) + GetStatusCode(statusCode) + "\r\nContent-Type: text/html\r\n\r\n";
+        // ResponseHeaders = + ;
     }
+    else if(statusCode >= 0 && statusCode < 400)
+    {
+        if(Req.ContentLength.size())
+            ResponseHeaders += "Content-Lenght: " + Req.ContentLength + "\r\n";
+    }
+    ResponseHeaders += "\r\n";
     return(0);
 }
 
