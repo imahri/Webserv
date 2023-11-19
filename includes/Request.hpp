@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/18 23:45:36 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/19 14:02:55 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,16 @@ typedef struct L
         
 }  LOCATION;
 
+typedef struct R
+{
+    std::string     Host;
+    std::string     Connection;
+    std::string     UserAgent;
+    std::string     ContentType;
+    std::string     ContentLength;
+}  Rq;
+
+
 class Request
 {
     private:
@@ -67,7 +77,7 @@ class Request
     	std::string                         ResponseHeaders;
     	std::string                         ResponseBody;
         size_t                              index;
-        size_t                              statusCode;
+        int                                 statusCode;
 		Webserv								Server;
         int                                 locationIndex;
         std::string                         LocationRoot;
@@ -76,6 +86,7 @@ class Request
         std::string                         UploadDir;
         size_t                              ServerIndex;
         LOCATION                            Loc;
+        Rq                                  Req;
 
         
     public:

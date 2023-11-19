@@ -6,7 +6,7 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/18 18:51:44 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/19 14:02:20 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,9 +21,14 @@ NAME = Webserv
 HEADER = includes/*.hpp\
 
 SRC =	SRC/*.cpp \
-		SRC/Cheesy/*.cpp \
 		SRC/Fiddler/*.cpp \
 		SRC/Buda/*.cpp \
+		SRC/Cheesy/*.cpp \
+		SRC/Cheesy/DELETE/*.cpp \
+		SRC/Cheesy/GET/*.cpp \
+		SRC/Cheesy/POST/*.cpp \
+		SRC/Cheesy/REQUEST/*.cpp \
+		SRC/Cheesy/RESPONSE/*.cpp \
 
 all: $(NAME)
 

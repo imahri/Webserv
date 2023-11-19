@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Request.hpp"
+#include "../../../includes/Request.hpp"
 
 int     Request::fillHeaderAndBody(std::string buffer)
 {
@@ -65,7 +65,6 @@ int		Request::checkHttp()
 
 int		Request::checkBody()
 {
-	std::cout << "body SIZE: " << body.size() << "|CLIENT SIZE: " << Loc.client_body_max_size << std::endl;
 	if(body.size() > Loc.client_body_max_size)
 		return(statusCode = 413, 1);
 	return(0);
@@ -83,26 +82,37 @@ int		Request::parseChuncked()
 
 int		Request::checkHeader()
 {
-	std::map<std::string, std::string>::iterator itM = HeaderData.begin();
+	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
 	bool isChuncked = false;
 	int transferEncoding = 0, contentLength = 0;
-	for (; itM != HeaderData.end(); itM++)
+	for (; it != HeaderData.end(); it++)
 	{
-		if(itM->second.size() == 0)
+		if(it->second.size() == 0)
 			return(statusCode = 400, 1);
 
-		if(itM->first == "Transfer-Encoding" && itM->second != "chunked")
+		if(it->first == "Transfer-Encoding" && it->second != "chunked")
 			return(statusCode = 501, 1);
 
-		if(itM->first == "Transfer-Encoding" && itM->second == "chunked")
+		if(it->first == "Transfer-Encoding" && it->second == "chunked")
 			isChuncked = true;
 
-		if(itM->first == "Transfer-Encoding")
+		if(it->first == "Transfer-Encoding")
 			transferEncoding = 1;
 
-		if(itM->first == "Content-Length")
+		if(it->first == "Content-Length")
 			contentLength = 1;
+
+		if(it->first == "Host" && it->second.size())
+			Req.Host = it->second;
+		else if(it->first == "Connection" && it->second.size())
+			Req.Connection = it->second;
+		else if(it->first == "User-Agent" && it->second.size())
+			Req.UserAgent = it->second;
+		else if(it->first == "Content-Type" && it->second.size())
+			Req.ContentType = it->second;
+		else if(it->first == "Content-Length" && it->second.size())
+			Req.ContentLength = it->second;
 	}
 
 	if(transferEncoding == 0 && contentLength == 0 && methode == "POST")
@@ -129,6 +139,8 @@ int		Request::parseRequest()
 	directory = -1;
 	ResponseHeaders.clear();
 	ResponseBody.clear();
+	memset(&Loc, 0, sizeof(LOCATION));
+	memset(&Req, 0, sizeof(Rq));
  
 	if(checkHttp())
 		return(1);
@@ -138,6 +150,11 @@ int		Request::parseRequest()
 		return(1);
 	if(checkBody())
 		return(1);
+	std::cout << "-----------------------HEADER-------------------" << std::endl;
+	std::cout << header << std::endl;
+	std::cout << "-----------------------BODY-------------------" << std::endl;
+	std::cout << body << std::endl;
+	std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 	// if(methode == "GET")
 	// {
 	// 	if(GET())

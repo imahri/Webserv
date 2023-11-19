@@ -1,4 +1,4 @@
-#include "../../includes/Request.hpp"
+#include "../../../includes/Request.hpp"
 
 int		Request::GetCorrectLocation()
 {
@@ -67,7 +67,6 @@ int		Request::GetCorrectLocation()
 
 int		Request::checkLocations()
 {
-	memset(&Loc, 0, sizeof(LOCATION));
 	if(GetCorrectLocation())
 		return(1);
 

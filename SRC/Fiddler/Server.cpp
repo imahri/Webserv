@@ -75,21 +75,23 @@
 //     return 0;
 // }
 
-
 int    Request::createServer(Webserv &webserv)
 {
 	Server = webserv;
     
-
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1)
         return(std::cerr << "Failed to create socket." << std::endl, 1);
+
+    int optionValue = 1;
+    setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &optionValue, sizeof(optionValue));
 
     // Set up server address
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_port = htons(8080);  // Use the desired port number
     serverAddress.sin_addr.s_addr = INADDR_ANY;
+
 
     // Bind the socket to the server address
     if (bind(serverSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress)) == -1)
@@ -119,7 +121,7 @@ int    Request::createServer(Webserv &webserv)
     
         //Print the received request
         std::cout << "--------------------START OF REQUEST-----------------------" << std::endl;
-        std::cout << "Received request:\n" << buffer << std::endl;
+        // std::cout << "Received request:\n" << buffer << std::endl;
         std::cout << "--------------------START PARSING REQUEST-----------------------" << std::endl;
 
         if(strlen(buffer))
