@@ -6,21 +6,21 @@ int main(int ac, char **av)
     {   
         //BUDA
         Webserv wbs;
-       	if (!wbs.parsing(ac, av))
+       	if (!wbs.parsing(ac, av) || !wbs.fillServerList() || !wbs.finalConfigFileParsing())
+		{
+			std::cout << "GHALAAAAAAT" << std::endl;
 			return 0;
-        wbs.fillServerList();
+		}
 		wbs.fillResponseTypes();
-
-		std::cout << ( wbs.finalConfigFileParsing() ? "true" : "false" ) << std::endl;
+			std::cout << "SA7777777" << std::endl;
+	
+		
 
         //CHEESY
         Request     rq;
 
-        
         if(rq.createServer(wbs))
             return(1);
-		
-
 
     }
     catch(const std::exception& e)

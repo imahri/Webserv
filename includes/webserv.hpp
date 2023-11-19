@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:46:12 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/18 21:29:56 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/19 21:22:06 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ class Webserv
 		Webserv&	operator = (const Webserv& copy);
 		std::vector<std::string> getHttpStatusCodes();
 		bool		parsing(int ac, char **av);
-		void		fillServerList();
+		bool		fillServerList();
 		void		fillResponseTypes();
 		bool		finalConfigFileParsing();
 
@@ -78,7 +78,7 @@ class Webserv
 		
 
 };
-
+bool																	checkOther					(const std::string& val);
 bool																	isValidPort					(const std::string& port);
 bool																	isValidIPAddress			(const std::string& ipAddress);
 bool																	isDirectory					( const std::string& path);
@@ -87,7 +87,7 @@ bool																	isValideAutoIndex			(const std::string& autoindex);
 bool																	isValideUploadDir			(const std::string& uploadDir);
 bool																	isValideRoot				(const std::string& root);
 bool																	isValideClientBodyMaxSize	(const std::string& clientBodyMaxSize);
-bool																	isValideErrorPage			(const std::string &err, const std::string &errPage);
+bool																	isValideErrorPage			(const std::string &err);
 bool																	isValideLocationPath		(const std::string &uri);
 
 bool																	isValideLocationMethods		(const std::string &method);
