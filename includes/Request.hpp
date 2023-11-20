@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/19 14:02:55 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/20 12:04:15 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct L
         bool                                                    CheckCGI;
         bool                                                    CheckRedirect;
         bool                                                    CheckMethods;
+        bool                                                    CheckUploadDir;
         
         std::string                                             upload_dir;
         std::string                                             root;

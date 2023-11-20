@@ -6,13 +6,13 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/19 14:02:20 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/20 11:05:50 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = c++
 
-CFLAGS = -Wall -Werror -Wextra -std=c++98 #-g -fsanitize=address
+CFLAGS = -Wall -Werror -Wextra -std=c++98 -g -fsanitize=address
 
 FRM = rm -rf
 

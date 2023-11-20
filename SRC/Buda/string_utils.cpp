@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/19 18:13:39 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/20 12:15:09 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,11 +248,12 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 					{
 						while (j < servers[i].size())
 						{
-							std::vector < std::string > line = ft_split(servers[i][j]);
+							line.clear();
+							line = ft_split(servers[i][j]);
 							std::vector < std::string > values (line.begin() + 1, line.end());
 							locationData.push_back(std::make_pair(line[0], values));
 							j++;
-							if (ft_split(servers[i][j])[0] == "location")
+							if (j < servers[i].size() && ft_split(servers[i][j])[0] == "location")
 								break;
 						}
 					}

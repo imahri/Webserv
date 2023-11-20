@@ -2,9 +2,12 @@
 
 int		Request::GetCorrectLocation()
 {
+	std::cout << "----------------------------------------SERVER INDEX: " << ServerIndex << std::endl;
 	std::string str;
 	locationIndex = 0;
 	locationIndex = Server.checkForLocation(ServerIndex, URI);
+	if(locationIndex == -1)
+		locationIndex = 0;
 	if(locationIndex == 0)
 	{
 		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
@@ -23,6 +26,7 @@ int		Request::GetCorrectLocation()
 	}
 	else
 	{
+		std::cout << "----------SERVER INDEX INSIDE: " << ServerIndex << "LOCATION INDEX: " << locationIndex << std::endl;
 		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
 			Loc.autoindex = true;
 		else
@@ -53,8 +57,14 @@ int		Request::GetCorrectLocation()
 			Loc.CheckRedirect = false;
 
 		std::vector < std::string >	it = Server.getLocationSingle(ServerIndex, locationIndex, "upload_dir");
-        Loc.upload_dir = *it.begin();
-
+		if(it.size())
+		{
+			Loc.CheckUploadDir = true;
+        	Loc.upload_dir = *it.begin();
+		}
+		else
+			Loc.CheckUploadDir = false;
+			
 		it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
         Loc.root = *it.begin();
 
@@ -91,19 +101,5 @@ int		Request::checkLocations()
 			return(statusCode = 405, 1);
 	}
 
-
-	// std::cout << "TESTING BUDA'S SHIT" << std::endl;
-
-	// std::map < std::string, std::vector < std::string > >::iterator	it = Server.responseTypes.begin();
-	
-	// Server.responseTypes.lower_bound
-	// for (; it != Server.responseTypes.end(); it++)
-	// {
-	// 	std::cout << "first: " << it->first << std::endl;
-	// 	for (std::vector < std::string >::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
-	// 		std::cout << "second: " << *it2 << std::endl;
-	// }
-	
-	// std::cout << "END OF TESTING BUDA'S SHIT" << std::endl;
 	return(0);
 }
