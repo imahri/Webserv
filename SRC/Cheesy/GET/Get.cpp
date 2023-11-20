@@ -113,8 +113,8 @@ int		Request::GET()
 			return(statusCode = 404, 1);
 		}
 	}
-	else
-		return(puts("henwnnwnewnewn"), statusCode = 404, 1);
+	// else
+	// 	return(puts("henwnnwnewnewn"), statusCode = 404, 1);
 
 	std::cout << "GET PATH:" << RequestPath << " DIR: " << directory << std::endl;
 

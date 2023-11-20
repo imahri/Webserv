@@ -155,12 +155,12 @@ int		Request::parseRequest()
 	// std::cout << "-----------------------BODY-------------------" << std::endl;
 	// std::cout << body << std::endl;
 	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
-	GenerateResponse();
-	// if(methode == "GET")
-	// {
-	// 	if(GET())
-	// 		return(1);
-	// }
+	// GenerateResponse();
+	if(methode == "GET")
+	{
+		if(GET())
+			return(1);
+	}
 	// else if(methode == "POST")
 	// {
 	// 	if(POST())
