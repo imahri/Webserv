@@ -101,22 +101,49 @@ std::string intToString(int number)
     return oss.str();
 }
 
+int         Request::FillFromHtmlFile()
+{
+    std::string str;
+    std::fstream file;
+    std::string fileName = "tt.html";
+
+    file.open(fileName);
+    if (!file)
+        return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
+    ResponseBody = "<!DOCTYPE html> <html> <head>  <title>Error " + intToString(statusCode) + ": " + GetStatusCode(statusCode) + "</title>";  
+    while (std::getline(file, str))
+    {
+        if(str == "    <div class=\"error-code\">400</div>")
+            str = "    <div class=\"error-code\">" + intToString(statusCode) + "</div>";
+        else if(str == "    <div class=\"error-message\">Method Not Allowed</div>")
+            str = "    <div class=\"error-message\">" + GetStatusCode(statusCode) + "</div>";
+        ResponseBody += str;
+    }
+    return(0);
+}
+
 int     Request::GenerateResponse()
 {
     ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
 
     std::time_t currentTime = std::time(0);
     std::string str = (std::ctime(&currentTime));
-    ResponseHeaders += "Date: " + str + " GMT\r\n";
+    ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
 
-    ResponseHeaders += "Content-Type: text/html\r\n";
+    ResponseHeaders += "Content-Type: ";
 
     if(statusCode >= 400 && statusCode <= 600)
     {
-        // ResponseHeaders = + ;
+        ResponseHeaders += "text/html\r\n";
+        FillFromHtmlFile();
     }
     else if(statusCode >= 0 && statusCode < 400)
     {
+        if(Req.ContentType.size())
+            ResponseHeaders += Req.MimeType + "\r\n";
+        else
+            ResponseHeaders += "text/html\r\n";
+
         if(Req.ContentLength.size())
             ResponseHeaders += "Content-Lenght: " + Req.ContentLength + "\r\n";
     }
@@ -127,3 +154,16 @@ int     Request::GenerateResponse()
 
 //"<a class=\"icon dir\" href=\"" + it->second + "\">" + "Redirect to" + it->second + "</a><br>";
 // ResponseBody += "<meta http-equiv=\"Refresh\" content=\"0; url='" + it->second + "'\" />";
+
+
+int     Request::GetMimeType()
+{
+    std::map < std::string, std::vector < std::string > >::iterator it = Server.responseTypes.begin();
+	for (; it != Server.responseTypes.end(); it++)
+	{
+		for (size_t j = 0; j < it->second.size(); j++)
+            if(Req.ContentType.size() && Req.ContentType == it->second[j])
+                return(Req.MimeType = it->first, 1);
+	}
+    return(0);
+}

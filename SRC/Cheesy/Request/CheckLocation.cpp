@@ -2,7 +2,6 @@
 
 int		Request::GetCorrectLocation()
 {
-	std::cout << "----------------------------------------SERVER INDEX: " << ServerIndex << std::endl;
 	std::string str;
 	locationIndex = 0;
 	locationIndex = Server.checkForLocation(ServerIndex, URI);
@@ -26,7 +25,6 @@ int		Request::GetCorrectLocation()
 	}
 	else
 	{
-		std::cout << "----------SERVER INDEX INSIDE: " << ServerIndex << "LOCATION INDEX: " << locationIndex << std::endl;
 		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
 			Loc.autoindex = true;
 		else

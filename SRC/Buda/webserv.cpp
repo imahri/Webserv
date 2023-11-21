@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:25:18 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/16 15:31:22 by ytaqsi           ###   ########.fr       */
+/*   Updated: 2023/11/21 12:32:25 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,15 +49,16 @@ void		Webserv::fillResponseTypes()
 	}
 
 	// std::map < std::string, std::vector < std::string > >::iterator it = responseTypes.begin();
+	
 	// for (; it != responseTypes.end(); it++)
 	// {
 	// 	std::cout << "|" + it->first + "|" << std::endl;
 	// 	for (size_t j = 0; j < it->second.size(); j++)
-	// 	{
 	// 		std::cout << "|" +it->second[j]+ "|" << " ";
-	// 	}
+			
 	// 	std::cout << std::endl;
 	// 	std::cout << "--------------------------------------------------" << std::endl;
 	// }
 	
 }
+

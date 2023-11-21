@@ -51,8 +51,11 @@ int		Request::checkHttp()
 	URI = *(it + 1);
 	httpVersion = *(it + 2);
 
-	if((methode != "POST" && methode != "GET" && methode != "DELETE") || (httpVersion != "HTTP/1.1"))
+	if(httpVersion != "HTTP/1.1")
 		return(statusCode = 400, 1);
+
+	if(methode != "POST" && methode != "GET" && methode != "DELETE")
+		return(statusCode = 405, 1);
 	else if(URI.size() > 2048)
 		return(statusCode = 414, 1);
 
@@ -72,7 +75,6 @@ int		Request::checkBody()
 
 int		Request::parseChuncked()
 {
-	
 	std::cout << "-----------------------HEADER-------------------" << std::endl;
 	std::cout << header << std::endl;
 	std::cout << "-----------------------BODY-------------------" << std::endl;
@@ -130,6 +132,7 @@ int		Request::getRequest(std::string buffer)
 	if(parseRequest())
 		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
 	std::cout << "GOOD REQUEST" << std::endl;
+
 	return(0);
 }
 
@@ -144,23 +147,22 @@ int		Request::parseRequest()
  
 	if(checkHttp())
 		return(1);
+	// std::cout << "-----------------------HEADER-------------------" << std::endl;
+	// std::cout << header << std::endl;
+	// std::cout << "-----------------------BODY-------------------" << std::endl;
+	// std::cout << body << std::endl;
+	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 	if(checkHeader())
 		return(1);
 	if(checkLocations())
 		return(1);
 	if(checkBody())
 		return(1);
-	// std::cout << "-----------------------HEADER-------------------" << std::endl;
-	// std::cout << header << std::endl;
-	// std::cout << "-----------------------BODY-------------------" << std::endl;
-	// std::cout << body << std::endl;
-	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
-	// GenerateResponse();
-	if(methode == "GET")
-	{
-		if(GET())
-			return(1);
-	}
+	// if(methode == "GET")
+	// {
+	// 	if(GET())
+	// 		return(1);
+	// }
 	// else if(methode == "POST")
 	// {
 	// 	if(POST())

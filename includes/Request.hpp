@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/20 12:04:15 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/21 12:48:47 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct R
     std::string     Connection;
     std::string     UserAgent;
     std::string     ContentType;
+    std::string     MimeType;
     std::string     ContentLength;
 }  Rq;
 
@@ -117,6 +118,8 @@ class Request
         int                                 PostDir();
         int                                 GetCorrectLocation();
         int                                 GenerateResponse();
+        int                                 GetMimeType();
+        int                                 FillFromHtmlFile();
 
 
         //extra functions

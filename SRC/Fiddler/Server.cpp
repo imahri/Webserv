@@ -121,7 +121,7 @@ int    Request::createServer(Webserv &webserv)
     
         //Print the received request
         std::cout << "--------------------START OF REQUEST-----------------------" << std::endl;
-        // std::cout << "Received request:\n" << buffer << std::endl;
+        std::cout << "Received request:\n" << buffer << std::endl;
         std::cout << "--------------------START PARSING REQUEST-----------------------" << std::endl;
 
         if(strlen(buffer))
@@ -130,13 +130,12 @@ int    Request::createServer(Webserv &webserv)
             statusCode = 0;
             this->getRequest(buffer);
             std::cout << "StatusCode: " << statusCode << std::endl;
+            GenerateResponse();
         }
         else
             continue;
-        std::cout << "--------------------END OF REQUEST-----------------------" << std::endl;
         std::cout << "--------------------START OF HEADER-----------------------" << std::endl;
         std::cout << ResponseHeaders << std::endl;
-        std::cout << "--------------------END OF HEADER-----------------------" << std::endl;
         std::cout << "--------------------START OF BODY-----------------------" << std::endl;
         std::cout << ResponseBody << std::endl;
         std::cout << "--------------------END OF BODY-----------------------" << std::endl;

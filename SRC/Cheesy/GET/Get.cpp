@@ -68,7 +68,7 @@ int		Request::GetDirectory()
 			{
 				link = fileName + entry->d_name;
 				ResponseBody += "<a class=\"icon dir\" href=\"" + link + "\">" + entry->d_name + "</a><br>";
-				std::cout << "FILES:" << entry->d_name << std::endl;
+				// std::cout << "FILES:" << entry->d_name << std::endl;
 			}
 
 			// Close the directory
@@ -100,7 +100,8 @@ int		Request::GET()
 	}
 	else
 		RequestPath = Server.getServerDataSingle(ServerIndex, "root") + URI;
-	// std::cout << ""
+
+	
 	if (stat(RequestPath.c_str(), &fileStat) == 0)
 	{
 		if (S_ISDIR(fileStat.st_mode))
@@ -116,19 +117,15 @@ int		Request::GET()
 	// else
 	// 	return(puts("henwnnwnewnewn"), statusCode = 404, 1);
 
-	std::cout << "GET PATH:" << RequestPath << " DIR: " << directory << std::endl;
-
 	if(directory == 1 && (URI[URI.size() - 1] != '/' || URI != "/"))
 		return(statusCode = 301, 1);
 	if(URI[URI.size() - 1] == '/' || URI == "/")
 	{
-		std::cout << "DIR" << std::endl;
 		if(GetDirectory())
 			return(1);
 	}
 	else
 	{
-		std::cout << "File" << std::endl;
 		File = URI;
 		if(GetFile())
 			return(1);

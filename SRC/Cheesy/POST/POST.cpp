@@ -31,13 +31,13 @@ int     Request::GetRessource()
 		return(statusCode = 301, 1);
     if(URI[URI.size() - 1] == '/' || URI == "/")
 	{
-		std::cout << "POST DIR" << std::endl;
+		// std::cout << "POST DIR" << std::endl;
 		if(GetDirectory())
 			return(1);
 	}
 	else
 	{
-		std::cout << "POST File" << std::endl;
+		// std::cout << "POST File" << std::endl;
 		File = URI;
 		if(GetFile())
 			return(1);
