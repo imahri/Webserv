@@ -158,11 +158,11 @@ int		Request::parseRequest()
 		return(1);
 	if(checkBody())
 		return(1);
-	// if(methode == "GET")
-	// {
-	// 	if(GET())
-	// 		return(1);
-	// }
+	if(methode == "GET")
+	{
+		if(GET())
+			return(1);
+	}
 	// else if(methode == "POST")
 	// {
 	// 	if(POST())

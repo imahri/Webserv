@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/20 12:15:09 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/21 16:33:29 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,7 +384,6 @@ int Webserv::checkForLocation (size_t serverIndex , const std::string& s)
 				}
 				line.clear();
 			}
-			
 		}
 	}
 	return -1;

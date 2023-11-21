@@ -6,7 +6,12 @@ int		Request::GetCorrectLocation()
 	locationIndex = 0;
 	locationIndex = Server.checkForLocation(ServerIndex, URI);
 	if(locationIndex == -1)
-		locationIndex = 0;
+	{
+		locationIndex = Server.checkForLocation(ServerIndex, "/");
+		if(locationIndex == -1)
+			locationIndex = 0;
+	}
+	
 	if(locationIndex == 0)
 	{
 		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")

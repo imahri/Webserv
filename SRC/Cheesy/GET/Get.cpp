@@ -89,7 +89,7 @@ int		Request::GET()
 {
 	struct stat fileStat;
 
-	if(locationIndex != 0)// if found in location
+	if(locationIndex != 0)
 	{
 		std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
 		LocationRoot = it[0];

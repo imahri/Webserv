@@ -151,10 +151,8 @@ int     Request::GenerateResponse()
     return(0);
 }
 
-
 //"<a class=\"icon dir\" href=\"" + it->second + "\">" + "Redirect to" + it->second + "</a><br>";
 // ResponseBody += "<meta http-equiv=\"Refresh\" content=\"0; url='" + it->second + "'\" />";
-
 
 int     Request::GetMimeType()
 {
