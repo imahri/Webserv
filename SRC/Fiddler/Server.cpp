@@ -62,7 +62,7 @@ int    Request::createServer(Webserv &webserv)
         std::cout << "--------------------START OF HEADER-----------------------" << std::endl;
         std::cout << ResponseHeaders << std::endl;
         std::cout << "--------------------START OF BODY-----------------------" << std::endl;
-        std::cout << ResponseBody << std::endl;
+        // std::cout << ResponseBody << std::endl;
         std::cout << "--------------------END OF BODY-----------------------" << std::endl;
 
 

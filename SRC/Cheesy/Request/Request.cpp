@@ -56,7 +56,7 @@ int		Request::checkHttp()
 
 	if(methode != "POST" && methode != "GET" && methode != "DELETE")
 		return(statusCode = 405, 1);
-	else if(URI.size() > 2048)
+	else if(URI.size() == 0 ||  URI.size() > 2048)
 		return(statusCode = 414, 1);
 
 	for (size_t i = 0; i < URI.size(); i++)

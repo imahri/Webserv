@@ -146,6 +146,8 @@ int     Request::GenerateResponse()
 
         if(Req.ContentLength.size())
             ResponseHeaders += "Content-Lenght: " + Req.ContentLength + "\r\n";
+        else if(ResponseBody.size())
+            ResponseHeaders += "Content-Lenght: " + intToString(ResponseBody.size()) + "\r\n";
     }
     ResponseHeaders += "\r\n";
     return(0);

@@ -1,27 +1,30 @@
 #include "../../../includes/Request.hpp"
 
+
+int		Request::FillResponseBodyFromFile()
+{
+	
+}
+
 int		Request::GetFile()
 {
 	if(locationIndex == 0)
 		return(1);
 	else
 	{
-		std::vector < std::pair <std::string, std::string > > srv = Server.getLocationMultiple(ServerIndex, locationIndex, "cgi");
-		if(srv.size())
+		if(Loc.CheckCGI)
 		{
 			//Run CGI on requested file
-			// std::vector < std::pair <std::string, std::string > >::iterator srvIT = srv.begin();
 		}
 		else
 		{
-			ResponseHeaders = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
 			std::fstream configFile;
-			std::string fileName = RequestPath + File, str;
+			std::string fileName = RequestPath, str;
 
 			ResponseBody.clear();
 			configFile.open(fileName);
 			if (!configFile)
-				return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
+				return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
 			while (std::getline(configFile, str))
 				ResponseBody += str;
 		}
@@ -90,7 +93,7 @@ int		Request::GET()
 	struct stat fileStat;
 
 	if(URI != "/")
-		RequestPath = Loc.root + URI;
+		RequestPath = Loc.root + URI.substr(1, URI.size());
 	else
 		RequestPath = Loc.root;
 	
@@ -104,20 +107,21 @@ int		Request::GET()
 	else
 		return(statusCode = 404, 1);
 
-	std::cout << "DIR IS: " << IsDirectory << std::endl;
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
-	// if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
-	// 	return(statusCode = 301, 1);
-	// if(URI[URI.size() - 1] == '/' || URI == "/")
-	// {
-	// 	if(GetDirectory())
-	// 		return(1);
-	// }
-	// else
-	// {
-	// 	File = URI;
-	// 	if(GetFile())
-	// 		return(1);
-	// }
+
+	if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
+		return(statusCode = 301, 1);
+
+	if(IsDirectory)
+	{
+		// if(GetDirectory())
+		// 	return(1);
+	}
+	else
+	{
+		File = URI;
+		if(GetFile())
+			return(1);
+	}
 	return(0);
 }
