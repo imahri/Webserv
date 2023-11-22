@@ -13,9 +13,9 @@ int     Request::CheckRessource()
     if (stat(RequestPath.c_str(), &fileStat) == 0)
 	{
 		if (S_ISDIR(fileStat.st_mode))
-			directory = 1;
+			IsDirectory = true;
 		else if (S_ISREG(fileStat.st_mode))
-			directory = 0;
+			IsDirectory = false;
 		else
 			return(statusCode = 404, 1);
 	}
@@ -27,7 +27,7 @@ int     Request::CheckRessource()
 
 int     Request::GetRessource()
 {
-    if(directory == 1 && (URI[URI.size() - 1] != '/' || URI != "/"))
+    if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
 		return(statusCode = 301, 1);
     if(URI[URI.size() - 1] == '/' || URI == "/")
 	{
@@ -91,11 +91,11 @@ int		Request::POST()
         else
         {
             std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
-            LocationRoot = it[0];
+            Loc.root = it[0];
             if(URI != "/")
-                RequestPath = LocationRoot + URI;
+                RequestPath = Loc.root + URI;
             else
-                RequestPath = LocationRoot;
+                RequestPath = Loc.root;
             if(CheckRessource())
                     return(1);
         }

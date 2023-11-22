@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/21 12:48:47 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/22 15:41:10 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,7 @@ class Request
         int                                 statusCode;
 		Webserv								Server;
         int                                 locationIndex;
-        std::string                         LocationRoot;
-        int                                 directory;
+        bool                                IsDirectory;
         std::string                         File;
         std::string                         UploadDir;
         size_t                              ServerIndex;

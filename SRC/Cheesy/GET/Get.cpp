@@ -89,46 +89,35 @@ int		Request::GET()
 {
 	struct stat fileStat;
 
-	if(locationIndex != 0)
-	{
-		std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
-		LocationRoot = it[0];
-		if(URI != "/")
-			RequestPath = LocationRoot + URI;
-		else
-			RequestPath = LocationRoot;	
-	}
+	if(URI != "/")
+		RequestPath = Loc.root + URI;
 	else
-		RequestPath = Server.getServerDataSingle(ServerIndex, "root") + URI;
-
+		RequestPath = Loc.root;
 	
 	if (stat(RequestPath.c_str(), &fileStat) == 0)
 	{
 		if (S_ISDIR(fileStat.st_mode))
-			directory = 1;
+			IsDirectory = true;
 		else if (S_ISREG(fileStat.st_mode))
-			directory = 0;
-		else
-		{
-			puts("here1");
-			return(statusCode = 404, 1);
-		}
-	}
-	// else
-	// 	return(puts("henwnnwnewnewn"), statusCode = 404, 1);
-
-	if(directory == 1 && (URI[URI.size() - 1] != '/' || URI != "/"))
-		return(statusCode = 301, 1);
-	if(URI[URI.size() - 1] == '/' || URI == "/")
-	{
-		if(GetDirectory())
-			return(1);
+			IsDirectory = false;
 	}
 	else
-	{
-		File = URI;
-		if(GetFile())
-			return(1);
-	}
+		return(statusCode = 404, 1);
+
+	std::cout << "DIR IS: " << IsDirectory << std::endl;
+	std::cout << "RequestPath IS: " << RequestPath << std::endl;
+	// if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
+	// 	return(statusCode = 301, 1);
+	// if(URI[URI.size() - 1] == '/' || URI == "/")
+	// {
+	// 	if(GetDirectory())
+	// 		return(1);
+	// }
+	// else
+	// {
+	// 	File = URI;
+	// 	if(GetFile())
+	// 		return(1);
+	// }
 	return(0);
 }

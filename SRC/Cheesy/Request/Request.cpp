@@ -139,7 +139,7 @@ int		Request::getRequest(std::string buffer)
 int		Request::parseRequest()
 {
 	locationIndex = 0;
-	directory = -1;
+	IsDirectory = false;
 	ResponseHeaders.clear();
 	ResponseBody.clear();
 	memset(&Loc, 0, sizeof(LOCATION));
