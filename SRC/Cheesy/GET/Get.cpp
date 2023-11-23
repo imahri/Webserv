@@ -15,22 +15,13 @@ int		Request::FillResponseBodyFromFile()
 		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, configFile.close(),  1);
 
 	//-----------------------------------------------------------------------------
-	ResponseBody.clear();
 	while (std::getline(configFile, str))
 		store << str;
 
 	store.close();
 	configFile.close();
 
-	std::ifstream rd("/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send");
-	if (!rd.is_open())
-		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
-
-	//-----------------------------------------------------------------------------
-	str.clear();
-	while (std::getline(rd, str))
-		ResponseBody += str;
-	
+	SendFile = true;
 	return(0);
 }
 
@@ -45,10 +36,8 @@ int		Request::GetFile()
 			//Run CGI on requested file
 		}
 		else
-		{
 			if(FillResponseBodyFromFile())
 				return(1);
-		}
 	}
 	return(0);
 }

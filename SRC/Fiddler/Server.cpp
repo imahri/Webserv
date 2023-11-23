@@ -53,8 +53,29 @@ int    Request::createServer(Webserv &webserv)
         {
             ServerIndex = 1;
             statusCode = 200;
+            SendFile = false;
             this->getRequest(buffer);
             std::cout << "StatusCode: " << statusCode << std::endl;
+            if(SendFile)
+            {
+	            std::string str, fileName = "/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send";
+	            ResponseBody.clear();
+
+                std::ifstream rd(fileName);
+                if (!rd.is_open())
+                {
+                    std::cerr << "Error Unable to open the file" << std::endl;
+                    statusCode = 404;
+                }
+                else
+                {
+                    str.clear();
+                    while (std::getline(rd, str))
+                        ResponseBody += str;
+                    rd.close();
+                    // remove(fileName.c_str());
+                }
+            }
             GenerateResponse();
         }
         else
