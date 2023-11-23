@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/22 15:41:10 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/23 10:05:26 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,7 @@ class Request
         int                                 GenerateResponse();
         int                                 GetMimeType();
         int                                 FillFromHtmlFile();
+        int                                 FillResponseBodyFromFile();
 
 
         //extra functions

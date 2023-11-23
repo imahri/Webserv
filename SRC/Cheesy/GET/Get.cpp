@@ -1,9 +1,37 @@
 #include "../../../includes/Request.hpp"
 
-
 int		Request::FillResponseBodyFromFile()
 {
-	
+	std::fstream configFile;
+	std::string fileName = RequestPath, str;
+
+	configFile.open(fileName);
+	if (!configFile)
+		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
+
+	//-----------------------------------------------------------------------------
+	std::ofstream store("/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send");
+	if (!store.is_open())
+		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, configFile.close(),  1);
+
+	//-----------------------------------------------------------------------------
+	ResponseBody.clear();
+	while (std::getline(configFile, str))
+		store << str;
+		
+	store.close();
+	configFile.close();
+
+	std::ifstream rd("/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send");
+	if (!rd.is_open())
+		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
+
+	//-----------------------------------------------------------------------------
+	str.clear();
+	while (std::getline(rd, str))
+		ResponseBody += str;
+
+	return(0);
 }
 
 int		Request::GetFile()
@@ -18,15 +46,8 @@ int		Request::GetFile()
 		}
 		else
 		{
-			std::fstream configFile;
-			std::string fileName = RequestPath, str;
-
-			ResponseBody.clear();
-			configFile.open(fileName);
-			if (!configFile)
-				return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
-			while (std::getline(configFile, str))
-				ResponseBody += str;
+			if(FillResponseBodyFromFile())
+				return(1);
 		}
 	}
 	return(0);
@@ -105,7 +126,7 @@ int		Request::GET()
 			IsDirectory = false;
 	}
 	else
-		return(statusCode = 404, 1);
+		return(puts("HNANANANANA"), statusCode = 404, 1);
 
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
