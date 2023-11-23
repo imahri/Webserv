@@ -1,30 +1,5 @@
 #include "../../../includes/Request.hpp"
 
-int		Request::FillResponseBodyFromFile()
-{
-	std::fstream configFile;
-	std::string fileName = RequestPath, str;
-
-	configFile.open(fileName);
-	if (!configFile)
-		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
-
-	//-----------------------------------------------------------------------------
-	std::ofstream store("/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send");
-	if (!store.is_open())
-		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, configFile.close(),  1);
-
-	//-----------------------------------------------------------------------------
-	while (std::getline(configFile, str))
-		store << str;
-
-	store.close();
-	configFile.close();
-
-	SendFile = true;
-	return(0);
-}
-
 int		Request::GetFile()
 {
 	if(locationIndex == 0)
@@ -36,8 +11,7 @@ int		Request::GetFile()
 			//Run CGI on requested file
 		}
 		else
-			if(FillResponseBodyFromFile())
-				return(1);
+			SendFile = true;
 	}
 	return(0);
 }

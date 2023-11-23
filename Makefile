@@ -6,7 +6,7 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/20 11:05:50 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/23 14:51:24 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,11 +29,12 @@ SRC =	SRC/*.cpp \
 		SRC/Cheesy/POST/*.cpp \
 		SRC/Cheesy/REQUEST/*.cpp \
 		SRC/Cheesy/RESPONSE/*.cpp \
+		SRC/Cheesy/SENDFILE/*.cpp \
 
 all: $(NAME)
 
 $(NAME): $(SRC) $(HEADER)
-	$(CC) $(CFLAGS) $(SRC) -o $(NAME)
+	$(CC) $(CFLAGS) $(SRC) -o $(NAME) 
 
 clean:
 	$(FRM) $(NAME)
@@ -41,3 +42,8 @@ clean:
 fclean: clean
 
 re: fclean all
+
+
+fuck: 
+	$(FRM) Webserv.dSYM
+	

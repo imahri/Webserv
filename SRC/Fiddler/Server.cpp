@@ -49,86 +49,43 @@ int    Request::createServer(Webserv &webserv)
         std::cout << "Received request:\n" << buffer << std::endl;
         std::cout << "--------------------START PARSING REQUEST-----------------------" << std::endl;
 
-        ssize_t lenght = 0;
         if(strlen(buffer))
         {
-            ServerIndex = 1;
-            statusCode = 200;
-            SendFile = false;
+            offset = 0;
+            ClientIsDone = false;
+            PathToSaveFile = "/Users/eamghar/Desktop/send";
+            ResponseHeaders.clear();
+            ResponseBody.clear();
             this->getRequest(buffer);
             std::cout << "StatusCode: " << statusCode << std::endl;
-            if(SendFile)
-            {
-	            std::string str, fileName = "/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send";
-	            ResponseBody.clear();
-
-                std::ifstream rd(fileName);
-                if (!rd.is_open())
-                {
-                    std::cerr << "Error Unable to open the file" << std::endl;
-                    statusCode = 404;
-                }
-                else
-                {
-                    lenght = 0;
-                    str.clear();
-                    while (std::getline(rd, str))
-                    {
-                        lenght += str.size();
-                        // ResponseBody += str;
-                    }
-
-                    rd.close();
-                    // remove(fileName.c_str());
-                }
-            }
             GenerateResponse();
         }
         else
             continue;
-        // std::cout << "--------------------START OF HEADER-----------------------" << std::endl;
-        // std::cout << ResponseHeaders << std::endl;
-        // std::cout << "--------------------START OF BODY-----------------------" << std::endl;
-        // // std::cout << ResponseBody << std::endl;
-        // std::cout << "--------------------END OF BODY-----------------------" << std::endl;
+        std::cout << "--------------------START OF HEADER-----------------------" << std::endl;
+        std::cout << ResponseHeaders << std::endl;
+        std::cout << "--------------------START OF BODY-----------------------" << std::endl;
+        // std::cout << ResponseBody << std::endl;
+        std::cout << "--------------------END OF BODY-----------------------" << std::endl;
 
 
         // Send a response back to the client
 
         ssize_t bytesSent = send(clientSocket, ResponseHeaders.c_str(), strlen(ResponseHeaders.c_str()), 0);
         if (bytesSent == -1)
-            return(std::cerr << "Error sending response." << std::endl, 1);
+            return(std::cerr << "Error sending Header Response." << std::endl, 1);
 
-
-        std::string str, fileName = "/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send";
-
-        std::ifstream rd(fileName);
-        if (!rd.is_open())
+        if(SendFile)
         {
-            std::cerr << "Error Unable to open the file" << std::endl;
-            statusCode = 404;
+            while (ClientIsDone == false)
+                FillResponseBodyFromFile(clientSocket);
         }
         else
         {
-            bytesSent = 0;
-            while (lenght >= 0)
-            {
-                std::string str;
-                ssize_t i = 0;
-                ResponseBody.clear();
-                for (; i < MEGA && std::getline(rd, str); i++)
-                {
-                    ResponseBody += str;
-                    i += str.size();
-                    // std::cout << "I SIZE: " << i << std::endl;
-                }
-                bytesSent += send(clientSocket, ResponseBody.c_str(), strlen(ResponseBody.c_str()), 0);
-                if (bytesSent == -1)
-                    return(std::cerr << "Error sending response." << std::endl, 1);
-                lenght -= bytesSent;
-            }
+            bytesSent = send(clientSocket, ResponseBody.c_str(), strlen(ResponseBody.c_str()), 0);
+            if (bytesSent == -1)
+                return(std::cerr << "Error sending Body Response." << std::endl, 1);
         }
-
         // Close the client socket
         close(clientSocket);
     }

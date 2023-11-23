@@ -127,10 +127,13 @@ int		Request::checkHeader()
 
 int		Request::getRequest(std::string buffer)
 {
+	ServerIndex = 1;
+	statusCode = 200;
+	SendFile = false;
 	if(fillHeaderAndBody(buffer))
-		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
+		return(std::cout << "CAUGHT REQUEST1" << std::endl,1);
 	if(parseRequest())
-		return(std::cout << "CAUGHT REQUEST" << std::endl,1);
+		return(std::cout << "CAUGHT REQUEST2" << std::endl,1);
 	std::cout << "GOOD REQUEST" << std::endl;
 
 	return(0);
