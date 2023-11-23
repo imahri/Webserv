@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/23 11:07:02 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/23 11:56:21 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 
 #include "webserv.hpp"
 
-#define MEGA 1000000
+#define MEGA 1000
 typedef struct L
 {
         bool                                                    autoindex;
