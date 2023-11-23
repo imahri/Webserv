@@ -18,7 +18,7 @@ int		Request::FillResponseBodyFromFile()
 	ResponseBody.clear();
 	while (std::getline(configFile, str))
 		store << str;
-		
+
 	store.close();
 	configFile.close();
 
@@ -30,7 +30,7 @@ int		Request::FillResponseBodyFromFile()
 	str.clear();
 	while (std::getline(rd, str))
 		ResponseBody += str;
-
+	
 	return(0);
 }
 
