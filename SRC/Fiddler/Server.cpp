@@ -52,6 +52,7 @@ int    Request::createServer(Webserv &webserv)
         if(strlen(buffer))
         {
             offset = 0;
+            RequestIsDone = false;
             ClientIsDone = false;
             PathToSaveFile = "/Users/eamghar/Desktop/send";
             ResponseHeaders.clear();
@@ -77,11 +78,21 @@ int    Request::createServer(Webserv &webserv)
 
         if(SendFile)
         {
+            offset = 0;
+            std::ifstream file(RequestPath, std::ios::binary);
+            if (!file)
+                return (std::cerr << "Failed to open the file." << std::endl, 1);
+            file.seekg(0, std::ios::end);
+            FileSize = file.tellg();
+            file.close();
+            std::cout << "FILESIZE: " << FileSize << std::endl;
             while (ClientIsDone == false)
-                FillResponseBodyFromFile(clientSocket);
+                if(FillResponseBodyFromFile(clientSocket))
+                    break;
         }
         else
         {
+            std::cout << "-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>.-----------------------------" << std::endl;
             bytesSent = send(clientSocket, ResponseBody.c_str(), strlen(ResponseBody.c_str()), 0);
             if (bytesSent == -1)
                 return(std::cerr << "Error sending Body Response." << std::endl, 1);

@@ -6,7 +6,7 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/23 17:07:46 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/24 14:34:17 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,12 @@ class Request
         LOCATION                            Loc;
         Rq                                  Req;
         bool                                SendFile;
-        ssize_t                             FileSize;
+        std::streampos                      FileSize;
         std::string                         PathToSaveFile;
         int                                 offset;
         bool                                ClientIsDone;
+        std::string                         ds;
+        bool                                RequestIsDone;
         
     public:
         Request();
@@ -126,6 +128,7 @@ class Request
         int                                 FillFromHtmlFile();
         int                                 FillResponseBodyFromFile(int clientSocket);
         int                                 SendFileFromTmp(int clientSocket);
+        int                                 WaitForFullRequest(char *buff);
 
 
 

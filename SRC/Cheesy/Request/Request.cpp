@@ -176,4 +176,20 @@ int		Request::parseRequest()
 
 	return(0);
 }
-  
+
+
+int		Request::WaitForFullRequest(char *buff)
+{
+	if(RequestIsDone == false)
+	{
+		ds += buff;
+		size_t	 first = ds.find_first_of("\r\n\r\n");
+		if(first != ds.npos)
+		{
+			size_t	 last = ds.find_last_of("\r\n\r\n");
+			if(last != ds.npos)
+				RequestIsDone = true;
+		}
+	}
+	return(0);
+}
