@@ -33,15 +33,12 @@
 #include "Request.hpp"
 #include "Server.hpp"
 
-// class Request;
-// class Parsing;
-// class IoMultiplexing;
 
-class Webserv
-{
-    public:
-        // IoMultiplexing  io;
-        // Parsing         ps;
-        // Request         rq;
+// class Webserv
+// {
+//     public:
+//         IoMultiplexing  io;
+//         Parsing         ps;
+//         Request         rq;
         
-};
+// };

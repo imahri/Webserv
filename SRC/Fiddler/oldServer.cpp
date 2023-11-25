@@ -63,10 +63,18 @@ int    Request::createServer(Parsing &parsing)
         }
         else
             continue;
-        std::cout << "--------------------START OF HEADER-----------------------" << std::endl;
-        std::cout << ResponseHeaders << std::endl;
-        std::cout << "--------------------START OF BODY-----------------------" << std::endl;
-        // std::cout << ResponseBody << std::endl;
+        // std::cout << "--------------------START OF HEADER-----------------------" << std::endl;
+        // std::cout << ResponseHeaders << std::endl;
+        // std::cout << "--------------------START OF BODY-----------------------" << std::endl;
+        // // std::cout << ResponseBody << std::endl;
+
+        
+        std::map<std::string, std::string>::iterator it = HeaderData.begin();
+
+        for (; it != HeaderData.end(); it++)
+            std::cout << it->first << "|----------------->|" << it->second << std::endl;
+        
+
         std::cout << "--------------------END OF BODY-----------------------" << std::endl;
 
 
@@ -85,14 +93,14 @@ int    Request::createServer(Parsing &parsing)
             file.seekg(0, std::ios::end);
             FileSize = file.tellg();
             file.close();
-            std::cout << "FILESIZE: " << FileSize << std::endl;
+            // std::cout << "FILESIZE: " << FileSize << std::endl;
             while (ClientIsDone == false)
                 if(FillResponseBodyFromFile(clientSocket))
                     break;
         }
         else
         {
-            std::cout << "-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>.-----------------------------" << std::endl;
+            // std::cout << "-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>.-----------------------------" << std::endl;
             bytesSent = send(clientSocket, ResponseBody.c_str(), strlen(ResponseBody.c_str()), 0);
             if (bytesSent == -1)
                 return(std::cerr << "Error sending Body Response." << std::endl, 1);

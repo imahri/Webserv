@@ -41,8 +41,9 @@ class IoMultiplexing
         std::vector<Client *>::iterator         checkClient(int fd);
         std::vector<Server>::iterator           checkServer(int fd);
         bool    isDoneRequest(char *str);
-        int     StartTheMatrix();
+        int     StartTheMatrix(Parsing &ps);
         IoMultiplexing(){};
         ~IoMultiplexing(){};
 };
+
 

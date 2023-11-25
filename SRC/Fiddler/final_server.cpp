@@ -11,6 +11,7 @@ Server::Server(int port, std::string    ip)
 void Server::start()
 {
     this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
+    std::cout << "socket created " << serversocket << std::endl;
     bzero(&this->serverAddr, sizeof(this->serverAddr));
     this->serverAddr.sin_family = AF_INET;
     this->serverAddr.sin_port = htons(this->port);
@@ -22,8 +23,10 @@ void Server::start()
     n = bind(this->serversocket, (struct sockaddr*)&this->serverAddr, sizeof(this->serverAddr));
     if (n < 0)
         perror("wa bzaaaaf");
+    std::cout << "bind to " << port << std::endl;
     fcntl(this->serversocket, F_SETFL, O_NONBLOCK);
     listen(this->serversocket, 1000);
+    std::cout << "listen to ... " << serversocket << std::endl;
     nbr_srv++;
 }
 
@@ -118,17 +121,21 @@ std::vector<Server>::iterator    IoMultiplexing::checkServer(int fd)
     return fin;
 }
 
-int IoMultiplexing::StartTheMatrix()
+int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
     IoMultiplexing re;
-    Server qw(3005,"0.0.0.0");
-    Server qwe(3006,"0.0.0.0");
+
+    for (size_t i = 1; i <= ps.getServersNumber(); i++)
+    {
+        std::string str = ps.getServerDataSingle(i, "listen");
+        std::vector<std::string>  it = ft_split(str, ':');
+        Server qw(std::atoi(it[1].c_str()), it[0]);
+        re.sudo_apt.push_back(qw);
+    }
+    std::cout << "--------------------------------" << std::endl;
+
+
     char buffer[3001];
-    std::vector<Server> tr;
-    tr.push_back(qw);
-    tr.push_back(qwe);
-    re.sudo_apt.push_back(qw);
-    re.sudo_apt.push_back(qwe);
     size_t  ll = re.sudo_apt.size();
 
     for (size_t i = 0; i < ll; i++)

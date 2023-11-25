@@ -32,6 +32,8 @@ typedef struct R
     std::string     ContentLength;
 }  Response;
 
+
+
 class Request
 {
     private:
