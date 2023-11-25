@@ -5,7 +5,7 @@ int main(int ac, char **av)
     try
     {
         // Webserv     wb;
-        //BUDA
+        // BUDA
         Parsing wbs;
        	if (!wbs.parsing(ac, av) || !wbs.fillServerList() || !wbs.finalConfigFileParsing())
 			return (std::cout << "ERROR IN CONFIG FILE." << std::endl, 1);
@@ -16,6 +16,9 @@ int main(int ac, char **av)
 
         if(rq.createServer(wbs))
             return(1);
+        
+        IoMultiplexing io;
+        io.StartTheMatrix();
     }
     catch(const std::exception& e)
     {

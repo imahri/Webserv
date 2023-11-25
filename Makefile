@@ -6,7 +6,7 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/24 14:23:19 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/25 11:43:56 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,17 +20,23 @@ NAME = Webserv
 
 HEADER = includes/*.hpp\
 
-SRC =	SRC/*.cpp \
-		SRC/Fiddler/*.cpp \
-		SRC/Buda/*.cpp \
-		SRC/Cheesy/*.cpp \
-		SRC/Cheesy/DELETE/*.cpp \
-		SRC/Cheesy/GET/*.cpp \
-		SRC/Cheesy/POST/*.cpp \
-		SRC/Cheesy/REQUEST/*.cpp \
-		SRC/Cheesy/RESPONSE/*.cpp \
-		SRC/Cheesy/SENDFILE/*.cpp \
+SRC = 	SRC/main.cpp\
+		SRC/Fiddler/final_server.cpp \
+		SRC/Fiddler/oldServer.cpp \
+		SRC/Buda/Buda.cpp \
+		SRC/Buda/finalParsing.cpp \
+		SRC/Buda/string_utils.cpp \
+		SRC/Buda/webserv.cpp \
+		SRC/Cheesy/extraFunctions.cpp \
+		SRC/Cheesy/DELETE/DELETE.cpp \
+		SRC/Cheesy/GET/Get.cpp \
+		SRC/Cheesy/POST/POST.cpp \
+		SRC/Cheesy/Request/CheckLocation.cpp \
+		SRC/Cheesy/Request/Request.cpp \
+		SRC/Cheesy/Response/Response.cpp \
+		SRC/Cheesy/SENDFILE/sendFile.cpp \
 
+		
 all: $(NAME)
 
 $(NAME): $(SRC) $(HEADER)
