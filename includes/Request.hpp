@@ -36,7 +36,7 @@ typedef struct R
 
 class Request
 {
-    private:
+    public:
         std::map<std::string, std::string>  HeaderData;
         std::string                         header;
         std::string                         body;
@@ -66,7 +66,6 @@ class Request
         std::string                         ds;
         bool                                RequestIsDone;
         
-    public:
         Request();
         Request(const Request &obj);
         Request &operator=(const Request &other);
@@ -95,9 +94,10 @@ class Request
         int                                 GenerateResponse();
         int                                 GetMimeType();
         int                                 FillFromHtmlFile();
-        int                                 FillResponseBodyFromFile(int clientSocket);
-        int                                 SendFileFromTmp(int clientSocket);
+        int                                 FillResponseBodyFromFile();
         int                                 WaitForFullRequest(char *buff);
+        int                                 InitRequest(std::string str);
+        int                                 FillResponseBody();
 
 
 

@@ -11,7 +11,7 @@ Server::Server(int port, std::string    ip)
 void Server::start()
 {
     this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
-    std::cout << "socket created " << serversocket << std::endl;
+    // std::cout << "socket created " << serversocket << std::endl;
     bzero(&this->serverAddr, sizeof(this->serverAddr));
     this->serverAddr.sin_family = AF_INET;
     this->serverAddr.sin_port = htons(this->port);
@@ -23,10 +23,10 @@ void Server::start()
     n = bind(this->serversocket, (struct sockaddr*)&this->serverAddr, sizeof(this->serverAddr));
     if (n < 0)
         perror("wa bzaaaaf");
-    std::cout << "bind to " << port << std::endl;
+    // std::cout << "bind to " << port << std::endl;
     fcntl(this->serversocket, F_SETFL, O_NONBLOCK);
     listen(this->serversocket, 1000);
-    std::cout << "listen to ... " << serversocket << std::endl;
+    // std::cout << "listen to ... " << serversocket << std::endl;
     nbr_srv++;
 }
 
@@ -124,16 +124,17 @@ std::vector<Server>::iterator    IoMultiplexing::checkServer(int fd)
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
     IoMultiplexing re;
+    Request     rq;
+    rq.Server = ps;
 
     for (size_t i = 1; i <= ps.getServersNumber(); i++)
     {
         std::string str = ps.getServerDataSingle(i, "listen");
         std::vector<std::string>  it = ft_split(str, ':');
         Server qw(std::atoi(it[1].c_str()), it[0]);
+        std::cout << "Port|" << qw.port << "|ip|" << qw.ip << std::endl;
         re.sudo_apt.push_back(qw);
     }
-    std::cout << "--------------------------------" << std::endl;
-
 
     char buffer[3001];
     size_t  ll = re.sudo_apt.size();
@@ -144,57 +145,81 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         struct pollfd tmp;
         tmp.fd = re.sudo_apt[i].serversocket;
         tmp.events = POLLIN;
-        IoMultiplexing::net.push_back(tmp);
+        net.push_back(tmp);
     }
+    std::string sttrr;
     signal(SIGPIPE, SIG_IGN);
     while(true)
     {
-        int ret = poll(IoMultiplexing::net.data(), IoMultiplexing::net.size(), 0);
-        for (size_t j = 0; j < IoMultiplexing::net.size() && ret; j++)
+        int ret = poll(net.data(), net.size(), 0);
+        for (size_t j = 0; j < net.size() && ret; j++)
         {
-                if (re.isServer(IoMultiplexing::net[j].fd) && IoMultiplexing::net[j].revents & POLLIN)
+                if (re.isServer(net[j].fd) && net[j].revents & POLLIN)
                 {
-                    re.acceptNewClient(IoMultiplexing::net[j].fd);
+                    re.acceptNewClient(net[j].fd);
                     continue;
                 }
                 else if (j >= (size_t)Server::nbr_srv){
                 
-                    if (IoMultiplexing::net[j].revents & POLLIN)
+                    if (net[j].revents & POLLIN)
                     {
                         while(1)
                         {
+                            usleep(1000);
                             bzero(buffer, 3000);
-                            int tt = recv(IoMultiplexing::net[j].fd, buffer,3000, 0);
-                            std::cout << "===>> " << tt << std::endl;
+                            int tt = recv(net[j].fd, buffer,2000, 0);
+                            if (tt <= 0)
+                            {
+                                std::cout << "------->>>>>> "<< sttrr << std::endl;
+                                if(rq.InitRequest(sttrr))
+                                    return(1);
+                                sttrr.clear();
+                                net[j].events = POLLOUT;
+                                net[j].revents = 0;
+                                break;
+                            }
+                            std::string bu = buffer;
+                            sttrr += bu;
+                            bu = "";
+                            // std::cout << "tt\t" << tt << std::endl;
+                            // std::cout << "*****\t" << net[j].fd << std::endl;
+                            // tr++;
+                            // std::cout << "===>> " << tt << std::endl;
                             if (tt == 0)
                             {
-                                close(IoMultiplexing::net[j].fd);
+                                close(net[j].fd);
                             }
-                            else if (tt < 0)
-                                break;
-                            std::cout << buffer << std::endl;
                         }
-                        if (re.isDoneRequest(buffer))
-                        {
-                            // int sta = re.checkClient(IoMultiplexing::net[j].fd);
-                            std::cout << "XXXX" << std::endl;
-                            IoMultiplexing::net[j].events = POLLOUT;
-                            IoMultiplexing::net[j].revents = 0;
-                        }
+                        // std::cout<< "tr\t" << tr << std::endl;
+                        // if (re.isDoneRequest(buffer))
+                        // {
+                            // int sta = re.checkClient(net[j].fd);
+                            // auto serverIterator = re.checkServer(net[j].fd);
+                            // auto serverIteratos = re.checkClient(net[j].fd);
+                            // std::cout << "fd server " << (*serverIterator).serversocket << std::endl;
+                            // std::cout << "fd client " << (*serverIteratos)->fd << std::endl;
+
+                            // std::cout << "XXXX" << std::endl;
+                        // }
                         continue;
                     }
-                    else if (IoMultiplexing::net[j].revents & POLLOUT){
-                        // std::cout << IoMultiplexing::net[j].fd << std::endl;
-                        //response
-                        // if data end
-                        const char *response = "HTTP/1.1 200 OK\r\nContent-Length: 10\r\nContent-Type: text/plain\r\n\r\n"; // here start the response send 500000
-                        const char *message = "hacker men";
-                        send(IoMultiplexing::net[j].fd, response, strlen(response), 0);
-                        send(IoMultiplexing::net[j].fd, message, strlen(message), 0);
-                        IoMultiplexing::net[j].events = POLLIN;
+                    else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
+                    {
+                        const char *response = rq.ResponseHeaders.c_str();
+                        send(net[j].fd, response, strlen(response), 0);
+                        
+                        const char *message = rq.ResponseBody.c_str();
+                        long long  bytesSent = send(net[j].fd, message, strlen(message), 0);
+                        if(bytesSent == -1)
+                            //error
+                        std::cout << "HEADER" << std::endl;
+                        std::cout << rq.ResponseHeaders << std::endl;
 
+                        std::cout << "BODY" << std::endl;
+                        std::cout << rq.ResponseBody << std::endl;
+                        net[j].events = POLLIN;
                     }
-                //     // if (IoMultiplexing::net[j].revents & POLLERR | POLLHUP)
+                //     // if (net[j].revents & POLLERR | POLLHUP)
                 //     // {
                 //     //     //close clien and erase it 
                 //     // }
@@ -203,5 +228,4 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             // ret--;
         }
     }
-    return(0);
 }

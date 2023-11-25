@@ -6,7 +6,7 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/25 11:43:56 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/25 16:53:48 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,7 @@ SRC = 	SRC/main.cpp\
 		SRC/Cheesy/POST/POST.cpp \
 		SRC/Cheesy/Request/CheckLocation.cpp \
 		SRC/Cheesy/Request/Request.cpp \
+		SRC/Cheesy/Request/InitRequest.cpp \
 		SRC/Cheesy/Response/Response.cpp \
 		SRC/Cheesy/SENDFILE/sendFile.cpp \
 

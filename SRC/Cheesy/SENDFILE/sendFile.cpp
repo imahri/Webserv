@@ -11,31 +11,30 @@ size_t ft_strlen(char *str)
     return(i);
 }
 
-int Request::FillResponseBodyFromFile(int clientSocket)
-{
+// int Request::FillResponseBody()
+// {
+//     std::ifstream file(RequestPath, std::ios::binary);
+//     if (!file)
+//         return (std::cerr << "Failed to open the file." << std::endl, 1);
 
-    std::ifstream file(RequestPath, std::ios::binary);
-    if (!file)
-        return (std::cerr << "Failed to open the file." << std::endl, 1);
+//     int bufferSize = 50000;
+//     char* buffer = new char[bufferSize];
+//     ssize_t bytesSent;
 
-    int bufferSize = 50000;
-    char* buffer = new char[bufferSize];
-    ssize_t bytesSent;
+//     file.seekg(offset);
+//     file.read(buffer, bufferSize);
+//     int a = file.tellg();
 
-    file.seekg(offset);
-    file.read(buffer, bufferSize);
-    int a = file.tellg();
+//     bytesSent = send(clientSocket, buffer, a, 0);
+//     if (bytesSent == -1)
+//         return(std::cerr << "Error sending Body Response." << std::endl, 1);
 
-    bytesSent = send(clientSocket, buffer, a, 0);
-    if (bytesSent == -1)
-        return(std::cerr << "Error sending Body Response." << std::endl, 1);
+//     offset += bytesSent;
 
-    offset += bytesSent;
+//     if (file.eof())
+//         ClientIsDone = true;
 
-    if (file.eof())
-        ClientIsDone = true;
-
-    file.close();
-    delete[] buffer;
-    return 0;
-}
+//     file.close();
+//     delete[] buffer;
+//     return 0;
+// }

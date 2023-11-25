@@ -4,7 +4,6 @@ int main(int ac, char **av)
 {
     try
     {
-        // BUDA
         Parsing wbs;
        	if (!wbs.parsing(ac, av) || !wbs.fillServerList() || !wbs.finalConfigFileParsing())
 			return (std::cout << "ERROR IN CONFIG FILE." << std::endl, 1);
@@ -12,18 +11,8 @@ int main(int ac, char **av)
 
 
         IoMultiplexing io;
-        //FIDDLER
         if(io.StartTheMatrix(wbs))
             return(1);
-
-        //CHEESY
-        // Request     rq;
-
-        // if(rq.createServer(wbs))
-        //     return(1);
-        
-        // IoMultiplexing io;
-        // io.StartTheMatrix();
     }
     catch(const std::exception& e)
     {
