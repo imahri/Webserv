@@ -1,8 +1,8 @@
 #include "../../includes/Request.hpp"
 
-int    Request::createServer(Webserv &webserv)
+int    Request::createServer(Parsing &parsing)
 {
-	Server = webserv;
+	Server = parsing;
     
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1)

@@ -6,11 +6,11 @@
 /*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/21 16:33:29 by eamghar          ###   ########.fr       */
+/*   Updated: 2023/11/25 09:58:20 by eamghar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/Request.hpp"
+#include "../../includes/Webserv.hpp"
 
 bool	ft_isAllSpace(std::string& s)
 {
@@ -22,7 +22,7 @@ bool	ft_isAllSpace(std::string& s)
 	return true;
 }
 
-bool	Webserv::parsing(int ac, char **av)
+bool	Parsing::parsing(int ac, char **av)
 {
 	if (ac > 2)
 	{
@@ -139,7 +139,7 @@ bool	checkOther(const std::string& val)
 	return true;
 }
 
-bool	Webserv::fillServerList()
+bool	Parsing::fillServerList()
 {
 	std::string					line;
 	std::string					finalLine;
@@ -200,13 +200,13 @@ bool	Webserv::fillServerList()
 	return true;
 }
 
-size_t	Webserv::getServersNumber()
+size_t	Parsing::getServersNumber()
 {
 	return (int)this->servers.size();
 }
 
 
-size_t		Webserv::getLocationsNumber(size_t index)
+size_t		Parsing::getLocationsNumber(size_t index)
 {
 	int	cp = 0;
 
@@ -228,7 +228,7 @@ size_t		Webserv::getLocationsNumber(size_t index)
 	return cp;
 }
 
-std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::getLocationData(size_t serverIndex, size_t locationIndex)
+std::vector < std::pair <std::string, std::vector < std::string > > > Parsing::getLocationData(size_t serverIndex, size_t locationIndex)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
 	
@@ -266,7 +266,7 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 
 }
 
-std::vector < std::string >	Webserv::getLocationSingle(size_t serverIndex, size_t locationIndex, std::string data)
+std::vector < std::string >	Parsing::getLocationSingle(size_t serverIndex, size_t locationIndex, std::string data)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData (getLocationData(serverIndex, locationIndex));
 
@@ -278,7 +278,7 @@ std::vector < std::string >	Webserv::getLocationSingle(size_t serverIndex, size_
 	return std::vector<std::string>();
 }
 
-std::vector < std::pair <std::string, std::string > > Webserv::getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string dataToSearch)
+std::vector < std::pair <std::string, std::string > > Parsing::getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string dataToSearch)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = getLocationData(serverIndex, locationIndex);
 	std::vector < std::pair <std::string, std::string > > data;
@@ -295,7 +295,7 @@ std::vector < std::pair <std::string, std::string > > Webserv::getLocationMultip
 
 
 
-std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::serverData(size_t index)
+std::vector < std::pair <std::string, std::vector < std::string > > >	Parsing::serverData(size_t index)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > serverData;
 	if (index < 1 || index > servers.size())
@@ -321,7 +321,7 @@ std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::s
 	return serverData;
 }
 
-std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPages(size_t index)
+std::vector < std::pair < std::string, std::string > > Parsing::getServerErrorPages(size_t index)
 {
 	std::vector <  std::pair < std::string, std::string > > errorPages;
 	if (index < 1 || index > servers.size())
@@ -341,7 +341,7 @@ std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPa
 	return errorPages;
 }
 
-std::string Webserv::getServerDataSingle (size_t serverIndex, std::string data)
+std::string Parsing::getServerDataSingle (size_t serverIndex, std::string data)
 {
 	if (serverIndex < 1 || serverIndex > servers.size())
 		return NULL;
@@ -364,7 +364,7 @@ std::string Webserv::getServerDataSingle (size_t serverIndex, std::string data)
 	return NULL;
 }
 
-int Webserv::checkForLocation (size_t serverIndex , const std::string& s)
+int Parsing::checkForLocation (size_t serverIndex , const std::string& s)
 {
 	if (serverIndex < 1 || serverIndex > servers.size())
 		return -1;

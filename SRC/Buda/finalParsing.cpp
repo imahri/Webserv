@@ -1,19 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   finalParsing.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/13 15:53:49 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/19 21:22:53 by eamghar          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "../../includes/Webserv.hpp"
 
-#include "../../includes/Request.hpp"
-#include "../../includes/webserv.hpp"
-
-Webserv::Webserv()
+Parsing::Parsing()
 {
 	httpStatusCodes.push_back("100");
 	httpStatusCodes.push_back("101");
@@ -85,7 +72,7 @@ Webserv::Webserv()
 	httpStatusCodes.push_back("511");
 }
 
-std::vector<std::string> Webserv::getHttpStatusCodes()
+std::vector<std::string> Parsing::getHttpStatusCodes()
 {
 	return httpStatusCodes;
 }
@@ -145,7 +132,7 @@ bool checkServerData(std::vector<std::string> &data)
 	return true;
 }
 
-bool Webserv::finalConfigFileParsing()
+bool Parsing::finalConfigFileParsing()
 {
 	for (size_t i = 0; i < servers.size(); i++)
 	{

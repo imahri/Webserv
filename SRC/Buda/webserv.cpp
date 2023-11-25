@@ -1,20 +1,8 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   webserv.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/11 15:25:18 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/21 12:32:25 by eamghar          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "../../includes/Webserv.hpp"
 
-#include "../../includes/Request.hpp"
+Parsing::Parsing(const Parsing& copy) : servers(copy.servers), responseTypes(copy.responseTypes) {}
 
-Webserv::Webserv(const Webserv& copy) : servers(copy.servers), responseTypes(copy.responseTypes) {}
-
-Webserv& Webserv::operator=(const Webserv& copy)
+Parsing& Parsing::operator=(const Parsing& copy)
 {
     if (this != &copy)
 	{
@@ -24,7 +12,7 @@ Webserv& Webserv::operator=(const Webserv& copy)
     return *this;
 }
 
-void		Webserv::fillResponseTypes()
+void		Parsing::fillResponseTypes()
 {
 	std::string		line;
 	std::ifstream	typesFile;

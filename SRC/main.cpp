@@ -1,11 +1,12 @@
-#include "../includes/Request.hpp"
+#include "../includes/Webserv.hpp"
 
 int main(int ac, char **av)
 {
     try
-    {   
+    {
+        // Webserv     wb;
         //BUDA
-        Webserv wbs;
+        Parsing wbs;
        	if (!wbs.parsing(ac, av) || !wbs.fillServerList() || !wbs.finalConfigFileParsing())
 			return (std::cout << "ERROR IN CONFIG FILE." << std::endl, 1);
 		wbs.fillResponseTypes();

@@ -1,38 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Request.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/24 02:32:10 by eamghar           #+#    #+#             */
-/*   Updated: 2023/11/24 14:34:17 by eamghar          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#pragma once
 
-
-#ifndef REQUEST_HPP
-#define REQUEST_HPP
-
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <netinet/in.h>
-#include <cstring>
-#include <unistd.h>
-#include <sys/stat.h> 
-#include <dirent.h>
-
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-
-#include <algorithm>
-#include <map>
-#include <vector>
-
-#include "webserv.hpp"
+#include "Webserv.hpp"
 
 #define MEGA 1000000
 typedef struct L
@@ -62,8 +30,7 @@ typedef struct R
     std::string     ContentType;
     std::string     MimeType;
     std::string     ContentLength;
-}  Rq;
-
+}  Response;
 
 class Request
 {
@@ -81,14 +48,14 @@ class Request
     	std::string                         ResponseBody;
         size_t                              index;
         int                                 statusCode;
-		Webserv								Server;
+		Parsing								Server;
         int                                 locationIndex;
         bool                                IsDirectory;
         std::string                         File;
         std::string                         UploadDir;
         size_t                              ServerIndex;
         LOCATION                            Loc;
-        Rq                                  Req;
+        Response                            Req;
         bool                                SendFile;
         std::streampos                      FileSize;
         std::string                         PathToSaveFile;
@@ -103,7 +70,7 @@ class Request
         Request &operator=(const Request &other);
         ~Request();
         
-        int                                 createServer(Webserv &Webserv);
+        int                                 createServer(Parsing &parsing);
         int                                 getRequest(std::string buffer);
         int                                 fillHeaderAndBody(std::string buffer);
         int                                 parseRequest();
@@ -145,5 +112,3 @@ class Request
         std::vector<std::string>            ft_split(std::string& s);
         std::string                         &ft_trim(std::string& s, char c);
         std::string                         ft_trim(std::string s, std::string delimiter);
-
-#endif

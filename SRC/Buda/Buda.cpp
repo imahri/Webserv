@@ -1,17 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Buda.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/12 15:20:14 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/18 13:08:33 by ytaqsi           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../../includes/Request.hpp"
-#include "../../includes/webserv.hpp"
+#include "../../includes/Webserv.hpp"
 
 bool isValidPort(const std::string& port)
 {
@@ -151,7 +138,7 @@ bool isValideLocationCGI (const std::string &cgi, const std::string &cgiFile)
 
 bool isValideErrorPage			(const std::string &err)
 {
-	Webserv w;
+	Parsing 	w;
 	std::vector<std::string> codes = w.getHttpStatusCodes();
 	std::vector<std::string>::iterator it = std::find(codes.begin(), codes.end(), err);
 	

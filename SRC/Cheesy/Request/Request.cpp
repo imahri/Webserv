@@ -146,7 +146,7 @@ int		Request::parseRequest()
 	ResponseHeaders.clear();
 	ResponseBody.clear();
 	memset(&Loc, 0, sizeof(LOCATION));
-	memset(&Req, 0, sizeof(Rq));
+	memset(&Req, 0, sizeof(Response));
  
 	if(checkHttp())
 		return(1);
