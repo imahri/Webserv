@@ -9,16 +9,9 @@ int		Request::FillResponseBodyFromFile()
 	if (!configFile)
 		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
 
-	//-----------------------------------------------------------------------------
-	std::ofstream store("/Users/eamghar/Desktop/Webserv/SRC/Cheesy/EXTRA/send");
-	if (!store.is_open())
-		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, configFile.close(),  1);
-
-	//-----------------------------------------------------------------------------
 	while (std::getline(configFile, str))
-		store << str;
+		ResponseBody += str;
 
-	store.close();
 	configFile.close();
 
 	SendFile = true;

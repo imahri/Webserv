@@ -3,6 +3,8 @@
 int     Request::fillHeaderAndBody(std::string buffer)
 {
 	index = buffer.find('\n');
+	if(index == buffer.npos)
+		return(statusCode = 400, 1);
 	http = buffer.substr(0, index - 1);
 
 	size_t oldIndex = index + 1;
@@ -108,34 +110,23 @@ int		Request::checkHeader()
 	if(transferEncoding == 0 && contentLength == 0 && methode == "POST")
 		return(statusCode = 400, 1);
 
-	// if(isChuncked == true)
-	// 	parseChuncked();
+	if(isChuncked == true)
+		parseChuncked();
 	return(0);
 }
 
 int		Request::getRequest(std::string buffer)
 {
-	ServerIndex = 1;
-	statusCode = 200;
-	SendFile = false;
 	if(fillHeaderAndBody(buffer))
-		return(std::cout << "CAUGHT REQUEST1" << std::endl,1);
-	if(parseRequest())
-		return(std::cout << "CAUGHT REQUEST2" << std::endl,1);
+		return(std::cout << "CAUGHT REQUEST1" << std::endl, 1);
+	if(parseRequest()) 
+		return(std::cout << "CAUGHT REQUEST2" << std::endl, 1);
 	std::cout << "GOOD REQUEST" << std::endl;
-
 	return(0);
 }
 
 int		Request::parseRequest()
 {
-	locationIndex = 0;
-	IsDirectory = false;
-	ResponseHeaders.clear();
-	ResponseBody.clear();
-	memset(&Loc, 0, sizeof(LOCATION));
-	memset(&Req, 0, sizeof(Response));
- 
 	if(checkHttp())
 		return(1);
 	// std::cout << "-----------------------HEADER-------------------" << std::endl;

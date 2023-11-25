@@ -6,7 +6,7 @@
 #    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/25 16:53:48 by eamghar          ###   ########.fr        #
+#    Updated: 2023/11/25 21:41:41 by eamghar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,4 +53,6 @@ re: fclean all
 
 fuck: 
 	$(FRM) Webserv.dSYM .vscode
+	
+nik : fclean fuck re
 	

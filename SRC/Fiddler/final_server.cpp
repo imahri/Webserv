@@ -125,6 +125,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
     IoMultiplexing re;
     Request     rq;
+
     rq.Server = ps;
 
     for (size_t i = 1; i <= ps.getServersNumber(); i++)
@@ -159,8 +160,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     re.acceptNewClient(net[j].fd);
                     continue;
                 }
-                else if (j >= (size_t)Server::nbr_srv){
-                
+                else if (j >= (size_t)Server::nbr_srv)
+                {
                     if (net[j].revents & POLLIN)
                     {
                         while(1)
@@ -168,11 +169,12 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                             usleep(1000);
                             bzero(buffer, 3000);
                             int tt = recv(net[j].fd, buffer,2000, 0);
-                            if (tt <= 0)
+                            if (tt <= 0 )
                             {
-                                std::cout << "------->>>>>> "<< sttrr << std::endl;
-                                if(rq.InitRequest(sttrr))
-                                    return(1);
+                                std::cout << "----------------------REQUEST---------------------- "<< std::endl;
+                                std::cout << sttrr;
+                                rq.InitRequest(sttrr, 1, ps);
+                                std::cout << "----------------------END OF REQUEST---------------------- "<< std::endl;
                                 sttrr.clear();
                                 net[j].events = POLLOUT;
                                 net[j].revents = 0;
@@ -180,7 +182,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                             }
                             std::string bu = buffer;
                             sttrr += bu;
-                            bu = "";
+                            bu.clear();
                             // std::cout << "tt\t" << tt << std::endl;
                             // std::cout << "*****\t" << net[j].fd << std::endl;
                             // tr++;
@@ -208,16 +210,15 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         const char *response = rq.ResponseHeaders.c_str();
                         send(net[j].fd, response, strlen(response), 0);
                         
-                        const char *message = rq.ResponseBody.c_str();
-                        long long  bytesSent = send(net[j].fd, message, strlen(message), 0);
-                        if(bytesSent == -1)
-                            //error
-                        std::cout << "HEADER" << std::endl;
-                        std::cout << rq.ResponseHeaders << std::endl;
-
-                        std::cout << "BODY" << std::endl;
-                        std::cout << rq.ResponseBody << std::endl;
+                        if(rq.ResponseBody.size())
+                        {
+                            const char *message = rq.ResponseBody.c_str();
+                            send(net[j].fd, message, strlen(message), 0);
+                        }
+                        
                         net[j].events = POLLIN;
+                        std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
+                        // exit(1);
                     }
                 //     // if (net[j].revents & POLLERR | POLLHUP)
                 //     // {
