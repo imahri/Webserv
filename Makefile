@@ -1,14 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/10/26 13:42:42 by imahri            #+#    #+#              #
-#    Updated: 2023/11/27 11:29:33 by eamghar          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
 
 CC = c++
 
@@ -18,13 +7,18 @@ FRM = rm -rf
 
 NAME = Webserv
 
-HEADER = includes/*.hpp\
+HEADER = 	includes/CGI.hpp\
+			includes/Parsing.hpp\
+			includes/Request.hpp\
+			includes/Server.hpp\
+			includes/Webserv.hpp\
 
 SRC = 	SRC/main.cpp\
 		SRC/Fiddler/final_server.cpp \
 		SRC/Fiddler/oldServer.cpp \
 		SRC/Buda/Buda.cpp \
 		SRC/Buda/finalParsing.cpp \
+		SRC/Buda/cgi.cpp \
 		SRC/Buda/string_utils.cpp \
 		SRC/Buda/webserv.cpp \
 		SRC/Cheesy/extraFunctions.cpp \

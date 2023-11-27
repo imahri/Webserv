@@ -18,6 +18,19 @@ int		Request::FillResponseBodyFromFile()
 	return(0);
 }
 
+void		Request::FillCgi()
+{
+	this->cgi.HeaderData = HeaderData;
+	this->cgi.header = header;
+	this->cgi.body = body;
+	this->cgi.httpVersion = httpVersion;
+	this->cgi.methode = methode;
+	this->cgi.URI = URI;
+	this->cgi.RequestPath = RequestPath;
+	this->cgi.CodeStatus = statusCode;
+};
+
+
 int		Request::GetFile()
 {
 	if(locationIndex == 0)
@@ -26,6 +39,8 @@ int		Request::GetFile()
 	{
 		if(Loc.CheckCGI)
 		{
+			FillCgi();
+			std::string str =  Server.CgiResult(cgi);
 			//Run CGI on requested file
 		}
 		else

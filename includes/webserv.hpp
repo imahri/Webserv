@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WEBSERV
+#define WEBSERV
 
 #include <cmath>
 #include <cstddef>
@@ -34,11 +35,4 @@
 #include "Server.hpp"
 
 
-// class Webserv
-// {
-//     public:
-//         IoMultiplexing  io;
-//         Parsing         ps;
-//         Request         rq;
-        
-// };
+#endif 

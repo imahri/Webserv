@@ -222,7 +222,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         }
                         // if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
                         // {
-                            std::cerr << "REQUEST" <<  re.request_msg[net[j].fd];
+                            std::cerr << "---------|" <<  re.request_msg[net[j].fd] << "|-----------";
                             // int ar =   checkServer(net[j].fd);
                             // std::cout << "yyy  " << ar << std::endl;
                             // rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
@@ -236,7 +236,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     }
                     else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
                     {
-                        std::cout << "HNANANANANNANA"<< std::endl;
+                        // std::cout << "HNANANANANNANA"<< std::endl;
                         const char *response = rq.ResponseHeaders.c_str();
                         send(net[j].fd, response, strlen(response), 0);
                         
