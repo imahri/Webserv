@@ -1,8 +1,0 @@
-HTTP 1.1 200 OK
-
-Date: Sun, 2023, 12:20:31 GMT
-Content-Type: text/html
-Connection: keep-alive
-Content-Length: 240;
-
-body
