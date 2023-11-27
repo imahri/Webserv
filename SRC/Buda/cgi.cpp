@@ -56,29 +56,28 @@ Set by the Web Server or CGI Handler:
 
 // ["SERVER_PORT"]					== req port +						=>	80
 // ["SERVER_NAME"]					== "OreO"							=>	OreO
-
-// ["REQUEST_METHOD"]				== req mathod+						=>	GET
+// ["REQUEST_METHOD"]				== req mathod+						=>	POST
 // ["QUERY_STRING"]					== req query+						=>	param1=value1&param2=value2
 // ["SERVER_PROTOCOL"]				== ?+								=>	HTTP/1.1
-
-
-// ["SCRIPT_FILENAME"]				== script file						=>	/var/www/cgi-bin/my_script.cgi
-// ["CONTENT_LENGTH"]				== req body len+					=>	256
+// ["PATH_INFO"]					== 1 line in the header				=>	example/path
+// ["REQUEST_URI"]					== 1 line in the header+			=>	/example/path?param1=value1&param2=value2
+// ["SCRIPT_FILENAME"]				== script file						=>	/SRC/BUDA/CGI_BIN/php-cgi
+// ["CONTENT_LENGTH"]				== req body len+					=>	56
 // ["CONTENT_TYPE"]					== req type+						=>	application/json
 // ["REDIRECT_STATUS"]				== 200+								=>	200
-// ["REQUEST_URI"]					== 1 line in the header+			=>	/path/to/resource?param=value
-// ["PATH_INFO"]					== 1 line in the header				=>	/path/to/resource
-// ["HTTP_COOKIE"]					== header Cookies					=>	session_id=abc123; user_id=456
+// ["HTTP_COOKIE"]					== header Cookies					=>	user_session=abc123; preferences=dark-mode
 // ["GATEWAY_INTERFACE"]			== "CGI/1.1"						=>	CGI/1.1
 // ["PATH_TRANSLATED"] 				== ?								=>	/var/www/html/path/to/resource
-// ["HTTP_ACCEPT"]					== header Accept					=>	text/html,application/xhtml+xml,application/xml;q=0.9,*;q=0.8
+// ["HTTP_ACCEPT"]					== header Accept					=>	text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,**;q=0.8
 // ["UPLOAD_PATH"]					== upload dir form the config +		=>	/var/www/uploads
-// ["HTTP_ACCEPT_LANGUAGE"]			== header Accept-Language			=>	en-US,en;q=0.5
-// ["HTTP_REFERER"]					== Referer							=>	https:/www.example.com/referer-page
+// ["HTTP_ACCEPT_LANGUAGE"]			== header Accept-Language			=>	en-US,en;q=0.9
+// ["HTTP_REFERER"]					== Referer							=>	https://referrer.com/page
 // ["AUTH_TYPE"]					== "Basic" +						=>	Basic
-// ["SERVER_SOFTWARE"]				== "webserv/test/1.0"				=>	nginx/1.18.0
-// ["REMOTE_HOST"]					== req host							=>	127.0.0.1
-// ["HTTP_USER_AGENT"]				== req User-Agent +					=>	Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0
+// ["SERVER_SOFTWARE"]				== "webserv/test/1.0"				=>	webserv/test/1.0
+// ["REMOTE_HOST"]					== 127.0.0.1						=>	127.0.0.1
+// ["HTTP_USER_AGENT"]				== req User-Agent +					=>	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
+
+
 // ["HTTP_ACCEPT_ENCODING"]			== req Accept-Encoding				=>	gzip, deflate, br
 // ["DOCUMENT_ROOT"]				== ?								=>	/var/www/html
 
@@ -119,3 +118,5 @@ Set by the Web Server or CGI Handler:
 // {
 // 	// FILE *fIn = tmpfile();
 // }
+
+
