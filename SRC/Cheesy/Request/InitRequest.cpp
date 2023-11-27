@@ -32,11 +32,14 @@ void    Request::Reset()
     PathToSaveFile = "/Users/eamghar/Desktop/send";
 }
 
-int     Request::InitRequest(std::string str, int j, Parsing &ps)
+int     Request::InitRequest(std::string str, int fd, int index, Parsing &ps)
 {
     Reset();
     Server = ps;
-    ServerIndex = j;
+    (void)fd;
+
+    ServerIndex = index;
+    // std::cout << "index---->" << ServerIndex << std::endl;
     std::cout << "------------------------------------------------------------------1" << std::endl;
     this->getRequest(str);
     std::cout << "------------------------------------------------------------------2" << std::endl;

@@ -10,6 +10,8 @@ Server::Server(int port, std::string    ip)
 
 void Server::start()
 {
+    nbr_srv++;
+    index = 0;
     this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
     // std::cout << "socket created " << serversocket << std::endl;
     bzero(&this->serverAddr, sizeof(this->serverAddr));
@@ -27,7 +29,9 @@ void Server::start()
     fcntl(this->serversocket, F_SETFL, O_NONBLOCK);
     listen(this->serversocket, 1000);
     // std::cout << "listen to ... " << serversocket << std::endl;
-    nbr_srv++;
+    index = nbr_srv;
+    // std::cout << "index >>  " << index << std::endl;
+    // std::cout << "nbr_srv >>  " << nbr_srv << std::endl;
 }
 
 int IoMultiplexing::maxfd = 0;
@@ -105,7 +109,7 @@ std::vector<Client *>::iterator    IoMultiplexing::checkClient(int fd)
     return fin;
 }
 
-std::vector<Server>::iterator    IoMultiplexing::checkServer(int fd)
+int   IoMultiplexing::checkServer(int fd)
 {
     std::vector<Server>::iterator fin;
     std::vector<Server>::iterator itr = sudo_apt.begin();
@@ -118,7 +122,21 @@ std::vector<Server>::iterator    IoMultiplexing::checkServer(int fd)
                 fin =  itr;
         }
     }
-    return fin;
+    // std::cout << "fin->index    " << fin->index << std::endl;
+    return fin->index;
+}
+
+int WaitForFullRequest(std::string buff)
+{
+    std::string substringToFind = "\r\n\r\n";
+
+    size_t found = buff.find(substringToFind);
+
+    if (found != std::string::npos) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
@@ -133,13 +151,12 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         std::string str = ps.getServerDataSingle(i, "listen");
         std::vector<std::string>  it = ft_split(str, ':');
         Server qw(std::atoi(it[1].c_str()), it[0]);
-        std::cout << "Port|" << qw.port << "|ip|" << qw.ip << std::endl;
+        // std::cout << "Port|" << qw.port << "|ip|" << qw.ip << std::endl;
         re.sudo_apt.push_back(qw);
     }
-
     char buffer[3001];
     size_t  ll = re.sudo_apt.size();
-
+    // std::cout << "qwertyui     dsudds   " << ll << std::endl;
     for (size_t i = 0; i < ll; i++)
     {
         re.sudo_apt[i].start();
@@ -147,6 +164,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         tmp.fd = re.sudo_apt[i].serversocket;
         tmp.events = POLLIN;
         net.push_back(tmp);
+        // std::cout << re.sudo_apt[i].index << std::endl;
     }
     std::string sttrr;
     signal(SIGPIPE, SIG_IGN);
@@ -164,45 +182,31 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 {
                     if (net[j].revents & POLLIN)
                     {
-                        while(1)
+                        bzero(buffer, 3000);
+                        int tt = recv(net[j].fd, buffer, 1, 0);
+                        if (tt == -1)
                         {
-                            usleep(1000);
-                            bzero(buffer, 3000);
-                            int tt = recv(net[j].fd, buffer,2000, 0);
-                            if (tt <= 0 )
-                            {
-                                std::cout << "----------------------REQUEST---------------------- "<< std::endl;
-                                std::cout << sttrr;
-                                rq.InitRequest(sttrr, 1, ps);
-                                std::cout << "----------------------END OF REQUEST---------------------- "<< std::endl;
-                                sttrr.clear();
-                                net[j].events = POLLOUT;
-                                net[j].revents = 0;
-                                break;
-                            }
-                            std::string bu = buffer;
-                            sttrr += bu;
-                            bu.clear();
-                            // std::cout << "tt\t" << tt << std::endl;
-                            // std::cout << "*****\t" << net[j].fd << std::endl;
-                            // tr++;
-                            // std::cout << "===>> " << tt << std::endl;
-                            if (tt == 0)
-                            {
-                                close(net[j].fd);
-                            }
+                            perror("webserv: ");
+                            continue;
                         }
-                        // std::cout<< "tr\t" << tr << std::endl;
-                        // if (re.isDoneRequest(buffer))
-                        // {
-                            // int sta = re.checkClient(net[j].fd);
-                            // auto serverIterator = re.checkServer(net[j].fd);
-                            // auto serverIteratos = re.checkClient(net[j].fd);
-                            // std::cout << "fd server " << (*serverIterator).serversocket << std::endl;
-                            // std::cout << "fd client " << (*serverIteratos)->fd << std::endl;
-
-                            // std::cout << "XXXX" << std::endl;
-                        // }
+                        if (tt == 0)
+                            close(net[j].fd);
+                        else
+                        {
+                            std::string bu(buffer, tt);
+                            re.request_msg[net[j].fd] += bu;
+                            bu.clear();
+                        }
+                        if ((WaitForFullRequest(re.request_msg[net[j].fd]) == true))
+                        {
+                            std::cerr << re.request_msg[net[j].fd];
+                            // int ar =   checkServer(net[j].fd);
+                            // std::cout << "yyy  " << ar << std::endl;
+                            rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
+                            re.request_msg[net[j].fd].clear();
+                            net[j].events = POLLOUT;
+                            net[j].revents = 0;
+                        }
                         continue;
                     }
                     else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
@@ -215,7 +219,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                             const char *message = rq.ResponseBody.c_str();
                             send(net[j].fd, message, strlen(message), 0);
                         }
-                        
+
                         net[j].events = POLLIN;
                         std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
                         // exit(1);
