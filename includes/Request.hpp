@@ -105,14 +105,14 @@ class Request
 
 
 
-        //extra functions
-        size_t                              convertToCharacters(std::string sizeString);
-        std::string                         getNextToken(std::istringstream &iss);
-        int                                 checkDigit(std::string str);
-        int                                 checkWhiteSpace(std::string str);
-        int                                 checkNumbers(std::string str);
 };
 
+        //extra functions
+        int                                 checkNumbers(std::string str);
+        int                                 checkDigit(std::string str);
+        size_t                              convertToCharacters(std::string sizeString);
+        std::string                         getNextToken(std::istringstream &iss);
+        int                                 checkWhiteSpace(std::string str);
         std::vector<std::string>            ft_split(std::string &s, std::string delimiter);
         std::vector<std::string>            ft_split(std::string& s, char c);
         std::vector<std::string>            ft_split(std::string& s);
