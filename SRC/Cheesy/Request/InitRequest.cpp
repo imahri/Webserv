@@ -44,7 +44,7 @@ int     Request::InitRequest(std::string str, int fd, int index, Parsing &ps)
     this->getRequest(str);
     std::cout << "------------------------------------------------------------------2" << std::endl;
     std::cout << "StatusCode: " << statusCode << std::endl;
-    GenerateResponse();
+    // GenerateResponse();
     return(0);
 }
 
