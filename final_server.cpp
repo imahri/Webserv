@@ -253,17 +253,12 @@ int main()
                         }
                         if (re.isDoneRequest(buffer))
                         {
-                            // int sta = re.checkClient(Webserve::net[j].fd);
-                            std::cout << "XXXX" << std::endl;
                             Webserve::net[j].events = POLLOUT;
                             Webserve::net[j].revents = 0;
                         }
                         continue;
                     }
                     else if (Webserve::net[j].revents & POLLOUT){
-                        // std::cout << Webserve::net[j].fd << std::endl;
-                        //response
-                        // if data end
                         const char *response = "HTTP/1.1 200 OK\r\nContent-Length: 10\r\nContent-Type: text/plain\r\n\r\n"; // here start the response send 500000
                         const char *message = "hacker men";
                         send(Webserve::net[j].fd, response, strlen(response), 0);
@@ -271,10 +266,10 @@ int main()
                         Webserve::net[j].events = POLLIN;
 
                     }
-                //     // if (Webserve::net[j].revents & POLLERR | POLLHUP)
-                //     // {
-                //     //     //close clien and erase it 
-                //     // }
+                    // if (Webserve::net[j].revents & POLLERR | POLLHUP)
+                    // {
+                    //     //close clien and erase it 
+                    // }
                 }
                 
             // ret--;
