@@ -10,23 +10,12 @@ bool isValidPort(const std::string& port)
 
 bool isValidIPAddress(const std::string& ipAddress)
 {
-	std::istringstream ss(ipAddress);
-	std::string octet;
-	std::vector<int> octets;
-
-	while (std::getline(ss, octet, '.'))
-	{
-		int num = std::atoi(octet.c_str());
-		if (num < 0 || num > 255) 
-			return false; 
-		if (octet.length() > 1 && octet[0] == '0') 
-			return false;
-		octets.push_back(num);
-	}
-	return (octets.size() == 4);
+	if (ipAddress == "127.0.0.1")
+		return true;
+	return false;
 }
 
-bool isDirectory( const std::string& path)
+bool isDirectory(const std::string& path)
 {
 	
 	struct stat fileInfo;
@@ -35,31 +24,33 @@ bool isDirectory( const std::string& path)
 	return S_ISDIR(fileInfo.st_mode);
 }
 
-bool isFile( const std::string& path)
+bool isFile(const std::string& path, bool permission)
 {
 	struct stat fileInfo;
 	if (stat(path.c_str(), &fileInfo) != 0)
 		return false;
+	if (permission)
+   		return (S_ISREG(fileInfo.st_mode) && (fileInfo.st_mode & S_IXUSR));
 	return S_ISREG(fileInfo.st_mode);
 }
 
-bool isValideAutoIndex(const std::string& autoindex)
+bool isValidAutoIndex(const std::string& autoindex)
 {
 	if (autoindex != "on" && autoindex != "off")
 		return false;
 	return true;
 }
 
-bool isValideUploadDir(const std::string& uploadDir)
+bool isValidUploadDir(const std::string& uploadDir)
 {
 	return isDirectory(uploadDir);
 }
-bool isValideRoot(const std::string& root)
+bool isValidRoot(const std::string& root)
 {
 	return isDirectory(root);
 }
 
-bool isValideClientBodyMaxSize(const std::string& clientBodyMaxSize)
+bool isValidClientBodyMaxSize(const std::string& clientBodyMaxSize)
 {
 	int cp = 0;
 
@@ -85,7 +76,7 @@ bool isValideClientBodyMaxSize(const std::string& clientBodyMaxSize)
 }
 
 
-bool isValideLocationPath(const std::string &uri)
+bool isValidLocationPath(const std::string &uri)
 {
 	std::string::const_iterator it = uri.begin();
 
@@ -106,39 +97,30 @@ bool isValideLocationPath(const std::string &uri)
 	return true;
 }
 
-bool isValideLocationMethods(const std::string &method)
+bool isValidLocationMethods(std::vector<std::string> &data)
 {
-	if (method != "POST" && method != "DELETE" && method != "GET")
-		return false;
+	for (size_t i = 1; i < data.size(); i++)
+	{
+		if (data[i] != "POST" && data[i] != "DELETE" && data[i] != "GET")
+			return false;		
+	}
 	return true;
 }
 
 
-bool isValideLocationCGI (const std::string &cgi, const std::string &cgiFile)
+bool isValidLocationCGI (const std::string &cgi, const std::string &cgiFile)
 {
 	if (cgi != "py" && cgi != "php")
 		return false;
 
-	if (!isFile(cgiFile))
+	if (!isFile(cgiFile, true))
 		return false;
 	return true;
 }
 
-// bool isValideLocationRedirect(const std::string &nbr, const std::string &page)
-// {
-
-// 	std::vector<std::string>::iterator it = std::find(httpStatusCodes.begin(), httpStatusCodes.end(), nbr);
-	
-// 	if (it == httpStatusCodes.end() || !isFile(page))
-// 		return false;
-	
-// 	return true;
-// }
-
-
-bool isValideErrorPage			(const std::string &err)
+bool isValidErrorPage(const std::string &err)
 {
-	Parsing 	w;
+	Parsing w;
 	std::vector<std::string> codes = w.getHttpStatusCodes();
 	std::vector<std::string>::iterator it = std::find(codes.begin(), codes.end(), err);
 	

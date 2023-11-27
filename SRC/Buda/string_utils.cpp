@@ -1,16 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   string_utils.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: eamghar <eamghar@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/25 09:58:20 by eamghar          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../includes/Webserv.hpp"
+
 
 bool	ft_isAllSpace(std::string& s)
 {
@@ -58,6 +47,11 @@ bool	Parsing::parsing(int ac, char **av)
 		pars = ft_split(line);
 		if (!pars[0].empty() && pars[0] == "server")
 		{
+			if (serverScope)
+			{
+				std::cerr << "Error in the server config " << std::endl;
+				return false;
+			}
 			if (pars.size() != 2 || pars[0] != "server" || pars[1] != "{")
 			{
 				std::cerr << "Error in the server config " << std::endl;
@@ -119,6 +113,7 @@ bool	checkOther(const std::string& val)
 	std::vector <std::string> data;
 
 	data.push_back("server");
+	data.push_back("server_name");
 	data.push_back("methods");
 	data.push_back("index");
 	data.push_back("listen");
@@ -166,6 +161,11 @@ bool	Parsing::fillServerList()
 			std::cout << "Error on " << "\033[0;31m"  << line << "\033[0m"  << std::endl;
 			return false; 
 		}
+		size_t i = trimedLine.find('}');
+
+		std::string eos = "_\n";
+		if (i != std::string::npos)
+			trimedLine.insert(i + 1, eos);
 		finalLine += trimedLine;
 	}
 
@@ -189,11 +189,13 @@ bool	Parsing::fillServerList()
 					--i; 
 					break;
 				}
-					data.push_back(finalParams[i]);
-				}
-				this->servers.push_back(data);
+				data.push_back(finalParams[i]);
 			}
+			this->servers.push_back(data);
+		}
 	}
+
+
 	pars.clear();
 	finalParams.clear();
 	params.clear();
@@ -253,7 +255,9 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Parsing::g
 							std::vector < std::string > values (line.begin() + 1, line.end());
 							locationData.push_back(std::make_pair(line[0], values));
 							j++;
-							if (j < servers[i].size() && ft_split(servers[i][j])[0] == "location")
+							line.clear();
+							line = ft_split(servers[i][j]);
+							if (j < servers[i].size() && (line[0] == "location" || line[0] == "_"))
 								break;
 						}
 					}
@@ -308,8 +312,13 @@ std::vector < std::pair <std::string, std::vector < std::string > > >	Parsing::s
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
-				if (line[0] == "location" || line[0] == "server")
-					break;
+				if (line[0] == "location")
+				{
+					while (j < servers[i].size() && servers[i][j] != "_")
+						j++;
+					--j;
+					continue;
+				}
 				if (line[0] == "listen" || line[0] == "server_name" || line[0] == "autoindex" || line[0] == "upload_dir" || line[0] == "root" || line[0] == "client_body_max_size")
 				{
 					std::vector < std::string > values (line.begin() + 1, line.end());
@@ -333,6 +342,13 @@ std::vector < std::pair < std::string, std::string > > Parsing::getServerErrorPa
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == "location")
+				{
+					while (j < servers[i].size() && servers[i][j] != "_")
+						j++;
+					--j;
+					continue;
+				}
 				if (line[0] == "error_page")
 					errorPages.push_back(std::make_pair(line[1], line[2]));
 			}
@@ -344,7 +360,7 @@ std::vector < std::pair < std::string, std::string > > Parsing::getServerErrorPa
 std::string Parsing::getServerDataSingle (size_t serverIndex, std::string data)
 {
 	if (serverIndex < 1 || serverIndex > servers.size())
-		return NULL;
+		return "";
 	for (size_t i = 0; i < this->servers.size(); i++)
 	{
 		if (i == serverIndex - 1)
@@ -352,16 +368,24 @@ std::string Parsing::getServerDataSingle (size_t serverIndex, std::string data)
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
+
+				if (line[0] == "location")
+				{
+					while (j < servers[i].size() && servers[i][j] != "_")
+						j++;
+					--j;
+					continue;
+				}
 				if (line[0] == data)
 				{
 					if (line[0] == "listen" && line[1].find(':') == std::string::npos)
-						return "localhost " + line[1];
+						return "0.0.0.0:" + line[1];
 					return line[1];
 				}
 			}
 		}
 	}
-	return NULL;
+	return "";
 }
 
 int Parsing::checkForLocation (size_t serverIndex , const std::string& s)
@@ -384,7 +408,20 @@ int Parsing::checkForLocation (size_t serverIndex , const std::string& s)
 				}
 				line.clear();
 			}
+			
 		}
 	}
 	return -1;
+}
+
+std::string Parsing::getMimeTypes(const std::string& s)
+{
+	std::map<std::string, std::vector<std::string> >::const_iterator it = responseTypes.begin();
+	for (; it != responseTypes.end(); ++it)
+	{
+		const std::vector<std::string>& mimeTypes = it->second;
+		if (std::find(mimeTypes.begin(), mimeTypes.end(), s) != mimeTypes.end()) 
+			return it->first;
+    }   
+    return "";
 }

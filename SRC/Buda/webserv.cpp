@@ -35,18 +35,6 @@ void		Parsing::fillResponseTypes()
 		splitedLine.clear();
 		values.clear();
 	}
-
-	// std::map < std::string, std::vector < std::string > >::iterator it = responseTypes.begin();
-	
-	// for (; it != responseTypes.end(); it++)
-	// {
-	// 	std::cout << "|" + it->first + "|" << std::endl;
-	// 	for (size_t j = 0; j < it->second.size(); j++)
-	// 		std::cout << "|" +it->second[j]+ "|" << " ";
-			
-	// 	std::cout << std::endl;
-	// 	std::cout << "--------------------------------------------------" << std::endl;
-	// }
 	
 }
 
