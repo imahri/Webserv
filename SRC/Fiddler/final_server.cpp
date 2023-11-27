@@ -132,11 +132,34 @@ int WaitForFullRequest(std::string buff)
 
     size_t found = buff.find(substringToFind);
 
-    if (found != std::string::npos) {
-        return true;
-    } else {
-        return false;
+    if (found != std::string::npos) 
+    {
+        size_t index = buff.find('\n');
+        if(index == std::string::npos)
+            return(0);
+        std::string http = buff.substr(0, index - 1);
+    	std::vector<std::string> vec = ft_split(http, " \n\r\t");
+        if(*vec.begin() == "GET" || *vec.begin() == "DELETE")
+            return 1;
+        else if(*vec.begin() == "POST")
+        {
+            // puts("--------------here-");
+            size_t second = buff.find(substringToFind, found + 4);
+            std::cout << "first:" << found << std::endl;
+            std::cout << "second:" << second << std::endl;
+            if (second != std::string::npos)
+            {
+                // puts("etwtewtetwtewtetw");
+                return 33;
+            }
+            else
+                return 0;
+        }
+        else
+            return 0;
     }
+    else
+        return 0;
 }
 
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
@@ -183,7 +206,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     if (net[j].revents & POLLIN)
                     {
                         bzero(buffer, 3000);
-                        int tt = recv(net[j].fd, buffer, 1, 0);
+                        int tt = recv(net[j].fd, buffer, 3000, 0);
                         if (tt == -1)
                         {
                             perror("webserv: ");
@@ -197,20 +220,23 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                             re.request_msg[net[j].fd] += bu;
                             bu.clear();
                         }
-                        if ((WaitForFullRequest(re.request_msg[net[j].fd]) == true))
-                        {
-                            std::cerr << re.request_msg[net[j].fd];
+                        // if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
+                        // {
+                            std::cerr << "REQUEST" <<  re.request_msg[net[j].fd];
                             // int ar =   checkServer(net[j].fd);
                             // std::cout << "yyy  " << ar << std::endl;
-                            rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
+                            // rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
                             re.request_msg[net[j].fd].clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;
-                        }
-                        continue;
+                        // }
+                        // else
+                            continue;
+                        // else
                     }
                     else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
                     {
+                        std::cout << "HNANANANANNANA"<< std::endl;
                         const char *response = rq.ResponseHeaders.c_str();
                         send(net[j].fd, response, strlen(response), 0);
                         
@@ -221,7 +247,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         }
 
                         net[j].events = POLLIN;
-                        std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
+                        // std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
                         // exit(1);
                     }
                 //     // if (net[j].revents & POLLERR | POLLHUP)
