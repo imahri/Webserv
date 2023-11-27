@@ -55,7 +55,7 @@ int   Request::checkNumbers(std::string str)
     return(0);
 }
 
-std::vector<std::string> Request::ft_split(std::string &s, std::string delimiter)
+std::vector<std::string> ft_split(std::string &s, std::string delimiter)
 {
 	std::vector<std::string> arr;
 	std::string current;
@@ -76,7 +76,7 @@ std::vector<std::string> Request::ft_split(std::string &s, std::string delimiter
 	return arr;
 }
 
-std::vector<std::string> Request::ft_split(std::string& s, char c)
+std::vector<std::string> ft_split(std::string& s, char c)
 {
 	std::vector<std::string> arr;
 	std::string			line;
@@ -87,7 +87,7 @@ std::vector<std::string> Request::ft_split(std::string& s, char c)
 	return arr;
 }
 
-std::vector<std::string> Request::ft_split(std::string& s)
+std::vector<std::string> ft_split(std::string& s)
 {
 	std::vector<std::string> arr;
 	std::string			line;
@@ -98,7 +98,7 @@ std::vector<std::string> Request::ft_split(std::string& s)
 	return arr;
 }
 
-std::string& Request::ft_trim(std::string& s, char c)
+std::string& ft_trim(std::string& s, char c)
 {
 	size_t i = 0;
 	while (i < s.size() && s[i] == c) 
@@ -116,55 +116,34 @@ std::string& Request::ft_trim(std::string& s, char c)
 	return s;
 }
 
-std::string& Request::ft_trim(std::string& s, std::string delimiter)
+std::string ft_trim(std::string s, std::string delimiter)
 {
 	size_t i = 0;
-	while (i < s.size() && delimiter.find(s[i]) != std::string::npos) 
-		s.erase(i, 1);
 
-	i = s.size() - 1;
+    
+    while (i < s.size() && delimiter.find(s[i]) != std::string::npos)
+        s.erase(i, 1);
 
-	while (i >= 0 && delimiter.find(s[i]) != std::string::npos) 
-	{
-		s.erase(i, 1);
-		i--; 
-	}
+    i = s.size();
+    while (i > 0 && delimiter.find(s[i - 1]) != std::string::npos)
+    {
+        i--;
+        s.erase(i, 1);
+    }
 
 	return s;
 }
 
-unsigned long long Request::convertToBytes(const std::string& sizeString)
+size_t Request::convertToCharacters(std::string sizeString)
 {
-    std::string numberString;
-    std::string unitString;
+    size_t size = std::atoi(sizeString.c_str());
+    size_t factor = 1;
 
-    // Separate the number and unit parts of the string
-    for (std::size_t i = 0; i < sizeString.length(); ++i)
-    {
-        char ch = sizeString[i];
-        if (std::isdigit(ch))
-            numberString += ch;
-        else
-            unitString += ch;
-    }
-
-    // Convert the number part to an integer
-    unsigned long long size = std::strtoull(numberString.c_str(), NULL, 10);
-
-    // Convert the unit part to lowercase for easier comparison
-    for (std::size_t i = 0; i < unitString.length(); ++i)
-    {
-        char &ch = unitString[i];
-        ch = std::tolower(ch);
-    }
-
-    // Convert the size to bytes based on the specified unit
-    if (unitString == "gb" || unitString == "gigabytes")
-        size *= 1024ULL * 1024 * 1024;
-    else if (unitString == "mb" || unitString == "megabytes")
-        size *= 1024ULL * 1024;
-    else if (unitString == "kb" || unitString == "kilobytes")
-        size *= 1024ULL;
-
-    return size;
+    if (sizeString.find("G") != std::string::npos)
+        factor = 1024 * 1024 * 1024;
+	else if (sizeString.find("MB") != std::string::npos)
+        factor = 1024 * 1024;
+	else if (sizeString.find("KB") != std::string::npos)
+        factor = 1024;
+    return (size * factor);
 }
