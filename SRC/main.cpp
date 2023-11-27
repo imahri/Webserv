@@ -1,31 +1,22 @@
-#include "../includes/Request.hpp"
+#include "../includes/Webserv.hpp"
 
 int main(int ac, char **av)
 {
     try
-    {   
-        //BUDA
-        Webserv wbs;
+    {
+        Parsing wbs;
        	if (!wbs.parsing(ac, av) || !wbs.fillServerList() || !wbs.finalConfigFileParsing())
-		{
-			std::cout << "GHALAAAAAAT" << std::endl;
-			return 0;
-		}
+			return (std::cout << "ERROR IN CONFIG FILE." << std::endl, 1);
 		wbs.fillResponseTypes();
-			std::cout << "SA7777777" << std::endl;
-	
-		
 
-        //CHEESY
-        // Request     rq;
 
-        // if(rq.createServer(wbs))
-        //     return(1);
-
+        IoMultiplexing io;
+        if(io.StartTheMatrix(wbs))
+            return(1);
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << e.what() << std::endl;
     }
     return 0;
 }

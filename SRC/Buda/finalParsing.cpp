@@ -1,19 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   finalParsing.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/13 15:53:49 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/18 15:35:04 by ytaqsi           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "../../includes/Webserv.hpp"
 
-#include "../../includes/Request.hpp"
-#include "../../includes/webserv.hpp"
 
-Webserv::Webserv()
+Parsing::Parsing()
 {
 	httpStatusCodes.push_back("100");
 	httpStatusCodes.push_back("101");
@@ -85,11 +73,10 @@ Webserv::Webserv()
 	httpStatusCodes.push_back("511");
 }
 
-std::vector<std::string> Webserv::getHttpStatusCodes()
+std::vector<std::string> Parsing::getHttpStatusCodes()
 {
 	return httpStatusCodes;
 }
-
 
 bool checkListen(std::string &data)
 {
@@ -107,112 +94,139 @@ bool checkListen(std::string &data)
 
 bool checkServerData(std::vector<std::string> &data)
 {
+	if (data[0] == "methods" && (data.size() < 2 || !isValidLocationMethods(data)))
+		return false;
 	if (data[0] == "listen" && (data.size() != 2 || !checkListen(data[1])))
-	{
-		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
 		return false;
-	}
-	if (data[0] == "autoindex" && (data.size() != 2 || !isValideAutoIndex(data[1])))
-	{
-		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
+	if (data[0] == "autoindex" && (data.size() != 2 || !isValidAutoIndex(data[1])))
 		return false;
-	}	
-	if (data[0] == "upload_dir" && (data.size() != 2 || !isValideUploadDir(data[1])))
-	{
-		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
+	if (data[0] == "upload_dir" && (data.size() != 2 || !isValidUploadDir(data[1])))
 		return false;
-	}	
-	if (data[0] == "root" && (data.size() != 2 || !isValideRoot(data[1])))
-	{
-		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
+	if (data[0] == "root" && (data.size() != 2 || !isValidRoot(data[1])))
 		return false;
-	}	
-	if (data[0] == "client_body_max_size" && (data.size() != 2 || !isValideClientBodyMaxSize(data[1])))
-	{
-		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
+	if (data[0] == "client_body_max_size" && (data.size() != 2 || !isValidClientBodyMaxSize(data[1])))
 		return false;
-	}	
-	if (data[0] == "error_page" && (data.size() != 3 || !isValideErrorPage(data[1])))
-	{
-		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
+	if (data[0] == "error_page" && (data.size() != 3 || !isValidErrorPage(data[1])))
 		return false;
-	}
-	if (data[0] == "cgi" && (data.size() != 3 || !isValideLocationCGI(data[1], data[2])))
-	{
-		std::cout << "Error on " << "\033[0;31m"  << data[0] << "\033[0m"  << std::endl;
+	if (data[0] == "cgi" && (data.size() != 3 || !isValidLocationCGI(data[1], data[2])))
 		return false;
-	}
+	if (data[0] == "server_name" && data.size() != 2)
+		return false;
+	if (data[0] == "redirect" && (data.size() != 3 || !isValidErrorPage(data[1])))
+		return false;
+	if (data[0] == "index" && data.size() != 2)
+		return false;
 	return true;
 }
 
-bool Webserv::finalConfigFileParsing()
+bool isValideServerCp(serverConfigData &data)
+{
+	if (data.listen  != 1 || data.root != 1 || data.client_body_max_size != 1 || data.redirect > 1 || data.index > 1 || data.autoindex > 1 || data.upload_dir > 1)
+		return false;
+	return true;
+}
+bool isValideLocationCp(locationConfigData &data)
+{
+	if (data.listen != 0 || data.root != 1 || data.client_body_max_size != 1 || data.mathods != 1 || data.redirect > 1 || data.index > 1 || data.autoindex > 1 || data.upload_dir > 1)
+		return false;
+	return true;
+}
+
+bool Parsing::checkRepetedServers()
+{
+	std::map < std::string, std::string >  serverPort;
+
+	for (size_t i = 0; i < servers.size(); i++)
+	{
+		std::string port = getServerDataSingle(i + 1, "listen");
+		std::string key = ft_split(port, ':' )[1];
+		std::string val = getServerDataSingle(i + 1, "server_name");
+		std::map < std::string, std::string >::iterator it = serverPort.find(key);
+		if (it != serverPort.end() && it->second == val)
+		{
+
+			return false;
+		}
+		serverPort[key] = val;
+	}
+
+	for (std::map  < std::string, std::string >::iterator i = serverPort.begin();
+	 i != serverPort.end(); i++)
+	{
+		std::cout << "listen: " + i->first << "\t\t\t" << "server_name: "+ i->second << std::endl;
+	}
+	
+	return true;
+}
+
+bool Parsing::finalConfigFileParsing()
 {
 	for (size_t i = 0; i < servers.size(); i++)
 	{
 		for (size_t j = 0; j < servers[i].size(); j++)
-		{	
+		{
 			std::vector<std::string> line = ft_split(servers[i][j]);
 			if (line[0] == "location" && line.size() != 2)
+			{
+				std::cout << "Error on " << "\033[0;31m" << servers[i][j] << "\033[0m" << std::endl;
 				return false;
-			if(!checkServerData(line))
+			}
+			if (!checkServerData(line))
+			{
+				std::cout << "Error on " << "\033[0;31m" << servers[i][j] << "\033[0m" << std::endl;
 				return line.clear(), false;
-			line.clear();	
+			}
+			line.clear();
 		}
 	}
-	int	listenCp;
-	int	autoIndexCp;
-	int	rootCp;
-	int	maxSizeCp;
-	int	uploadDirCp;
-	
-	int	locationRoot;
-	int	locationMethods;
-	int	locationMaxSize;
-	int	locationIndex;
-	int	locationuploadDir;
+	serverConfigData serverCp;
+	locationConfigData locationCp;
 	for (size_t i = 0; i < servers.size(); i++)
 	{
-		listenCp = 0;
-		autoIndexCp = 0;
-		rootCp = 0;
-		maxSizeCp = 0;
-		uploadDirCp = 0;
+		memset(&serverCp, 0, sizeof(serverConfigData));
 		for (size_t j = 0; j < servers[i].size(); j++)
 		{
 			std::vector<std::string> line = ft_split(servers[i][j]);
 			if (line[0] == "listen")
-				listenCp++;
-			if (line[0] == "autoindex")
-				autoIndexCp++;
+				serverCp.listen++;
 			if (line[0] == "root")
-				rootCp++;
+				serverCp.root++;
 			if (line[0] == "client_body_max_size")
-				maxSizeCp++;
+				serverCp.client_body_max_size++;
+			if (line[0] == "redirect")
+				serverCp.redirect++;
+			if (line[0] == "index")
+				serverCp.index++;
+			if (line[0] == "autoindex")
+				serverCp.autoindex++;
 			if (line[0] == "upload_dir")
-				uploadDirCp++;
+				serverCp.upload_dir++;
+
 			if (line[0] == "location")
 			{
 				line.clear();
-				locationRoot = 0;
-				locationMethods = 0;
-				locationMaxSize = 0;
-				locationIndex = 0;
-				locationuploadDir = 0;
+				memset(&locationCp, 0, sizeof(locationConfigData));
 				j++;
 				while (j < servers[i].size())
 				{
 					line = ft_split(servers[i][j]);
+					if (line[0] == "listen")
+						locationCp.listen++;
 					if (line[0] == "root")
-						locationRoot++;
-					if (line[0] == "index")
-						locationIndex++;
-					if (line[0] == "methods")
-						locationMethods++;
+						locationCp.root++;
 					if (line[0] == "client_body_max_size")
-						locationMaxSize++;
+						locationCp.client_body_max_size++;
+					if (line[0] == "methods")
+						locationCp.mathods++;
+					if (line[0] == "redirect")
+						locationCp.redirect++;
+					if (line[0] == "index")
+						locationCp.index++;
+					if (line[0] == "autoindex")
+						locationCp.autoindex++;
 					if (line[0] == "upload_dir")
-						locationuploadDir++;
-					if (line[0] == "location")
+						locationCp.upload_dir++;
+					if (line[0] == "location" || line[0] == "_")
 					{
 						--j;
 						break;
@@ -220,19 +234,22 @@ bool Webserv::finalConfigFileParsing()
 					line.clear();
 					j++;
 				}
-				if (locationRoot != 1 || locationIndex > 1 || locationMethods != 1 || locationMaxSize != 1 || locationuploadDir > 1 )
+				if (!isValideLocationCp(locationCp))
 				{
-					std::cout << "Error in " << "\033[0;31m"  << "the location config" << "\033[0m"  << std::endl;
+					std::cout << "Error in " << "\033[0;31m" << "the location config" << "\033[0m" << std::endl;
 					return false;
 				}
 			}
 			line.clear();
 		}
-		if (listenCp < 1 || autoIndexCp != 1 || rootCp != 1 || maxSizeCp != 1 || uploadDirCp > 1)
+		if (!isValideServerCp(serverCp))
 		{
-			std::cout << "Error in " << "\033[0;31m"  << "the server config" << "\033[0m"  << std::endl;
+			std::cout << "Error in " << "\033[0;31m" << "the server config" << "\033[0m" << std::endl;
 			return false;
 		}
 	}
+
+	checkRepetedServers();
+
 	return true;
 }

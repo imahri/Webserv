@@ -1,16 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   string_utils.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ytaqsi <ytaqsi@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/07 10:22:13 by ytaqsi            #+#    #+#             */
-/*   Updated: 2023/11/19 18:13:39 by ytaqsi           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "../../includes/Webserv.hpp"
 
-#include "../../includes/Request.hpp"
 
 bool	ft_isAllSpace(std::string& s)
 {
@@ -22,7 +11,7 @@ bool	ft_isAllSpace(std::string& s)
 	return true;
 }
 
-bool	Webserv::parsing(int ac, char **av)
+bool	Parsing::parsing(int ac, char **av)
 {
 	if (ac > 2)
 	{
@@ -58,6 +47,11 @@ bool	Webserv::parsing(int ac, char **av)
 		pars = ft_split(line);
 		if (!pars[0].empty() && pars[0] == "server")
 		{
+			if (serverScope)
+			{
+				std::cerr << "Error in the server config " << std::endl;
+				return false;
+			}
 			if (pars.size() != 2 || pars[0] != "server" || pars[1] != "{")
 			{
 				std::cerr << "Error in the server config " << std::endl;
@@ -119,6 +113,7 @@ bool	checkOther(const std::string& val)
 	std::vector <std::string> data;
 
 	data.push_back("server");
+	data.push_back("server_name");
 	data.push_back("methods");
 	data.push_back("index");
 	data.push_back("listen");
@@ -139,7 +134,7 @@ bool	checkOther(const std::string& val)
 	return true;
 }
 
-bool	Webserv::fillServerList()
+bool	Parsing::fillServerList()
 {
 	std::string					line;
 	std::string					finalLine;
@@ -166,6 +161,11 @@ bool	Webserv::fillServerList()
 			std::cout << "Error on " << "\033[0;31m"  << line << "\033[0m"  << std::endl;
 			return false; 
 		}
+		size_t i = trimedLine.find('}');
+
+		std::string eos = "_\n";
+		if (i != std::string::npos)
+			trimedLine.insert(i + 1, eos);
 		finalLine += trimedLine;
 	}
 
@@ -189,24 +189,26 @@ bool	Webserv::fillServerList()
 					--i; 
 					break;
 				}
-					data.push_back(finalParams[i]);
-				}
-				this->servers.push_back(data);
+				data.push_back(finalParams[i]);
 			}
+			this->servers.push_back(data);
+		}
 	}
+
+
 	pars.clear();
 	finalParams.clear();
 	params.clear();
 	return true;
 }
 
-size_t	Webserv::getServersNumber()
+size_t	Parsing::getServersNumber()
 {
 	return (int)this->servers.size();
 }
 
 
-size_t		Webserv::getLocationsNumber(size_t index)
+size_t		Parsing::getLocationsNumber(size_t index)
 {
 	int	cp = 0;
 
@@ -228,7 +230,7 @@ size_t		Webserv::getLocationsNumber(size_t index)
 	return cp;
 }
 
-std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::getLocationData(size_t serverIndex, size_t locationIndex)
+std::vector < std::pair <std::string, std::vector < std::string > > > Parsing::getLocationData(size_t serverIndex, size_t locationIndex)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData;
 	
@@ -248,11 +250,14 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 					{
 						while (j < servers[i].size())
 						{
-							std::vector < std::string > line = ft_split(servers[i][j]);
+							line.clear();
+							line = ft_split(servers[i][j]);
 							std::vector < std::string > values (line.begin() + 1, line.end());
 							locationData.push_back(std::make_pair(line[0], values));
 							j++;
-							if (ft_split(servers[i][j])[0] == "location")
+							line.clear();
+							line = ft_split(servers[i][j]);
+							if (j < servers[i].size() && (line[0] == "location" || line[0] == "_"))
 								break;
 						}
 					}
@@ -265,7 +270,7 @@ std::vector < std::pair <std::string, std::vector < std::string > > > Webserv::g
 
 }
 
-std::vector < std::string >	Webserv::getLocationSingle(size_t serverIndex, size_t locationIndex, std::string data)
+std::vector < std::string >	Parsing::getLocationSingle(size_t serverIndex, size_t locationIndex, std::string data)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData (getLocationData(serverIndex, locationIndex));
 
@@ -277,7 +282,7 @@ std::vector < std::string >	Webserv::getLocationSingle(size_t serverIndex, size_
 	return std::vector<std::string>();
 }
 
-std::vector < std::pair <std::string, std::string > > Webserv::getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string dataToSearch)
+std::vector < std::pair <std::string, std::string > > Parsing::getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string dataToSearch)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > locationData = getLocationData(serverIndex, locationIndex);
 	std::vector < std::pair <std::string, std::string > > data;
@@ -294,7 +299,7 @@ std::vector < std::pair <std::string, std::string > > Webserv::getLocationMultip
 
 
 
-std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::serverData(size_t index)
+std::vector < std::pair <std::string, std::vector < std::string > > >	Parsing::serverData(size_t index)
 {
 	std::vector < std::pair <std::string, std::vector < std::string > > > serverData;
 	if (index < 1 || index > servers.size())
@@ -307,8 +312,13 @@ std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::s
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
-				if (line[0] == "location" || line[0] == "server")
-					break;
+				if (line[0] == "location")
+				{
+					while (j < servers[i].size() && servers[i][j] != "_")
+						j++;
+					--j;
+					continue;
+				}
 				if (line[0] == "listen" || line[0] == "server_name" || line[0] == "autoindex" || line[0] == "upload_dir" || line[0] == "root" || line[0] == "client_body_max_size")
 				{
 					std::vector < std::string > values (line.begin() + 1, line.end());
@@ -320,7 +330,7 @@ std::vector < std::pair <std::string, std::vector < std::string > > >	Webserv::s
 	return serverData;
 }
 
-std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPages(size_t index)
+std::vector < std::pair < std::string, std::string > > Parsing::getServerErrorPages(size_t index)
 {
 	std::vector <  std::pair < std::string, std::string > > errorPages;
 	if (index < 1 || index > servers.size())
@@ -332,6 +342,13 @@ std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPa
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
+				if (line[0] == "location")
+				{
+					while (j < servers[i].size() && servers[i][j] != "_")
+						j++;
+					--j;
+					continue;
+				}
 				if (line[0] == "error_page")
 					errorPages.push_back(std::make_pair(line[1], line[2]));
 			}
@@ -340,10 +357,10 @@ std::vector < std::pair < std::string, std::string > > Webserv::getServerErrorPa
 	return errorPages;
 }
 
-std::string Webserv::getServerDataSingle (size_t serverIndex, std::string data)
+std::string Parsing::getServerDataSingle (size_t serverIndex, std::string data)
 {
 	if (serverIndex < 1 || serverIndex > servers.size())
-		return NULL;
+		return "";
 	for (size_t i = 0; i < this->servers.size(); i++)
 	{
 		if (i == serverIndex - 1)
@@ -351,19 +368,27 @@ std::string Webserv::getServerDataSingle (size_t serverIndex, std::string data)
 			for (size_t j = 0; j < servers[i].size(); j++)
 			{
 				std::vector < std::string > line = ft_split(servers[i][j]);
+
+				if (line[0] == "location")
+				{
+					while (j < servers[i].size() && servers[i][j] != "_")
+						j++;
+					--j;
+					continue;
+				}
 				if (line[0] == data)
 				{
 					if (line[0] == "listen" && line[1].find(':') == std::string::npos)
-						return "localhost " + line[1];
+						return "0.0.0.0:" + line[1];
 					return line[1];
 				}
 			}
 		}
 	}
-	return NULL;
+	return "";
 }
 
-int Webserv::checkForLocation (size_t serverIndex , const std::string& s)
+int Parsing::checkForLocation (size_t serverIndex , const std::string& s)
 {
 	if (serverIndex < 1 || serverIndex > servers.size())
 		return -1;
@@ -387,4 +412,16 @@ int Webserv::checkForLocation (size_t serverIndex , const std::string& s)
 		}
 	}
 	return -1;
+}
+
+std::string Parsing::getMimeTypes(const std::string& s)
+{
+	std::map<std::string, std::vector<std::string> >::const_iterator it = responseTypes.begin();
+	for (; it != responseTypes.end(); ++it)
+	{
+		const std::vector<std::string>& mimeTypes = it->second;
+		if (std::find(mimeTypes.begin(), mimeTypes.end(), s) != mimeTypes.end()) 
+			return it->first;
+    }   
+    return "";
 }
