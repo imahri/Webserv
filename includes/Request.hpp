@@ -61,12 +61,13 @@ class Request
         LOCATION                            Loc;
         Response                            Req;
         bool                                SendFile;
-        std::streampos                      FileSize;
+        size_t                              FileSize;
         std::string                         PathToSaveFile;
         int                                 offset;
         bool                                ClientIsDone;
         std::string                         ds;
         bool                                RequestIsDone;
+        std::string                         ttew;
         
         Request();
         Request(const Request &obj);

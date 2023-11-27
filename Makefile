@@ -1,7 +1,7 @@
 
 CC = c++
 
-CFLAGS = -Wall -Werror -Wextra -std=c++98 -g -fsanitize=address
+CFLAGS = -Wall -Werror -Wextra -std=c++98 -g #-fsanitize=address
 
 FRM = rm -rf
 
@@ -30,6 +30,7 @@ SRC = 	SRC/main.cpp\
 		SRC/Cheesy/Request/InitRequest.cpp \
 		SRC/Cheesy/Response/Response.cpp \
 		SRC/Cheesy/SENDFILE/sendFile.cpp \
+		testServer.cpp\
 
 		
 all: $(NAME)

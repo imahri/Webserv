@@ -2,18 +2,26 @@
 
 int		Request::FillResponseBodyFromFile()
 {
-	std::fstream configFile;
-	std::string fileName = RequestPath, str;
+	std::ifstream iosos(RequestPath, std::ios::binary);
+	if (!iosos)
+		return (std::cerr << "Error Unable to open the iosos " << std::endl, statusCode = 404, 1);
 
-	configFile.open(fileName);
-	if (!configFile)
-		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
+	iosos.seekg (0, iosos.end);
+    FileSize = iosos.tellg();
+    iosos.seekg (0, iosos.beg);
+	std::cout << "FILE SIZE:" << FileSize << std::endl;
 
-	while (std::getline(configFile, str))
-		ResponseBody += str;
+    char buffer[FileSize];
+    iosos.read (buffer, FileSize);
 
-	configFile.close();
+	ResponseBody.clear();
+	ResponseBody = buffer;
+    if (iosos)
+      std::cout << "all characters read successfully.";
+    else
+      std::cout << "error: only " << iosos.gcount() << " could be read";
 
+    iosos.close();
 	SendFile = true;
 	return(0);
 }
