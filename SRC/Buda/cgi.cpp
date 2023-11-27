@@ -118,5 +118,11 @@ Set by the Web Server or CGI Handler:
 // {
 // 	// FILE *fIn = tmpfile();
 // }
+#include "../../includes/Webserv.hpp"
 
 
+std::string  Parsing::CgiResult(CGI &c)
+{
+	cgi = c;
+	return("");
+};

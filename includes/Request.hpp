@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CGI.hpp"
 #include "Webserv.hpp"
 
 #define MEGA 1000000
@@ -37,6 +38,7 @@ typedef struct R
 class Request
 {
     public:
+        CGI                                 cgi;
         std::map<std::string, std::string>  HeaderData;
         std::string                         header;
         std::string                         body;
@@ -99,6 +101,7 @@ class Request
         int                                 InitRequest(std::string str, int j, int index, Parsing &ps);
         int                                 FillResponseBody();
         void                                Reset();
+        void                                FillCgi();
 
 
 
