@@ -38,6 +38,8 @@ struct locationConfigData
 class Parsing
 {
 	public:
+		std::map< std::string, std::string > cgiENV;
+
 		std::vector< std::vector<std::string > > servers;
 		std::map< std::string, std::vector<std::string > > responseTypes;
 		std::vector< std::string > httpStatusCodes;
@@ -78,8 +80,13 @@ class Parsing
 
 		// get one of location data ==> methods, cgi, redirect
 		std::vector< std::pair < std::string, std::string > > getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string data);
+
+
 		//-------------------------------------CGI------------------------------------------------------//
 		CGI			cgi;
+		void	envInit();
+		std::string	getEnvHeader(const std::string&  s);
+
 		std::string  CgiResult(CGI &c);
 };
 

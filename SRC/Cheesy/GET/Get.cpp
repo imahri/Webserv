@@ -41,19 +41,23 @@ void		Request::FillCgi()
 
 int		Request::GetFile()
 {
+				std::cout << " ------0------- " << std::endl;
 	if(locationIndex == 0)
 		return(1);
 	else
 	{
-		if(Loc.CheckCGI)
-		{
-			FillCgi();
-			std::string str =  Server.CgiResult(cgi);
+		// if(Loc.CheckCGI)
+		// {
 			//Run CGI on requested file
-		}
-		else
+		// }
+		// else
 			if(FillResponseBodyFromFile())
-				return(1);
+			{
+				std::cout << " ------1------- " << std::endl;
+				FillCgi();
+				std::string str =  Server.CgiResult(cgi);
+			}
+			return(1);
 	}
 	return(0);
 }

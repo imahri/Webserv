@@ -76,8 +76,6 @@ Set by the Web Server or CGI Handler:
 // ["SERVER_SOFTWARE"]				== "webserv/test/1.0"				=>	webserv/test/1.0
 // ["REMOTE_HOST"]					== 127.0.0.1						=>	127.0.0.1
 // ["HTTP_USER_AGENT"]				== req User-Agent +					=>	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
-
-
 // ["HTTP_ACCEPT_ENCODING"]			== req Accept-Encoding				=>	gzip, deflate, br
 // ["DOCUMENT_ROOT"]				== ?								=>	/var/www/html
 
@@ -120,9 +118,56 @@ Set by the Web Server or CGI Handler:
 // }
 #include "../../includes/Webserv.hpp"
 
+std::string	Parsing::getEnvHeader(const std::string&  s)
+{
+    std::map<std::string, std::string>::iterator	i = this->cgi.HeaderData.begin();
+	for (; i != cgi.HeaderData.end(); i++)
+	{
+		if (s == i->first)
+			return i->second;
+	}
+	
+	return "";
+}
+
+void	 Parsing::envInit()
+{
+	this->cgiENV["REQUEST_METHOD"] = cgi.methode;
+	this->cgiENV["REQUEST_URI"] = cgi.URI;
+	this->cgiENV["SERVER_NAME"] = "OreO";
+	this->cgiENV["GATEWAY_INTERFACE"] = "CGI/1.1";
+	this->cgiENV["AUTH_TYPE"] = "Basic";
+	this->cgiENV["SERVER_SOFTWARE"] = "webserv/test/1.0";
+	this->cgiENV["REMOTE_HOST"] = "127.0.0.1";
+	this->cgiENV["HTTP_ACCEPT_ENCODING"] = getEnvHeader("Accept-Encoding");
+	this->cgiENV["HTTP_USER_AGENT"] = getEnvHeader("User-Agent");
+	this->cgiENV["HTTP_COOKIE"] = getEnvHeader("Cookie");
+	this->cgiENV["HTTP_ACCEPT"] = getEnvHeader("Accept");
+	this->cgiENV["HTTP_ACCEPT_LANGUAGE"] = getEnvHeader("Accept-Language");
+	this->cgiENV["HTTP_REFERER"] = getEnvHeader("Referer");
+	this->cgiENV["CONTENT_LENGTH"] = getEnvHeader("Content-Length");
+	this->cgiENV["CONTENT_TYPE"] = getEnvHeader("Content-Type");
+
+	this->cgiENV["SERVER_PORT"] = getEnvHeader("");
+	this->cgiENV["QUERY_STRING"] = getEnvHeader("");
+	this->cgiENV["SERVER_PROTOCOL"] = getEnvHeader("");
+	this->cgiENV["PATH_INFO"] = getEnvHeader("");
+	this->cgiENV["SCRIPT_FILENAME"] = getEnvHeader("");
+	this->cgiENV["REDIRECT_STATUS"] = getEnvHeader("");
+	this->cgiENV["PATH_TRANSLATED"] = getEnvHeader("");
+	this->cgiENV["UPLOAD_PATH"] = getEnvHeader("");
+	this->cgiENV["DOCUMENT_ROOT"] = getEnvHeader("");
+}
+
+
 
 std::string  Parsing::CgiResult(CGI &c)
 {
 	cgi = c;
+	envInit();
+
+	
+
+
 	return("");
 };
