@@ -1,34 +1,73 @@
 #include "../../../includes/Request.hpp"
 
-int		Request::FillResponseBodyFromFile()
+// int		Request::FillResponseBodyFromFile()
+// {
+// 	std::ifstream iosos(RequestPath, std::ios::binary);
+// 	if (!iosos)
+// 		return (std::cerr << "Error Unable to open the iosos " << std::endl, statusCode = 404, 1);
+
+// 	iosos.seekg (0, iosos.end);
+//     FileSize = iosos.tellg();
+//     iosos.seekg (0, iosos.beg);
+
+//     char *buffer = new char[FileSize + 1];
+// 	bzero(buffer, FileSize + 1);
+//     iosos.read (buffer, FileSize);
+
+// 	ResponseBody.clear();
+// 	ResponseBody = buffer;
+// 	std::cout << "FILE SIZE: " << FileSize << " BODY SIZE: "<<  ResponseBody.length() << std::endl;
+
+// 	ResponseBody += "\r\n";
+//     if (iosos)
+//       std::cout << "all characters read successfully.";
+//     else
+//       std::cout << "error: only " << iosos.gcount() << " could be read";
+
+//     iosos.close();
+// 	delete[] buffer;
+// 	SendFile = true;
+// 	return(0);
+// }
+
+
+int Request::FillResponseBodyFromFile()
 {
-	std::ifstream iosos(RequestPath, std::ios::binary);
-	if (!iosos)
-		return (std::cerr << "Error Unable to open the iosos " << std::endl, statusCode = 404, 1);
+    std::ifstream fileStream(RequestPath, std::ios::binary);
+    if (!fileStream)
+    {
+        std::cerr << "Error: Unable to open the file " << RequestPath << std::endl;
+        statusCode = 404;
+        return 1;
+    }
 
-	iosos.seekg (0, iosos.end);
-    FileSize = iosos.tellg();
-    iosos.seekg (0, iosos.beg);
+    fileStream.seekg(0, fileStream.end);
+    FileSize = fileStream.tellg();
+    fileStream.seekg(0, fileStream.beg);
 
-    char *buffer = new char[FileSize + 1];
-	// bzero(buffer, FileSize + 1);
-    iosos.read (buffer, FileSize);
+    const int bufferSize = 4096; // Adjust the buffer size as per your needs
+    char buffer[bufferSize];
 
-	ResponseBody.clear();
-	ResponseBody = buffer;
-	std::cout << "----------FILE SIZE" << FileSize << "BODY SIZEEEE:"<<  ResponseBody.length() << std::endl;
+    ResponseBody.clear();
 
-	ResponseBody += "\r\n";
-    if (iosos)
-      std::cout << "all characters read successfully.";
-    else
-      std::cout << "error: only " << iosos.gcount() << " could be read";
+    while (fileStream.read(buffer, bufferSize))
+    {
+        ResponseBody.append(buffer, bufferSize);
+    }
 
-    iosos.close();
-	delete[] buffer;
-	SendFile = true;
-	return(0);
+    // Read the remaining bytes
+    ResponseBody.append(buffer, fileStream.gcount());
+
+    std::cout << "FILE SIZE: " << FileSize << " BODY SIZE: " << ResponseBody.length() << std::endl;
+
+    ResponseBody += "\r\n";
+
+    fileStream.close();
+
+    SendFile = true;
+    return 0;
 }
+
 
 void		Request::FillCgi()
 {
