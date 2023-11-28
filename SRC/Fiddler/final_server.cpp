@@ -144,6 +144,7 @@ int WaitForFullRequest(std::string buff)
             if (second != std::string::npos)
             {
                 std::string Val = buff.substr(second, found - second);
+                std::cout << "VAL: " << Val << std::endl;
                 static int i;
                 while (i < std::atoi(Val.c_str()))
                     i++;
@@ -176,7 +177,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         Server qw(std::atoi(it[1].c_str()), it[0]);
         re.sudo_apt.push_back(qw);
     }
-    char buffer[3001];
+    char buffer[50000];
     size_t ll = re.sudo_apt.size();
     for (size_t i = 0; i < ll; i++)
     {
@@ -202,8 +203,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             {
                 if (net[j].revents & POLLIN)
                 {
-                    bzero(buffer, 3000);
-                    int tt = recv(net[j].fd, buffer, 1, 0);
+                    bzero(buffer, 50000);
+                    int tt = recv(net[j].fd, buffer, 50000, 0);
                     if (tt == 0)
                         close(net[j].fd);
                     if (tt == -1)
@@ -216,14 +217,14 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         std::string bu(buffer, tt);
                         re.request_msg[net[j].fd] += bu;
                         bu.clear();
-                        if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
-                        {
-                            // std::cerr << re.request_msg[net[j].fd] << std::endl;
+                        // if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
+                        // {
+                            std::cerr << re.request_msg[net[j].fd] << std::endl;
                             rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
                             re.request_msg[net[j].fd].clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;
-                        }
+                        // }
                     }
                     continue;
                 }
