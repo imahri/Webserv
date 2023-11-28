@@ -145,17 +145,13 @@ int WaitForFullRequest(std::string buff)
             return 1;
         else if (*vec.begin() == "POST")
         {
-            puts("-----HEHRE-");
             size_t second = buff.find("Content-Length:") + 15;
             if (second != std::string::npos)
             {
-                puts("-----HEHRE2222-");
                 std::string Val = buff.substr(second, found - second);
-                std::cout << "Val: " << Val << std::endl;
                 static int i;
                 while (i < std::atoi(Val.c_str()))
                     i++;
-                std::cout << "------------>i: " << i << std::endl;
                 if (i == std::atoi(Val.c_str()))
                     return (i = 0, 1);
                 else
@@ -215,7 +211,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 if (net[j].revents & POLLIN)
                 {
                     bzero(buffer, 3000);
-                    int tt = recv(net[j].fd, buffer, 3000, 0);
+                    int tt = recv(net[j].fd, buffer, 1, 0);
                     if (tt == 0)
                         close(net[j].fd);
                     if (tt == -1)
@@ -241,11 +237,16 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 }
                 else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
                 {
-                    std::cout << "HEADER SIZE: " << rq.ResponseHeaders.length() << " BODY SIZE: " << rq.ResponseBody.length() << std::endl;
-                    std::string response = rq.ResponseHeaders + rq.ResponseBody;
-                    std::cout << "RESPONSE:" << std::endl;
-                    std::cout << response << std::endl;
+                    // std::cout << "RESPONSE:" << std::endl;
+                    // std::cout << rq.ResponseHeaders << std::endl;
+
+                    std::string response = rq.ResponseHeaders;
                     send(net[j].fd, &response[0], response.length(), 0);
+
+                    //Change this to send algo to send whole body
+                    std::string message = rq.ResponseBody;
+                    send(net[j].fd, &message[0], message.length(), 0);
+
                     net[j].events = POLLIN;
                 }
                 //     // if (net[j].revents & POLLERR | POLLHUP)
@@ -258,3 +259,22 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         }
     }
 }
+
+// std::fstream ff(rq.RequestPath); 
+// std::stringstream ss;
+// ss << ff.rdbuf();
+// std::string buff ;
+// buff = ss.str();
+
+// ssize_t sendbytes = send(net[j].fd, buff.c_str(), buff.length(), 0);
+// ssize_t oldsendbytes;
+
+// while(sendbytes > 0)
+// {
+//     oldsendbytes =  sendbytes;
+//     std::string newbuff = buff.substr(oldsendbytes);
+//     if(newbuff.length() > 0) 
+//         sendbytes = send(net[j].fd, newbuff.c_str(),newbuff.length(), 0);
+//     else
+//         break;
+// }

@@ -30,7 +30,6 @@ SRC = 	SRC/main.cpp\
 		SRC/Cheesy/Request/InitRequest.cpp \
 		SRC/Cheesy/Response/Response.cpp \
 		SRC/Cheesy/SENDFILE/sendFile.cpp \
-		testServer.cpp\
 
 		
 all: $(NAME)
