@@ -109,7 +109,8 @@ int         Request::FillFromHtmlFile()
 
     file.open(fileName);
     if (!file)
-        return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
+        return (std::cerr << "Unable to open the file html " << std::endl, statusCode = 404, 1);
+    ResponseBody.clear();
     ResponseBody = "<!DOCTYPE html> <html> <head>  <title>Error " + intToString(statusCode) + ": " + GetStatusCode(statusCode) + "</title>";  
     while (std::getline(file, str))
     {
@@ -130,25 +131,25 @@ int     Request::GenerateResponse()
     std::string str = (std::ctime(&currentTime));
     ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
 
-    ResponseHeaders += "Content-Type: text/html\r\n";
+    ResponseHeaders += "Content-Type: ";
 
-    // if(statusCode >= 400 && statusCode <= 600)
-    // {
-    //     ResponseHeaders += "text/html\r\n";
-    //     FillFromHtmlFile();
-    // }
-    // else if(statusCode >= 0 && statusCode < 400)
-    // {
-    //     // if(Req.ContentType.size())
-    //     //     ResponseHeaders += Req.MimeType + "\r\n";
-    //     // else
-    //         ResponseHeaders += "text/html\r\n";
+    if(statusCode >= 400 && statusCode <= 600)
+    {
+        ResponseHeaders += "text/html\r\n";
+        FillFromHtmlFile();
+    }
+    else if(statusCode >= 0 && statusCode < 400)
+    {
+        if(Req.ContentType.size())
+            ResponseHeaders += Req.MimeType + "\r\n";
+        else
+            ResponseHeaders += "text/html\r\n";
 
-    //     if(Req.ContentLength.size())
-    //         ResponseHeaders += "Content-Lenght: " + Req.ContentLength + "\r\n";
-    //     else if(ResponseBody.size())
-    //         ResponseHeaders += "Content-Lenght: " + intToString(ResponseBody.size()) + "\r\n";
-    // }
+        if(Req.ContentLength.size())
+            ResponseHeaders += "Content-Lenght: " + Req.ContentLength + "\r\n";
+        else if(ResponseBody.size())
+            ResponseHeaders += "Content-Lenght: " + intToString(ResponseBody.size()) + "\r\n";
+    }
     ResponseHeaders += "\r\n";
     return(0);
 }

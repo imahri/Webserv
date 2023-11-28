@@ -205,56 +205,69 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         int ret = poll(net.data(), net.size(), 0);
         for (size_t j = 0; j < net.size() && ret; j++)
         {
-                if (re.isServer(net[j].fd) && net[j].revents & POLLIN)
+            if (re.isServer(net[j].fd) && net[j].revents & POLLIN)
+            {
+                re.acceptNewClient(net[j].fd);
+                continue;
+            }
+            else if (j >= (size_t)Server::nbr_srv)
+            {
+                if (net[j].revents & POLLIN)
                 {
-                    re.acceptNewClient(net[j].fd);
-                    continue;
-                }
-                else if (j >= (size_t)Server::nbr_srv)
-                {
-                    if (net[j].revents & POLLIN)
+                    bzero(buffer, 3000);
+                    int tt = recv(net[j].fd, buffer, 3000, 0);
+                    if (tt == 0)
+                        close(net[j].fd);
+                    if (tt == -1)
                     {
-                        bzero(buffer, 3000);
-                        int tt = recv(net[j].fd, buffer, 3000, 0);
-                        if (tt == -1)
-                        {
-                            perror("webserv: ");
-                            continue;
-                        }
-                        if (tt == 0)
-                            close(net[j].fd);
-                        else
-                        {
-                            std::string bu(buffer, tt);
-                            re.request_msg[net[j].fd] += bu;
-                            bu.clear();
-                        }
+                        perror("webserv: ");
+                        continue;
+                    }
+                    else
+                    {
+                        std::string bu(buffer, tt);
+                        re.request_msg[net[j].fd] += bu;
+                        bu.clear();
                         if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
                         {
-                            std::cerr << "---------|" <<  re.request_msg[net[j].fd] << "|-----------";
+                            std::cerr <<  re.request_msg[net[j].fd] << std::endl;
+                            rq.ResponseBody.clear();
+                            rq.ResponseHeaders.clear();
                             rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
                             re.request_msg[net[j].fd].clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;
                         }
-                        continue;
                     }
-                    else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
-                    {
-                        // std::cout << "HNANANANANNANA"<< std::endl;
-                        const char *response = rq.ResponseHeaders.c_str();
-                        send(net[j].fd, response, strlen(response), 0);
-                        
-                        // if(rq.ResponseBody.size())
-                        // {
-                        //     const char *message = rq.ResponseBody.c_str();
-                        //     send(net[j].fd, message, strlen(message), 0);
-                        // }
+                    continue;
+                }
+                else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
+                {
+                    // std::string tewtew = rq.ResponseHeaders + rq.ResponseBody;
+                    // size_t size = tewtew.size();
+                    // std::cout << "------------------TO SEND---------------------" << std::endl;
+                    // std::cout << tewtew << std::endl;
+                    // std::cout << "------------------END OF TO SEND---------------------" << std::endl;
+                    std::cout << "HEADERS :" << rq.ResponseBody << std::endl;
+                    std::cout << "BODY SIZE:" << rq.ResponseBody.size() << std::endl;
+                    // std::cout << "LENGHT:" << size << std::endl;
+                    // long long l = send(net[j].fd, tewtew.c_str(), size, 0);
+                    // if(l == -1)
+                    // {
+                    //     puts("zaaaaaaaaaaabi");
+                    //     tewtew.clear();
+                    // }
+                    // const char *response = "HTTP/1.1 302 Found\r\nlocation: https://youtube.com\r\nContent-Length: 0\r\n\r\n";
+                    const char *response = "HTTP/1.1 200 OK\r\nContent-Length: 10\r\nContent-Type: text/plain\r\n\r\n";
+                    // const char *message = rq.ResponseBody.c_str();
+                    send(net[j].fd, response, strlen(response), 0);
+                    ssize_t bytesSent = send(net[j].fd, rq.ResponseBody.c_str(), strlen(rq.ResponseBody.c_str()), 0);
+                    if(bytesSent == -1)
+                        exit(1);
+                    net[j].events = POLLIN;
+                    // std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
+                }
 
-                        net[j].events = POLLIN;
-                        // std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
-                        // exit(1);
-                    }
                 //     // if (net[j].revents & POLLERR | POLLHUP)
                 //     // {
                 //     //     //close clien and erase it 

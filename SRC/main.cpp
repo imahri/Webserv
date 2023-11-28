@@ -13,6 +13,8 @@ int main(int ac, char **av)
         IoMultiplexing io;
         if(io.StartTheMatrix(wbs))
             return(1);
+        // Request     rq;
+        // rq.createServer(wbs);
     }
     catch(const std::exception& e)
     {
