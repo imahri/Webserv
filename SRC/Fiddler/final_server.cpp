@@ -13,7 +13,6 @@ void Server::start()
     nbr_srv++;
     index = 0;
     this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
-    // std::cout << "socket created " << serversocket << std::endl;
     bzero(&this->serverAddr, sizeof(this->serverAddr));
     this->serverAddr.sin_family = AF_INET;
     this->serverAddr.sin_port = htons(this->port);
@@ -25,13 +24,9 @@ void Server::start()
     n = bind(this->serversocket, (struct sockaddr *)&this->serverAddr, sizeof(this->serverAddr));
     if (n < 0)
         perror("wa bzaaaaf");
-    // std::cout << "bind to " << port << std::endl;
     fcntl(this->serversocket, F_SETFL, O_NONBLOCK);
     listen(this->serversocket, 1000);
-    // std::cout << "listen to ... " << serversocket << std::endl;
     index = nbr_srv;
-    // std::cout << "index >>  " << index << std::endl;
-    // std::cout << "nbr_srv >>  " << nbr_srv << std::endl;
 }
 
 int IoMultiplexing::maxfd = 0;
@@ -179,12 +174,10 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         std::string str = ps.getServerDataSingle(i, "listen");
         std::vector<std::string> it = ft_split(str, ':');
         Server qw(std::atoi(it[1].c_str()), it[0]);
-        // std::cout << "Port|" << qw.port << "|ip|" << qw.ip << std::endl;
         re.sudo_apt.push_back(qw);
     }
     char buffer[3001];
     size_t ll = re.sudo_apt.size();
-    // std::cout << "qwertyui     dsudds   " << ll << std::endl;
     for (size_t i = 0; i < ll; i++)
     {
         re.sudo_apt[i].start();
@@ -192,7 +185,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         tmp.fd = re.sudo_apt[i].serversocket;
         tmp.events = POLLIN;
         net.push_back(tmp);
-        // std::cout << re.sudo_apt[i].index << std::endl;
     }
     std::string sttrr;
     signal(SIGPIPE, SIG_IGN);
@@ -226,7 +218,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         bu.clear();
                         if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
                         {
-                            std::cerr << re.request_msg[net[j].fd] << std::endl;
+                            // std::cerr << re.request_msg[net[j].fd] << std::endl;
                             rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
                             re.request_msg[net[j].fd].clear();
                             net[j].events = POLLOUT;

@@ -1,4 +1,3 @@
-
 CC = c++
 
 CFLAGS = -Wall -Werror -Wextra -std=c++98 -g -fsanitize=address
@@ -15,7 +14,6 @@ HEADER = 	includes/CGI.hpp\
 
 SRC = 	SRC/main.cpp\
 		SRC/Fiddler/final_server.cpp \
-		SRC/Fiddler/oldServer.cpp \
 		SRC/Buda/Buda.cpp \
 		SRC/Buda/finalParsing.cpp \
 		SRC/Buda/cgi.cpp \
