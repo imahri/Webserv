@@ -145,10 +145,10 @@ int     Request::GenerateResponse()
         else
             ResponseHeaders += "text/html\r\n";
 
-        if(Req.ContentLength.size())
+        if(Req.ContentLength.length())
             ResponseHeaders += "Content-Lenght: " + Req.ContentLength + "\r\n";
-        else if(ResponseBody.size())
-            ResponseHeaders += "Content-Lenght: " + intToString(ResponseBody.size()) + "\r\n";
+        else if(ResponseBody.length())
+            ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
     }
     ResponseHeaders += "\r\n";
     return(0);
