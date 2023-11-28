@@ -15,6 +15,8 @@ class CGI
     	std::string                         URI;
     	std::string                         RequestPath;
         int                                 CodeStatus;
+    	std::string                         Query;
+        std::string                         root;
         
     CGI(){};
 

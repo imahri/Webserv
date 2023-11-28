@@ -79,6 +79,8 @@ void		Request::FillCgi()
 	this->cgi.URI = URI;
 	this->cgi.RequestPath = RequestPath;
 	this->cgi.CodeStatus = statusCode;
+	this->cgi.Query = Query;
+	this->cgi.root = this->Loc.root;
 };
 
 
@@ -103,6 +105,8 @@ int		Request::GetFile()
 
 int		Request::GetDirectory()
 {
+
+
 	std::vector < std::string> it;
 	if(locationIndex != 0)
 		it = Server.getLocationSingle(ServerIndex, locationIndex, "index");

@@ -39,6 +39,8 @@ class Request
 {
     public:
         CGI                                 cgi;
+        LOCATION                            Loc;
+        Response                            Req;
         std::map<std::string, std::string>  HeaderData;
         std::string                         header;
         std::string                         body;
@@ -47,6 +49,7 @@ class Request
     	std::string                         httpVersion;
     	std::string                         methode;
     	std::string                         URI;
+    	std::string                         Query;
     	std::string                         RequestPath;
     	std::string                         ResponseHeaders;
     	std::string                         ResponseBody;
@@ -58,8 +61,6 @@ class Request
         std::string                         File;
         std::string                         UploadDir;
         size_t                              ServerIndex;
-        LOCATION                            Loc;
-        Response                            Req;
         bool                                SendFile;
         size_t                              FileSize;
         std::string                         PathToSaveFile;
