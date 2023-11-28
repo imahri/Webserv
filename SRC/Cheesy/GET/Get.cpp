@@ -50,17 +50,13 @@ int		Request::GetFile()
 		return(1);
 	else
 	{
-		// if(Loc.CheckCGI)
-		// {
-			//Run CGI on requested file
-		// }
-		// else
-			if(FillResponseBodyFromFile())
-			{
-				std::cout << " ------1------- " << std::endl;
+		if(Loc.CheckCGI)
+		{
 				FillCgi();
 				std::string str =  Server.CgiResult(cgi);
-			}
+			//Run CGI on requested file
+		}
+		else if(FillResponseBodyFromFile())
 			return(1);
 	}
 	return(0);

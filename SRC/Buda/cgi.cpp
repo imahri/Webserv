@@ -50,6 +50,24 @@ Set by the Web Server or CGI Handler:
 		Content-Type: application/json
 		Content-Length: 56
 
+
+		Host: localhost:6969
+		Connection: keep-alive
+		sec-ch-ua: "Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"
+		sec-ch-ua-mobile: ?0
+		sec-ch-ua-platform: "macOS"
+		DNT: 1
+		Upgrade-Insecure-Requests: 1
+		User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36
+		Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.7
+		Sec-Fetch-Site: none
+		Sec-Fetch-Mode: navigate
+		Sec-Fetch-User: ?1
+		Sec-Fetch-Dest: document
+		Accept-Encoding: gzip, deflate, br
+		Accept-Language: en-US,en;q=0.9,fr;q=0.8
+
+
 	//body
 		{"key1": "value1", "key2": "value2", "key3": "value3"}
 */
@@ -147,10 +165,10 @@ void	 Parsing::envInit()
 	this->cgiENV["HTTP_REFERER"] = getEnvHeader("Referer");
 	this->cgiENV["CONTENT_LENGTH"] = getEnvHeader("Content-Length");
 	this->cgiENV["CONTENT_TYPE"] = getEnvHeader("Content-Type");
+	this->cgiENV["SERVER_PROTOCOL"] = cgi.httpVersion;
 
 	this->cgiENV["SERVER_PORT"] = getEnvHeader("");
 	this->cgiENV["QUERY_STRING"] = getEnvHeader("");
-	this->cgiENV["SERVER_PROTOCOL"] = getEnvHeader("");
 	this->cgiENV["PATH_INFO"] = getEnvHeader("");
 	this->cgiENV["SCRIPT_FILENAME"] = getEnvHeader("");
 	this->cgiENV["REDIRECT_STATUS"] = getEnvHeader("");
@@ -164,10 +182,23 @@ void	 Parsing::envInit()
 std::string  Parsing::CgiResult(CGI &c)
 {
 	cgi = c;
-	envInit();
-
+	// envInit();
+	std::cout << "---------------------------------------CGI-----------------------------------------" <<std::endl;
+	std::map<std::string, std::string>::iterator	i = this->cgi.HeaderData.begin();
+	for (; i != cgi.HeaderData.end(); i++)
+	{
+		std::cout << "|"+ i->first+"|: " + "|" + i->second + "|" << std::endl;
+	}
 	
+		std::cout << "header: " << cgi.header << std::endl;
+        std::cout << "body: " << cgi.body << std::endl;
+    	std::cout << "httpVersion: " << cgi.httpVersion << std::endl;
+    	std::cout << "methode: " << cgi.methode << std::endl;
+    	std::cout << "URI: " << cgi.URI << std::endl;
+    	std::cout << "RequestPath: " << cgi.RequestPath << std::endl;
+        std::cout << "CodeStatus: " << cgi.CodeStatus << std::endl;
 
+	std::cout << "---------------------------------------CGI end-----------------------------------------" <<std::endl;
 
 	return("");
 };
