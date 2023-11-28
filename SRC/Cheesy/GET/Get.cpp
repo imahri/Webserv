@@ -9,19 +9,23 @@ int		Request::FillResponseBodyFromFile()
 	iosos.seekg (0, iosos.end);
     FileSize = iosos.tellg();
     iosos.seekg (0, iosos.beg);
-	std::cout << "FILE SIZE:" << FileSize << std::endl;
 
-    char buffer[FileSize];
+    char *buffer = new char[FileSize + 1];
+	// bzero(buffer, FileSize + 1);
     iosos.read (buffer, FileSize);
 
 	ResponseBody.clear();
 	ResponseBody = buffer;
+	std::cout << "----------FILE SIZE" << FileSize << "BODY SIZEEEE:"<<  ResponseBody.length() << std::endl;
+
+	ResponseBody += "\r\n";
     if (iosos)
       std::cout << "all characters read successfully.";
     else
       std::cout << "error: only " << iosos.gcount() << " could be read";
 
     iosos.close();
+	delete[] buffer;
 	SendFile = true;
 	return(0);
 }
