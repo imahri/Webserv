@@ -137,20 +137,29 @@ int WaitForFullRequest(std::string buff)
         size_t index = buff.find('\n');
         if(index == std::string::npos)
             return(0);
+            
         std::string http = buff.substr(0, index - 1);
     	std::vector<std::string> vec = ft_split(http, " \n\r\t");
+        
         if(*vec.begin() == "GET" || *vec.begin() == "DELETE")
             return 1;
         else if(*vec.begin() == "POST")
         {
-            // puts("--------------here-");
-            size_t second = buff.find(substringToFind, found + 4);
-            std::cout << "first:" << found << std::endl;
-            std::cout << "second:" << second << std::endl;
+            puts("-----HEHRE-");
+            size_t second = buff.find("Content-Length:") + 15;
             if (second != std::string::npos)
             {
-                // puts("etwtewtetwtewtetw");
-                return 33;
+                puts("-----HEHRE2222-");
+                std::string Val = buff.substr(second, found - second);
+                std::cout << "Val: " << Val << std::endl;
+                static int i;
+                while (i < std::atoi(Val.c_str()))
+                    i++;
+                std::cout << "------------>i: " << i << std::endl;
+                if(i == std::atoi(Val.c_str()))
+                    return(i = 0, 1);
+                else
+                    return 0;
             }
             else
                 return 0;
@@ -196,60 +205,69 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         int ret = poll(net.data(), net.size(), 0);
         for (size_t j = 0; j < net.size() && ret; j++)
         {
-                if (re.isServer(net[j].fd) && net[j].revents & POLLIN)
+            if (re.isServer(net[j].fd) && net[j].revents & POLLIN)
+            {
+                re.acceptNewClient(net[j].fd);
+                continue;
+            }
+            else if (j >= (size_t)Server::nbr_srv)
+            {
+                if (net[j].revents & POLLIN)
                 {
-                    re.acceptNewClient(net[j].fd);
-                    continue;
-                }
-                else if (j >= (size_t)Server::nbr_srv)
-                {
-                    if (net[j].revents & POLLIN)
+                    bzero(buffer, 3000);
+                    int tt = recv(net[j].fd, buffer, 3000, 0);
+                    if (tt == 0)
+                        close(net[j].fd);
+                    if (tt == -1)
                     {
-                        bzero(buffer, 3000);
-                        int tt = recv(net[j].fd, buffer, 3000, 0);
-                        if (tt == -1)
+                        perror("webserv: ");
+                        continue;
+                    }
+                    else
+                    {
+                        std::string bu(buffer, tt);
+                        re.request_msg[net[j].fd] += bu;
+                        bu.clear();
+                        if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
                         {
-                            perror("webserv: ");
-                            continue;
-                        }
-                        if (tt == 0)
-                            close(net[j].fd);
-                        else
-                        {
-                            std::string bu(buffer, tt);
-                            re.request_msg[net[j].fd] += bu;
-                            bu.clear();
-                        }
-                        // if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
-                        // {
-                            std::cerr << "REQUEST" <<  re.request_msg[net[j].fd];
-                            // int ar =   checkServer(net[j].fd);
-                            // std::cout << "yyy  " << ar << std::endl;
-                            // rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
+                            std::cerr <<  re.request_msg[net[j].fd] << std::endl;
+                            rq.ResponseBody.clear();
+                            rq.ResponseHeaders.clear();
+                            rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
                             re.request_msg[net[j].fd].clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;
-                        // }
-                        // else
-                            continue;
-                        // else
-                    }
-                    else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
-                    {
-                        std::cout << "HNANANANANNANA"<< std::endl;
-                        const char *response = rq.ResponseHeaders.c_str();
-                        send(net[j].fd, response, strlen(response), 0);
-                        
-                        if(rq.ResponseBody.size())
-                        {
-                            const char *message = rq.ResponseBody.c_str();
-                            send(net[j].fd, message, strlen(message), 0);
                         }
-
-                        net[j].events = POLLIN;
-                        // std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
-                        // exit(1);
                     }
+                    continue;
+                }
+                else if (net[j].revents & POLLOUT)//----------------------SEND REQUEST-----------------------
+                {
+                    // std::string tewtew = rq.ResponseHeaders + rq.ResponseBody;
+                    // size_t size = tewtew.size();
+                    // std::cout << "------------------TO SEND---------------------" << std::endl;
+                    // std::cout << tewtew << std::endl;
+                    // std::cout << "------------------END OF TO SEND---------------------" << std::endl;
+                    std::cout << "HEADERS :" << rq.ResponseBody << std::endl;
+                    std::cout << "BODY SIZE:" << rq.ResponseBody.size() << std::endl;
+                    // std::cout << "LENGHT:" << size << std::endl;
+                    // long long l = send(net[j].fd, tewtew.c_str(), size, 0);
+                    // if(l == -1)
+                    // {
+                    //     puts("zaaaaaaaaaaabi");
+                    //     tewtew.clear();
+                    // }
+                    // const char *response = "HTTP/1.1 302 Found\r\nlocation: https://youtube.com\r\nContent-Length: 0\r\n\r\n";
+                    const char *response = "HTTP/1.1 200 OK\r\nContent-Length: 10\r\nContent-Type: text/plain\r\n\r\n";
+                    // const char *message = rq.ResponseBody.c_str();
+                    send(net[j].fd, response, strlen(response), 0);
+                    ssize_t bytesSent = send(net[j].fd, rq.ResponseBody.c_str(), strlen(rq.ResponseBody.c_str()), 0);
+                    if(bytesSent == -1)
+                        exit(1);
+                    net[j].events = POLLIN;
+                    // std::cout << "----------------------END OF RESPONSE---------------------- "<< std::endl;
+                }
+
                 //     // if (net[j].revents & POLLERR | POLLHUP)
                 //     // {
                 //     //     //close clien and erase it 

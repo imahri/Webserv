@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CGI.hpp"
 #include "Webserv.hpp"
 
 #define MEGA 1000000
@@ -37,6 +38,7 @@ typedef struct R
 class Request
 {
     public:
+        CGI                                 cgi;
         std::map<std::string, std::string>  HeaderData;
         std::string                         header;
         std::string                         body;
@@ -59,12 +61,13 @@ class Request
         LOCATION                            Loc;
         Response                            Req;
         bool                                SendFile;
-        std::streampos                      FileSize;
+        size_t                              FileSize;
         std::string                         PathToSaveFile;
         int                                 offset;
         bool                                ClientIsDone;
         std::string                         ds;
         bool                                RequestIsDone;
+        std::string                         ttew;
         
         Request();
         Request(const Request &obj);
@@ -99,17 +102,18 @@ class Request
         int                                 InitRequest(std::string str, int j, int index, Parsing &ps);
         int                                 FillResponseBody();
         void                                Reset();
+        void                                FillCgi();
 
 
 
-        //extra functions
-        size_t                              convertToCharacters(std::string sizeString);
-        std::string                         getNextToken(std::istringstream &iss);
-        int                                 checkDigit(std::string str);
-        int                                 checkWhiteSpace(std::string str);
-        int                                 checkNumbers(std::string str);
 };
 
+        //extra functions
+        int                                 checkNumbers(std::string str);
+        int                                 checkDigit(std::string str);
+        size_t                              convertToCharacters(std::string sizeString);
+        std::string                         getNextToken(std::istringstream &iss);
+        int                                 checkWhiteSpace(std::string str);
         std::vector<std::string>            ft_split(std::string &s, std::string delimiter);
         std::vector<std::string>            ft_split(std::string& s, char c);
         std::vector<std::string>            ft_split(std::string& s);

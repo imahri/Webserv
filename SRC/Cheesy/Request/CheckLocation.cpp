@@ -88,8 +88,9 @@ int		Request::checkLocations()
         std::vector < std::pair <std::string , std::string > >::iterator it = Loc.redirect.begin();
         for (; it != Loc.redirect.end(); it++)
         {
-			ResponseHeaders = "HTTP/1.1 302 OK\r\nContent-Type: text/html\r\n\r\n";
-			ResponseBody += "<meta http-equiv=\"Refresh\" content=\"0; url='" + it->second + "'\" />";
+			puts("UUUUUUUUUUUUU");
+			// ResponseHeaders = "HTTP/1.1 302 OK\r\nContent-Type: text/html\r\n\r\n";
+			// ResponseBody += "<meta http-equiv=\"Refresh\" content=\"0; url='" + it->second + "'\" />";
 			return(statusCode = std::atoi(it->first.c_str()), 1);
         }
     }

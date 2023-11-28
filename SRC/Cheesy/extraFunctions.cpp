@@ -16,7 +16,7 @@ Request &Request::operator=(const Request &other)
 
 Request::~Request(){}
 
-std::string Request::getNextToken(std::istringstream &iss)
+std::string getNextToken(std::istringstream &iss)
 {
     std::string token;
 
@@ -24,7 +24,7 @@ std::string Request::getNextToken(std::istringstream &iss)
     return token;
 }
 
-int   Request::checkDigit(std::string str)
+int   checkDigit(std::string str)
 {
     for (size_t i = 0; i < str.length(); i++)
 	{
@@ -37,7 +37,7 @@ int   Request::checkDigit(std::string str)
     return(0);
 }
 
-int   Request::checkWhiteSpace(std::string str)
+int   checkWhiteSpace(std::string str)
 {
     for (size_t i = 0; i < str.length(); i++)
         if(!std::isspace(str[i]))
@@ -45,7 +45,7 @@ int   Request::checkWhiteSpace(std::string str)
     return(0);
 }
 
-int   Request::checkNumbers(std::string str)
+int   checkNumbers(std::string str)
 {
     for (size_t i = 0; i < str.length(); i++)
 	{
@@ -134,7 +134,7 @@ std::string ft_trim(std::string s, std::string delimiter)
 	return s;
 }
 
-size_t Request::convertToCharacters(std::string sizeString)
+size_t convertToCharacters(std::string sizeString)
 {
     size_t size = std::atoi(sizeString.c_str());
     size_t factor = 1;

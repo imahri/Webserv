@@ -109,7 +109,8 @@ int         Request::FillFromHtmlFile()
 
     file.open(fileName);
     if (!file)
-        return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
+        return (std::cerr << "Unable to open the file html " << std::endl, statusCode = 404, 1);
+    ResponseBody.clear();
     ResponseBody = "<!DOCTYPE html> <html> <head>  <title>Error " + intToString(statusCode) + ": " + GetStatusCode(statusCode) + "</title>";  
     while (std::getline(file, str))
     {

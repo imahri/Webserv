@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CGI.hpp"
 #include "Webserv.hpp"
 
 bool ft_isAllSpace(std::string &s);
@@ -77,6 +78,9 @@ class Parsing
 
 		// get one of location data ==> methods, cgi, redirect
 		std::vector< std::pair < std::string, std::string > > getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string data);
+		//-------------------------------------CGI------------------------------------------------------//
+		CGI			cgi;
+		std::string  CgiResult(CGI &c);
 };
 
 

@@ -2,21 +2,42 @@
 
 int		Request::FillResponseBodyFromFile()
 {
-	std::fstream configFile;
-	std::string fileName = RequestPath, str;
+	std::ifstream iosos(RequestPath, std::ios::binary);
+	if (!iosos)
+		return (std::cerr << "Error Unable to open the iosos " << std::endl, statusCode = 404, 1);
 
-	configFile.open(fileName);
-	if (!configFile)
-		return (std::cerr << "Error Unable to open the file " << std::endl, statusCode = 404, 1);
+	iosos.seekg (0, iosos.end);
+    FileSize = iosos.tellg();
+    iosos.seekg (0, iosos.beg);
+	std::cout << "FILE SIZE:" << FileSize << std::endl;
 
-	while (std::getline(configFile, str))
-		ResponseBody += str;
+    char buffer[FileSize];
+    iosos.read (buffer, FileSize);
 
-	configFile.close();
+	ResponseBody.clear();
+	ResponseBody = buffer;
+    if (iosos)
+      std::cout << "all characters read successfully.";
+    else
+      std::cout << "error: only " << iosos.gcount() << " could be read";
 
+    iosos.close();
 	SendFile = true;
 	return(0);
 }
+
+void		Request::FillCgi()
+{
+	this->cgi.HeaderData = HeaderData;
+	this->cgi.header = header;
+	this->cgi.body = body;
+	this->cgi.httpVersion = httpVersion;
+	this->cgi.methode = methode;
+	this->cgi.URI = URI;
+	this->cgi.RequestPath = RequestPath;
+	this->cgi.CodeStatus = statusCode;
+};
+
 
 int		Request::GetFile()
 {
@@ -26,6 +47,8 @@ int		Request::GetFile()
 	{
 		if(Loc.CheckCGI)
 		{
+			FillCgi();
+			std::string str =  Server.CgiResult(cgi);
 			//Run CGI on requested file
 		}
 		else
