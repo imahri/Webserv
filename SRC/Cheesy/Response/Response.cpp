@@ -105,7 +105,7 @@ int         Request::FillFromHtmlFile()
 {
     std::string str;
     std::fstream file;
-    std::string fileName = "tt.html";
+    std::string fileName = "ErrorFile.html";
 
     file.open(fileName);
     if (!file)
@@ -120,6 +120,7 @@ int         Request::FillFromHtmlFile()
             str = "    <div class=\"error-message\">" + GetStatusCode(statusCode) + "</div>";
         ResponseBody += str;
     }
+    ResponseBody += "\r\n";
     return(0);
 }
 
@@ -133,23 +134,26 @@ int     Request::GenerateResponse()
 
     ResponseHeaders += "Content-Type: ";
 
-    if(statusCode >= 400 && statusCode <= 600)
+    if(statusCode >= 300 && statusCode <= 600)
     {
         ResponseHeaders += "text/html\r\n";
+        ResponseBody.clear();
         FillFromHtmlFile();
+        ResponseBody += "\r\n";
+        ResponseHeaders += "Content-Length: " +  std::to_string(ResponseBody.length() - 2) + "\r\n";
     }
-    else if(statusCode >= 0 && statusCode < 400)
+    else if(statusCode >= 0 && statusCode < 300)
     {
         if(Req.ContentType.size())
         {
             std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
-            ResponseHeaders +=Req.MimeType + "\r\n";
+            ResponseHeaders += Req.MimeType + "\r\n";
         }
         else
             ResponseHeaders += "text/html\r\n";
 
         if(Req.ContentLength.length())
-            ResponseHeaders += "Content-Lenght: " + Req.ContentLength + "\r\n";
+            ResponseHeaders += "Content-Length: " + Req.ContentLength + "\r\n";
         else if(ResponseBody.length())
             ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
     }

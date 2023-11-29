@@ -53,7 +53,6 @@ int		Request::checkHttp()
 		if((find = search.find(URI[i])) == search.npos)
 			return(statusCode = 400, 1);
 
-	std::cout << "BEFORE URI: " << URI << std::endl;
 	find = URI.find('?');
 	if(find != URI.npos)
 	{
@@ -61,7 +60,6 @@ int		Request::checkHttp()
 		std::cout << "Query: " << Query << std::endl;
 		URI = URI.substr(0, find);
 	}
-	std::cout << "AFTER URI: " << URI << std::endl;
 	return(0);
 }
 

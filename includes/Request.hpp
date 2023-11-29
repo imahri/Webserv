@@ -100,7 +100,7 @@ class Request
         int                                 FillFromHtmlFile();
         int                                 FillResponseBodyFromFile();
         int                                 WaitForFullRequest(char *buff);
-        int                                 InitRequest(std::string str, int j, int index, Parsing &ps);
+        std::string                         InitRequest(std::string str, int j, int index, Parsing &ps);
         int                                 FillResponseBody();
         void                                Reset();
         void                                FillCgi();
