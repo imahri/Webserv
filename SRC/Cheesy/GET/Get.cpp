@@ -97,75 +97,45 @@ int		Request::GetFile()
 	return(0);
 }
 
-// int		Request::GetDirectory()
-// {
-// 	std::string filename = Loc.root + "index.html";
-
-// 	if(isFile(filename, false))
-// 		return(RequestPath = filename, GetFile());
-// 	else
-// 	{
-// 		if(Loc.CheckIndex)
-// 		{
-
-// 		}
-// 	}
-// 	return(0);
-// }
-
-
 int		Request::GetDirectory()
 {
-	std::vector < std::string> it;
-	if(locationIndex != 0)
-		it = Server.getLocationSingle(ServerIndex, locationIndex, "index");
-	if(it.size())//If index files are present
+	if(Loc.autoindex)
 	{
-		puts("HERE-------------");
-		File = it[0];
-		if(GetFile())
-			return(1);
-	}
-	else//else check autoindex
-	{
-		std::string str = Server.getServerDataSingle(ServerIndex, "autoindex");
-		if(str == "off")
-			return(statusCode = 403, 1);
-		else if(str == "on")
+		DIR 			*dir;
+		struct dirent 	*entry;
+
+		dir = opendir(RequestPath.c_str());
+		if (dir == NULL)
+			return (statusCode = 404, std::cout << "Failed to open directory." << std::endl, 1);
+
+		std::string link;
+		ResponseBody.clear();
+		ResponseBody = "<h1>Name</h1>";
+		while ((entry = readdir(dir)) != NULL)
 		{
-			ResponseHeaders = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-			std::fstream configFile;
-			std::string fileName = RequestPath + File, str;
-			ResponseBody.clear();
-
-			DIR *dir;
-			struct dirent *entry;
-
-			// Open the directory
-			dir = opendir(fileName.c_str());
-			if (dir == NULL)
-				return (puts("hnanananan"),statusCode = 404, std::cout << "Failed to open directory." << std::endl, 1);
-
-			// Read directory entries
-			std::string link;
-			ResponseBody = "<h1>Name</h1>";
-			while ((entry = readdir(dir)) != NULL)
-			{
-				link = fileName + entry->d_name;
-				ResponseBody += "<a class=\"icon dir\" href=\"" + link + "\">" + entry->d_name + "</a><br>";
-				// std::cout << "FILES:" << entry->d_name << std::endl;
-			}
-
-			// Close the directory
-			closedir(dir);
-
-
-			// configFile.open(fileName);
-			// if (!configFile)
-			// 	return (std::cerr << "Unable to open the file " << std::endl, statusCode = 404, 1);
-			// while (std::getline(configFile, str))
-				// ResponseBody += str;
+			link = RequestPath + entry->d_name;
+			if(isDirectory(link))
+				link += "/";
+			std::cout << "LINK: " << link<< std::endl;
+			ResponseBody += "<a class=\"icon dir\" href=\"" + link + "\">" + entry->d_name + "</a><br>";
 		}
+		ResponseBody += "\r\n";
+		closedir(dir);
+	}
+	else
+	{
+		ResponseBody.clear();
+		std::string filename = Loc.root + "index.html";
+		if(isFile(filename, false))
+			return(RequestPath = filename, GetFile());
+		else if(Loc.CheckIndex)
+		{
+			filename = Loc.root + Loc.index;
+			if(isFile(filename, false))
+				return(RequestPath = filename, GetFile());
+		}
+		else
+			return(statusCode = 403, 1);
 	}
 	return(0);
 }
@@ -174,7 +144,11 @@ int		Request::GET()
 {
 	struct stat fileStat;
 
-	if(URI != "/")
+	
+	size_t find = URI.find("/Users/");
+	if(find != URI.npos)
+		RequestPath = URI;
+	else if(URI != "/")
 		RequestPath = Loc.root + URI.substr(1, URI.size());
 	else
 		RequestPath = Loc.root;
@@ -187,17 +161,18 @@ int		Request::GET()
 			IsDirectory = false;
 	}
 	else
-		return(puts("HNANANANANA"), statusCode = 404, 1);
+		return(puts("hehrhherehrehrehr") ,statusCode = 404, 1);
 
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
-	if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
-		return(statusCode = 301, 1);
+	std::cout << "CHECK: " << URI[URI.size() - 1] << std::endl;
+	// if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
+	// 	return(statusCode = 301, 1);
 
 	if(IsDirectory)
 	{
-		// if(GetDirectory())
-		// 	return(1);
+		if(GetDirectory())
+			return(1);
 	}
 	else
 	{

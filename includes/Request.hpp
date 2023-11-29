@@ -15,7 +15,7 @@ typedef struct L
         
         std::string                                             upload_dir;
         std::string                                             root;
-        std::vector <std::string>                               index;
+        std::string                                             index;
         std::vector <std::string>                               methodes;
         size_t                                                  client_body_max_size;
         std::vector < std::pair <std::string , std::string > >  cgi;

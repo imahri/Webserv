@@ -217,14 +217,15 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         std::string bu(buffer, tt);
                         re.request_msg[net[j].fd] += bu;
                         bu.clear();
-                        // if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
-                        // {
+                        if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
+                        {
+                            std::cout << "---------------------NEW REQUEST---------------------"<< std::endl;
                             std::cerr << re.request_msg[net[j].fd] << std::endl;
                             rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
                             re.request_msg[net[j].fd].clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;
-                        // }
+                        }
                     }
                     continue;
                 }
