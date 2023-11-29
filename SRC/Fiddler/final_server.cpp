@@ -117,54 +117,10 @@ int IoMultiplexing::checkServer(int fd)
                 fin = itr;
         }
     }
-    // std::cout << "fin->index    " << fin->index << std::endl;
     return fin->index;
 }
 
-// int WaitForFullRequest(std::string buff)
-// {
-//     std::string substringToFind = "\r\n\r\n";
-
-//     size_t found = buff.find(substringToFind);
-
-//     if (found != std::string::npos)
-//     {
-//         size_t index = buff.find('\n');
-//         if (index == std::string::npos)
-//             return (0);
-
-//         std::string http = buff.substr(0, index - 1);
-//         std::vector<std::string> vec = ft_split(http, " \n\r\t");
-
-//         if (*vec.begin() == "GET" || *vec.begin() == "DELETE")
-//             return 1;
-//         else if (*vec.begin() == "POST")
-//         {
-//             size_t second = buff.find("Content-Length:") + 15;
-//             if (second != std::string::npos)
-//             {
-//                 std::string Val = buff.substr(second, found - second);
-//                 std::cout << "VAL: " << Val << std::endl;
-//                 static int i;
-//                 while (i < std::atoi(Val.c_str()))
-//                     i++;
-//                 if (i == std::atoi(Val.c_str()))
-//                     return (i = 0, 1);
-//                 else
-//                     return 0;
-//             }
-//             else
-//                 return 0;
-//         }
-//         else
-//             return 0;
-//     }
-//     else
-//         return 0;
-// }
-
-
-int WaitForFullRequest(std::string &buff)
+int WaitForFullRequest(std::string& buff)
 {
     std::string substringToFind = "\r\n\r\n";
 
@@ -174,70 +130,69 @@ int WaitForFullRequest(std::string &buff)
     {
         size_t index = buff.find('\n');
         if (index == std::string::npos)
-            return 0;
+            return (0);
 
         std::string http = buff.substr(0, index - 1);
-        std::vector<std::string> vec;
+        std::vector<std::string> vec = ft_split(http, " \n\r\t");
 
-        // Split the request line into components
-        size_t pos = 0;
-        while (pos != std::string::npos)
+        if(vec.size() == 3)
         {
-            size_t nextPos = http.find_first_of(" \n\r\t", pos);
-            if (nextPos != std::string::npos)
+            if (*vec.begin() == "GET" || *vec.begin() == "DELETE")
+                return 1;
+            else if (*vec.begin() == "POST")
             {
-                vec.push_back(http.substr(pos, nextPos - pos));
-                pos = http.find_first_not_of(" \n\r\t", nextPos);
-            }
-            else
-            {
-                vec.push_back(http.substr(pos));
-                break;
-            }
-        }
-
-        if (vec.empty())
-            return 0;
-
-        if (vec[0] == "GET" || vec[0] == "DELETE")
-            return 1;
-        else if (vec[0] == "POST")
-        {
-            size_t second = buff.find("Content-Length:");
-            if (second != std::string::npos)
-            {
-                second += 15;
-                size_t end = buff.find('\n', second);
-                if (end != std::string::npos)
+                size_t second = buff.find("Content-Length:");
+                if (second != std::string::npos)
                 {
-                    std::string val = buff.substr(second, end - second);
-                    int contentLength = std::stoi(val);
+                    second += 15;
+                    size_t end = buff.find('\n', second);
+                    if (end != std::string::npos)
+                    {
+                        std::string val = buff.substr(second, end - second);
+                        int contentLength = std::stoi(val);
 
-                    // Check if the request body has been fully received
-                    if (buff.size() >= found + substringToFind.size() + contentLength)
+                        if (buff.size() >= found + substringToFind.size() + contentLength)
+                            return 1;
+                        else
+                            return 0;
+                    }
+                }
+                else if (buff.find("Transfer-Encoding: chunked") != std::string::npos)
+                {
+                    if (buff.find("0\r\n\r\n", found) != std::string::npos)
                         return 1;
                     else
                         return 0;
                 }
-            }
-            else if (buff.find("Transfer-Encoding: chunked") != std::string::npos)
-            {
-                // Check if the request body has been fully received for chunked requests
-                if (buff.find("0\r\n\r\n", found) != std::string::npos)
-                    return 1;
-                else
-                    return 0;
+                else if (buff.find("Content-Type: multipart/form-data") != std::string::npos)
+                {
+                    size_t boundaryStart = buff.find("boundary=");
+                    if (boundaryStart != std::string::npos)
+                    {
+                        boundaryStart += 9;
+                        size_t boundaryEnd = buff.find('\n', boundaryStart);
+                        if (boundaryEnd != std::string::npos)
+                        {
+                            std::string boundary = buff.substr(boundaryStart, boundaryEnd - boundaryStart - 1);
+                            std::string endBoundary = "--" + boundary + "--";
+                            size_t endBoundaryPos = buff.find(endBoundary, found);
+                            if (endBoundaryPos != std::string::npos)
+                            {
+                                size_t nextBoundaryPos = buff.find("--" + boundary, found);
+                                if (nextBoundaryPos == std::string::npos || nextBoundaryPos >= endBoundaryPos)
+                                    return 1;
+                            }
+                        }
+                    }
+                }
             }
         }
+        else
+            return 0;
     }
 
     return 0;
 }
-
-
-
-
-
 
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
@@ -297,6 +252,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         {
                             std::cout << "---------------------NEW REQUEST---------------------"<< std::endl;
                             std::cerr << re.request_msg[net[j].fd].first << std::endl;
+                            std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
                             re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
                             re.request_msg[net[j].fd].first.clear();
                             net[j].events = POLLOUT;
