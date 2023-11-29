@@ -3,26 +3,6 @@
 #include "CGI.hpp"
 #include "Webserv.hpp"
 
-#define MEGA 1000000
-typedef struct L
-{
-        bool                                                    autoindex;
-        bool                                                    CheckIndex;
-        bool                                                    CheckCGI;
-        bool                                                    CheckRedirect;
-        bool                                                    CheckMethods;
-        bool                                                    CheckUploadDir;
-        
-        std::string                                             upload_dir;
-        std::string                                             root;
-        std::string                                             index;
-        std::vector <std::string>                               methodes;
-        size_t                                                  client_body_max_size;
-        std::vector < std::pair <std::string , std::string > >  cgi;
-        std::vector < std::pair <std::string , std::string > >  redirect;
-        
-}  LOCATION;
-
 typedef struct R
 {
     std::string     Host;

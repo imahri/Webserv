@@ -28,6 +28,7 @@
 #include <dirent.h>
 #include <algorithm>
 #include <map>
+#include <vector>
 
 
 #include "Parsing.hpp"
