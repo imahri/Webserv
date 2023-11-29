@@ -190,7 +190,6 @@ int WaitForFullRequest(std::string& buff)
         else
             return 0;
     }
-
     return 0;
 }
 
@@ -250,7 +249,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         bu.clear();
                         if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
                         {
-                            std::cout << "---------------------NEW REQUEST---------------------"<< std::endl;
+                            std::cout << "---------------------START OF REQUEST---------------------"<< std::endl;
                             std::cerr << re.request_msg[net[j].fd].first << std::endl;
                             std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
                             re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
