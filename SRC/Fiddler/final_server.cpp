@@ -215,14 +215,14 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     else
                     {
                         std::string bu(buffer, tt);
-                        re.request_msg[net[j].fd] += bu;
+                        re.request_msg[net[j].fd].first += bu;
                         bu.clear();
-                        if ((WaitForFullRequest(re.request_msg[net[j].fd]) == 1))
+                        if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
                         {
                             std::cout << "---------------------NEW REQUEST---------------------"<< std::endl;
-                            std::cerr << re.request_msg[net[j].fd] << std::endl;
-                            rq.InitRequest(re.request_msg[net[j].fd], net[j].fd, 1, ps);
-                            re.request_msg[net[j].fd].clear();
+                            std::cerr << re.request_msg[net[j].fd].first << std::endl;
+                            re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
+                            re.request_msg[net[j].fd].first.clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;
                         }
@@ -231,8 +231,9 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 }
                 else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
                 {
-                    // std::cout << "RESPONSE:" << std::endl;
-                    // std::cout << rq.ResponseHeaders << std::endl;
+                    std::cout << "RESPONSE:" << std::endl;
+                    std::cout << re.request_msg[net[j].fd].second << std::endl;
+                    std::cout << "BODY SIZE: " << rq.ResponseBody.length() << std::endl;
 
                     std::string response = rq.ResponseHeaders;
                     send(net[j].fd, &response[0], response.length(), 0);

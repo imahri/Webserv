@@ -144,7 +144,6 @@ int		Request::GET()
 {
 	struct stat fileStat;
 
-	
 	size_t find = URI.find("/Users/");
 	if(find != URI.npos)
 		RequestPath = URI;
@@ -161,13 +160,13 @@ int		Request::GET()
 			IsDirectory = false;
 	}
 	else
-		return(puts("hehrhherehrehrehr") ,statusCode = 404, 1);
+		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
 
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
 	std::cout << "CHECK: " << URI[URI.size() - 1] << std::endl;
-	// if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
-	// 	return(statusCode = 301, 1);
+	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
+		return(statusCode = 301, 1);
 
 	if(IsDirectory)
 	{

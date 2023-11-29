@@ -32,7 +32,7 @@ void    Request::Reset()
     PathToSaveFile = "/Users/eamghar/Desktop/send";
 }
 
-int     Request::InitRequest(std::string str, int fd, int in, Parsing &ps)
+std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &ps)
 {
     Reset();
     Server = ps;
@@ -43,5 +43,6 @@ int     Request::InitRequest(std::string str, int fd, int in, Parsing &ps)
     this->getRequest(str);
     GenerateResponse();
     std::cout << "StatusCode: " << statusCode << std::endl;
-    return(0);
+    std::string ret = ResponseHeaders + ResponseBody;
+    return(ret);
 }

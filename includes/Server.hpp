@@ -33,7 +33,7 @@ class IoMultiplexing
 {
     public:
         std::vector<Server> sudo_apt;
-        std::map<int, std::string> request_msg;
+        std::map<int, std::pair<std::string, std::string> > request_msg;
         static std::vector<struct pollfd> net;
         static int maxfd;
         bool    isServer(int fd);
