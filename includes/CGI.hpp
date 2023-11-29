@@ -35,6 +35,8 @@ class CGI
         this->URI = obj.URI;
         this->RequestPath = obj.RequestPath;
         this->CodeStatus = obj.CodeStatus;
+        this->Query = obj.Query;
+        this->root = obj.root;
         return(*this);
     };
 
