@@ -121,7 +121,50 @@ int IoMultiplexing::checkServer(int fd)
     return fin->index;
 }
 
-int WaitForFullRequest(std::string buff)
+// int WaitForFullRequest(std::string buff)
+// {
+//     std::string substringToFind = "\r\n\r\n";
+
+//     size_t found = buff.find(substringToFind);
+
+//     if (found != std::string::npos)
+//     {
+//         size_t index = buff.find('\n');
+//         if (index == std::string::npos)
+//             return (0);
+
+//         std::string http = buff.substr(0, index - 1);
+//         std::vector<std::string> vec = ft_split(http, " \n\r\t");
+
+//         if (*vec.begin() == "GET" || *vec.begin() == "DELETE")
+//             return 1;
+//         else if (*vec.begin() == "POST")
+//         {
+//             size_t second = buff.find("Content-Length:") + 15;
+//             if (second != std::string::npos)
+//             {
+//                 std::string Val = buff.substr(second, found - second);
+//                 std::cout << "VAL: " << Val << std::endl;
+//                 static int i;
+//                 while (i < std::atoi(Val.c_str()))
+//                     i++;
+//                 if (i == std::atoi(Val.c_str()))
+//                     return (i = 0, 1);
+//                 else
+//                     return 0;
+//             }
+//             else
+//                 return 0;
+//         }
+//         else
+//             return 0;
+//     }
+//     else
+//         return 0;
+// }
+
+
+int WaitForFullRequest(std::string &buff)
 {
     std::string substringToFind = "\r\n\r\n";
 
@@ -131,37 +174,70 @@ int WaitForFullRequest(std::string buff)
     {
         size_t index = buff.find('\n');
         if (index == std::string::npos)
-            return (0);
+            return 0;
 
         std::string http = buff.substr(0, index - 1);
-        std::vector<std::string> vec = ft_split(http, " \n\r\t");
+        std::vector<std::string> vec;
 
-        if (*vec.begin() == "GET" || *vec.begin() == "DELETE")
-            return 1;
-        else if (*vec.begin() == "POST")
+        // Split the request line into components
+        size_t pos = 0;
+        while (pos != std::string::npos)
         {
-            size_t second = buff.find("Content-Length:") + 15;
+            size_t nextPos = http.find_first_of(" \n\r\t", pos);
+            if (nextPos != std::string::npos)
+            {
+                vec.push_back(http.substr(pos, nextPos - pos));
+                pos = http.find_first_not_of(" \n\r\t", nextPos);
+            }
+            else
+            {
+                vec.push_back(http.substr(pos));
+                break;
+            }
+        }
+
+        if (vec.empty())
+            return 0;
+
+        if (vec[0] == "GET" || vec[0] == "DELETE")
+            return 1;
+        else if (vec[0] == "POST")
+        {
+            size_t second = buff.find("Content-Length:");
             if (second != std::string::npos)
             {
-                std::string Val = buff.substr(second, found - second);
-                std::cout << "VAL: " << Val << std::endl;
-                static int i;
-                while (i < std::atoi(Val.c_str()))
-                    i++;
-                if (i == std::atoi(Val.c_str()))
-                    return (i = 0, 1);
+                second += 15;
+                size_t end = buff.find('\n', second);
+                if (end != std::string::npos)
+                {
+                    std::string val = buff.substr(second, end - second);
+                    int contentLength = std::stoi(val);
+
+                    // Check if the request body has been fully received
+                    if (buff.size() >= found + substringToFind.size() + contentLength)
+                        return 1;
+                    else
+                        return 0;
+                }
+            }
+            else if (buff.find("Transfer-Encoding: chunked") != std::string::npos)
+            {
+                // Check if the request body has been fully received for chunked requests
+                if (buff.find("0\r\n\r\n", found) != std::string::npos)
+                    return 1;
                 else
                     return 0;
             }
-            else
-                return 0;
         }
-        else
-            return 0;
     }
-    else
-        return 0;
+
+    return 0;
 }
+
+
+
+
+
 
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {

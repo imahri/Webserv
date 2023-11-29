@@ -62,7 +62,6 @@ int Request::FillResponseBodyFromFile()
     return 0;
 }
 
-
 void		Request::FillCgi()
 {
 	this->cgi.HeaderData = HeaderData;
@@ -74,7 +73,21 @@ void		Request::FillCgi()
 	this->cgi.RequestPath = RequestPath;
 	this->cgi.CodeStatus = statusCode;
 	this->cgi.Query = Query;
-	this->cgi.root = this->Loc.root;
+	this->cgi.root = Loc.root;
+
+	this->cgi.locationData.autoindex = this->Loc.autoindex;
+	this->cgi.locationData.CheckIndex = this->Loc.CheckIndex;
+	this->cgi.locationData.CheckCGI = this->Loc.CheckCGI;
+	this->cgi.locationData.CheckRedirect = this->Loc.CheckRedirect;
+	this->cgi.locationData.CheckMethods = this->Loc.CheckMethods;
+	this->cgi.locationData.CheckUploadDir = this->Loc.CheckUploadDir;
+	this->cgi.locationData.upload_dir = this->Loc.upload_dir;
+	this->cgi.locationData.root = this->Loc.root;
+	this->cgi.locationData.index = this->Loc.index;
+	this->cgi.locationData.methodes = this->Loc.methodes;
+	this->cgi.locationData.client_body_max_size = this->Loc.client_body_max_size;
+	this->cgi.locationData.cgi = this->Loc.cgi;
+	this->cgi.locationData.redirect = this->Loc.redirect;
 };
 
 
