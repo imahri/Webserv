@@ -88,6 +88,7 @@ int		Request::checkHeader()
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
 	bool isChuncked = false;
+	// bool isBoundry = false;
 	int transferEncoding = 0, contentLength = 0;
 	for (; it != HeaderData.end(); it++)
 	{
@@ -156,11 +157,11 @@ int		Request::parseRequest()
 		if(GET())
 			return(1);
 	}
-	// else if(methode == "POST")
-	// {
-	// 	if(POST())
-	// 		return(1);
-	// }
+	else if(methode == "POST")
+	{
+		if(POST())
+			return(1);
+	}
 	// else if(DELETE())
 	// 	return(1);
 

@@ -3,6 +3,8 @@
 #include "CGI.hpp"
 #include "Webserv.hpp"
 
+#define MEGA 1000000
+
 typedef struct R
 {
     std::string     Host;
