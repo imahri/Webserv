@@ -86,7 +86,6 @@ void		Request::FillCgi()
 
 int		Request::GetFile()
 {
-				std::cout << " ------0------- " << std::endl;
 	if(locationIndex == 0)
 		return(1);
 	else

@@ -166,13 +166,13 @@ void	 Parsing::envInit()
 	this->cgiENV["CONTENT_LENGTH"] = getEnvHeader("Content-Length");
 	this->cgiENV["CONTENT_TYPE"] = getEnvHeader("Content-Type");
 	this->cgiENV["SERVER_PROTOCOL"] = cgi.httpVersion;
+	this->cgiENV["REDIRECT_STATUS"] = cgi.CodeStatus;
+	this->cgiENV["PATH_TRANSLATED"] = cgi.RequestPath;
 
 	this->cgiENV["SERVER_PORT"] = getEnvHeader("");
 	this->cgiENV["QUERY_STRING"] = getEnvHeader("");
 	this->cgiENV["PATH_INFO"] = getEnvHeader("");
 	this->cgiENV["SCRIPT_FILENAME"] = getEnvHeader("");
-	this->cgiENV["REDIRECT_STATUS"] = getEnvHeader("");
-	this->cgiENV["PATH_TRANSLATED"] = getEnvHeader("");
 	this->cgiENV["UPLOAD_PATH"] = getEnvHeader("");
 	this->cgiENV["DOCUMENT_ROOT"] = getEnvHeader("");
 }
@@ -184,19 +184,23 @@ std::string  Parsing::CgiResult(CGI &c)
 	cgi = c;
 	// envInit();
 	std::cout << "---------------------------------------CGI-----------------------------------------" <<std::endl;
-	std::map<std::string, std::string>::iterator	i = this->cgi.HeaderData.begin();
-	for (; i != cgi.HeaderData.end(); i++)
-	{
-		std::cout << "|"+ i->first+"|: " + "|" + i->second + "|" << std::endl;
-	}
+	// std::map<std::string, std::string>::iterator	i = this->cgi.HeaderData.begin();
+	// for (; i != cgi.HeaderData.end(); i++)
+	// {
+	// 	std::cout << "|"+ i->first+"|: " + "|" + i->second + "|" << std::endl;
+	// }
 	
-		std::cout << "header: " << cgi.header << std::endl;
-        std::cout << "body: " << cgi.body << std::endl;
-    	std::cout << "httpVersion: " << cgi.httpVersion << std::endl;
-    	std::cout << "methode: " << cgi.methode << std::endl;
-    	std::cout << "URI: " << cgi.URI << std::endl;
-    	std::cout << "RequestPath: " << cgi.RequestPath << std::endl;
-        std::cout << "CodeStatus: " << cgi.CodeStatus << std::endl;
+	std::cout << "---------------------------------------CGI header-----------------------------------------" <<std::endl;
+		std::cout << cgi.header << std::endl;
+	std::cout << "--------------------------------------------------------------------------------" <<std::endl;
+		std::cout << "body: " << cgi.body << std::endl;
+		std::cout << "httpVersion: " << cgi.httpVersion << std::endl;
+		std::cout << "methode: " << cgi.methode << std::endl;
+		std::cout << "URI: " << cgi.URI << std::endl;
+		std::cout << "RequestPath: " << cgi.RequestPath << std::endl;
+		std::cout << "CodeStatus: " << cgi.CodeStatus << std::endl;
+		std::cout << "Query: " << cgi.Query << std::endl;
+		std::cout << "root: " << cgi.root << std::endl;
 
 	std::cout << "---------------------------------------CGI end-----------------------------------------" <<std::endl;
 
