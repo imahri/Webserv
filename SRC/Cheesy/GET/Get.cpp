@@ -116,7 +116,6 @@ int		Request::GetDirectory()
 			link = RequestPath + entry->d_name;
 			if(isDirectory(link))
 				link += "/";
-			std::cout << "LINK: " << link<< std::endl;
 			ResponseBody += "<a class=\"icon dir\" href=\"" + link + "\">" + entry->d_name + "</a><br>";
 		}
 		ResponseBody += "\r\n";
@@ -133,6 +132,8 @@ int		Request::GetDirectory()
 			filename = Loc.root + Loc.index;
 			if(isFile(filename, false))
 				return(RequestPath = filename, GetFile());
+			else
+				return(statusCode = 403, 1);
 		}
 		else
 			return(statusCode = 403, 1);
@@ -164,7 +165,6 @@ int		Request::GET()
 
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
-	std::cout << "CHECK: " << URI[URI.size() - 1] << std::endl;
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(statusCode = 301, 1);
 
