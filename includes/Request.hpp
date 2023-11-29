@@ -15,7 +15,7 @@ typedef struct L
         
         std::string                                             upload_dir;
         std::string                                             root;
-        std::vector <std::string>                               index;
+        std::string                                             index;
         std::vector <std::string>                               methodes;
         size_t                                                  client_body_max_size;
         std::vector < std::pair <std::string , std::string > >  cgi;
@@ -107,6 +107,7 @@ class Request
 
 
 
+
 };
 
         //extra functions
@@ -120,3 +121,4 @@ class Request
         std::vector<std::string>            ft_split(std::string& s);
         std::string                         &ft_trim(std::string& s, char c);
         std::string                         ft_trim(std::string s, std::string delimiter);
+        int                                 readFile(std::string &fileName, std::string &Tostore);

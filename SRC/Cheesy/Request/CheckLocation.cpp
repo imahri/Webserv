@@ -30,14 +30,18 @@ int		Request::GetCorrectLocation()
 	}
 	else
 	{
+		std::vector < std::string >	it;
 		if(Server.getServerDataSingle(ServerIndex, "autoindex") == "on")
 			Loc.autoindex = true;
 		else
 			Loc.autoindex = false;
 
-        Loc.index = Server.getLocationSingle(ServerIndex, locationIndex, "index");
-		if(Loc.index.size())
+		it = Server.getLocationSingle(ServerIndex, locationIndex, "index");
+		if(it.size())
+		{
 			Loc.CheckIndex = true;
+        	Loc.index = *it.begin();
+		}
 		else
 			Loc.CheckIndex = false;
 
@@ -59,7 +63,7 @@ int		Request::GetCorrectLocation()
 		else
 			Loc.CheckRedirect = false;
 
-		std::vector < std::string >	it = Server.getLocationSingle(ServerIndex, locationIndex, "upload_dir");
+		it = Server.getLocationSingle(ServerIndex, locationIndex, "upload_dir");
 		if(it.size())
 		{
 			Loc.CheckUploadDir = true;
