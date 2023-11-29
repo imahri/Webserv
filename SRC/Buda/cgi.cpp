@@ -170,10 +170,12 @@ void	 Parsing::envInit()
 	this->cgiENV["DOCUMENT_ROOT"] = cgi.root;
 	this->cgiENV["QUERY_STRING"] = cgi.Query;
 	this->cgiENV["PATH_INFO"] = cgi.URI + "?" + cgi.Query;
+
+	this->cgiENV["SCRIPT_FILENAME"] = this->cgi.locationData.CheckCGI ? this->cgi.locationData.cgi[0].second : "";
+	this->cgiENV["UPLOAD_PATH"] = this->cgi.locationData.CheckUploadDir ? this->cgi.locationData.upload_dir : "";
+	
 	std::string s = getEnvHeader("Host");
 	this->cgiENV["SERVER_PORT"] = ft_split(s, ':')[1];
-	this->cgiENV["SCRIPT_FILENAME"] = getEnvHeader("");
-	this->cgiENV["UPLOAD_PATH"] = getEnvHeader("");
 }
 
 void	Parsing::splitHeaders()
@@ -218,14 +220,71 @@ void	Parsing::convertMap()
 	
 
 }
+#include <sys/time.h>
+
+std::string	getFileName()
+{
+	struct timeval tv;
+    gettimeofday(&tv, NULL);
+    long long milliseconds = static_cast<long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+
+	std::ostringstream oss;
+    oss << milliseconds;
+    
+    return oss.str();
+}
+
 
 std::string  Parsing::CgiResult(CGI &c)
 {
+	std::string res;
 	cgi = c;
 	splitHeaders();
 	envInit();
-	std::cout << "-----------------CGI-----------------" << std::endl;
 	convertMap();
-	std::cout << "-----------------END-----------------" << std::endl;
-	return("");
+
+	// in and out files
+	// std::string inFileName = "inFile" + getFileName();
+	std::string outFileName = "/tmp/outFile" + getFileName();
+
+	// av
+	char *av[3];
+    av[0] = (char *)this->cgi.locationData.cgi[0].second.c_str();
+    av[1] = (char *)cgi.RequestPath.c_str();
+    av[2] = NULL;
+
+	int outBackUp = dup(STDOUT_FILENO);
+	int outFileFD = open(outFileName.c_str(), O_WRONLY | O_CREAT, 0777);
+
+    if (outFileFD == -1)
+        perror("open");
+
+	int pid = fork();
+	if (pid == 0)
+	{
+		if (dup2(outFileFD, STDOUT_FILENO) == -1)
+			perror("dup2");
+
+		execve(av[0], av, execEnv);
+		std::cerr << "------------------------------------------l7waaaaaaaaaa------------------------------------------------" << std::endl;
+	}
+	waitpid(pid, NULL, 0);
+	dup2(outBackUp, 1);
+    close(outFileFD);
+
+    std::ifstream resFile(outFileName.c_str());
+	if (!resFile.is_open()) {
+        std::cerr << "Error opening file: " << outFileName << std::endl;
+    }
+	std::cout << "-----------------------------------------------CGI Res-----------------------------------------" << std::endl;
+	std::string line;
+	while (std::getline(resFile, line))
+        res += line;
+
+	std::cout << res << std::endl; 
+	std::cout << "-----------------------------------------------CGI end Res-----------------------------------------" << std::endl;
+
+	std::remove(outFileName.c_str());
+	// std::remove(inFileName.c_str());
+	return(res);
 };
