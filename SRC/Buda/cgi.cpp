@@ -138,20 +138,17 @@ Set by the Web Server or CGI Handler:
 
 std::string	Parsing::getEnvHeader(const std::string&  s)
 {
-    std::map<std::string, std::string>::iterator	i = this->cgi.HeaderData.begin();
-	for (; i != cgi.HeaderData.end(); i++)
+    std::map<std::string, std::string>::iterator	i = this->headers.begin();
+	for (; i != headers.end(); i++)
 	{
 		if (s == i->first)
 			return i->second;
 	}
-	
 	return "";
 }
 
 void	 Parsing::envInit()
 {
-	this->cgiENV["REQUEST_METHOD"] = cgi.methode;
-	this->cgiENV["REQUEST_URI"] = cgi.URI;
 	this->cgiENV["SERVER_NAME"] = "OreO";
 	this->cgiENV["GATEWAY_INTERFACE"] = "CGI/1.1";
 	this->cgiENV["AUTH_TYPE"] = "Basic";
@@ -165,44 +162,70 @@ void	 Parsing::envInit()
 	this->cgiENV["HTTP_REFERER"] = getEnvHeader("Referer");
 	this->cgiENV["CONTENT_LENGTH"] = getEnvHeader("Content-Length");
 	this->cgiENV["CONTENT_TYPE"] = getEnvHeader("Content-Type");
+	this->cgiENV["REQUEST_METHOD"] = cgi.methode;
+	this->cgiENV["REQUEST_URI"] = cgi.URI;
 	this->cgiENV["SERVER_PROTOCOL"] = cgi.httpVersion;
-	this->cgiENV["REDIRECT_STATUS"] = cgi.CodeStatus;
+	this->cgiENV["REDIRECT_STATUS"] = std::to_string(cgi.CodeStatus);
 	this->cgiENV["PATH_TRANSLATED"] = cgi.RequestPath;
-
-	this->cgiENV["SERVER_PORT"] = getEnvHeader("");
-	this->cgiENV["QUERY_STRING"] = getEnvHeader("");
-	this->cgiENV["PATH_INFO"] = getEnvHeader("");
+	this->cgiENV["DOCUMENT_ROOT"] = cgi.root;
+	this->cgiENV["QUERY_STRING"] = cgi.Query;
+	this->cgiENV["PATH_INFO"] = cgi.URI + "?" + cgi.Query;
+	std::string s = getEnvHeader("Host");
+	this->cgiENV["SERVER_PORT"] = ft_split(s, ':')[1];
 	this->cgiENV["SCRIPT_FILENAME"] = getEnvHeader("");
 	this->cgiENV["UPLOAD_PATH"] = getEnvHeader("");
-	this->cgiENV["DOCUMENT_ROOT"] = getEnvHeader("");
 }
 
+void	Parsing::splitHeaders()
+{
+	std::vector <std::string> s = ft_split(cgi.header, "\n\r");
+	
+	for (size_t i = 0; i < s.size(); i++)
+	{
+		size_t f = s[i].find(':');
+		if (f != std::string::npos)
+		{
+			std::string key = s[i].substr(0, f);
+			std::string val =  s[i].substr(f + 2);
+			headers[key] = val;
+		}
+	}
+	s.clear();
+}
 
+void	Parsing::convertMap()
+{
+	std::map< std::string, std::string >::iterator it = cgiENV.begin();
+	execEnv = new char *[cgiENV.size() + 1];
+	size_t i = 0;
+	size_t j;
+	for (; it != cgiENV.end(); it++)
+	{
+		std::string s = it->first + "=" + it->second;
+		execEnv[i] = new char[s.length() + 1];
+		j = 0;
+		for (; j < s.length(); j++)
+			execEnv[i][j] = s[j];
+		execEnv[i][j] = '\0';
+		i++;
+	}
+	execEnv[i] = NULL;
+	
+	for (size_t i = 0; execEnv[i]; i++)
+	{
+		std::cout << execEnv[i] << std::endl;
+	}
+	
+
+}
 
 std::string  Parsing::CgiResult(CGI &c)
 {
 	cgi = c;
-	// envInit();
-	std::cout << "---------------------------------------CGI-----------------------------------------" <<std::endl;
-	// std::map<std::string, std::string>::iterator	i = this->cgi.HeaderData.begin();
-	// for (; i != cgi.HeaderData.end(); i++)
-	// {
-	// 	std::cout << "|"+ i->first+"|: " + "|" + i->second + "|" << std::endl;
-	// }
-	
-	std::cout << "---------------------------------------CGI header-----------------------------------------" <<std::endl;
-		std::cout << cgi.header << std::endl;
-	std::cout << "--------------------------------------------------------------------------------" <<std::endl;
-		std::cout << "body: " << cgi.body << std::endl;
-		std::cout << "httpVersion: " << cgi.httpVersion << std::endl;
-		std::cout << "methode: " << cgi.methode << std::endl;
-		std::cout << "URI: " << cgi.URI << std::endl;
-		std::cout << "RequestPath: " << cgi.RequestPath << std::endl;
-		std::cout << "CodeStatus: " << cgi.CodeStatus << std::endl;
-		std::cout << "Query: " << cgi.Query << std::endl;
-		std::cout << "root: " << cgi.root << std::endl;
-
-	std::cout << "---------------------------------------CGI end-----------------------------------------" <<std::endl;
-
+	splitHeaders();
+	envInit();
+	std::cout << "-----------------CGI-----------------" << std::endl;
+	convertMap();
+	std::cout << "-----------------END-----------------" << std::endl;
 	return("");
 };

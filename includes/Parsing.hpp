@@ -39,6 +39,7 @@ class Parsing
 {
 	public:
 		std::map< std::string, std::string > cgiENV;
+		std::map<std::string, std::string> headers;
 
 		std::vector< std::vector<std::string > > servers;
 		std::map< std::string, std::vector<std::string > > responseTypes;
@@ -86,7 +87,9 @@ class Parsing
 		CGI			cgi;
 		void	envInit();
 		std::string	getEnvHeader(const std::string&  s);
-
+		void	splitHeaders();
+		void	convertMap();
+		char	**execEnv;
 		std::string  CgiResult(CGI &c);
 };
 

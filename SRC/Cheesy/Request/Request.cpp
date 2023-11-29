@@ -56,7 +56,7 @@ int		Request::checkHttp()
 	find = URI.find('?');
 	if(find != URI.npos)
 	{
-		Query = URI.substr(find, URI.length());
+		Query = URI.substr(find + 1);
 		std::cout << "Query: " << Query << std::endl;
 		URI = URI.substr(0, find);
 	}
