@@ -162,8 +162,8 @@ int		Request::parseRequest()
 		if(POST())
 			return(1);
 	}
-	// else if(DELETE())
-	// 	return(1);
+	else if(DELETE())
+		return(1);
 
 	return(0);
 }

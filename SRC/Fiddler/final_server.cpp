@@ -262,8 +262,9 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 }
                 else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
                 {
-                    std::cout << "RESPONSE:" << std::endl;
+                    std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
                     std::cout << re.request_msg[net[j].fd].second << std::endl;
+                    std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
                     std::cout << "BODY SIZE: " << rq.ResponseBody.length() << std::endl;
 
                     std::string response = rq.ResponseHeaders;

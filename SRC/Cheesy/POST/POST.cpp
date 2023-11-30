@@ -14,7 +14,14 @@ int     Request::CheckRessource()
 
 int     Request::PostFile()
 {
-    
+    if(Loc.CheckCGI)
+    {
+        FillCgi();
+        ResponseBody =  Server.CgiResult(cgi);
+    }
+    else
+        return(statusCode = 403, 1);
+
     return(0);
 }
 
@@ -62,7 +69,7 @@ int     Request::GetRessource()
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
-		return(statusCode = 301, 1);
+		return(GenerateRedirection(), statusCode = 301, 1);
 
     if(IsDirectory)
 	{

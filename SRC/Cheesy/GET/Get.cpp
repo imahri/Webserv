@@ -179,7 +179,7 @@ int		Request::GET()
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
-		return(statusCode = 301, 1);
+		return(GenerateRedirection(), statusCode = 301, 1);
 
 	if(IsDirectory)
 	{

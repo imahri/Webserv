@@ -86,6 +86,7 @@ class Request
         int                                 FillResponseBody();
         void                                Reset();
         void                                FillCgi();
+        int                                 GenerateRedirection();
 
 
 
