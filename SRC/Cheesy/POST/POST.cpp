@@ -3,8 +3,8 @@
 int     Request::Upload()
 {
     statusCode = 201;
-    ResponseBody.clear();
-    ResponseBody += "\r\n";
+    // ResponseBody.clear();
+    // ResponseBody += "\r\n";
     return(0);
 }
 

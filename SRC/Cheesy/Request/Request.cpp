@@ -89,6 +89,7 @@ int		Request::parseBoundry()
 	// std::cout << header << std::endl;
 	// std::cout << "-----------------------BODY-------------------" << std::endl;
 	// std::cout << body << std::endl;
+	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 
 	return(0);
 }
@@ -141,10 +142,10 @@ int		Request::checkHeader()
 			Req.ContentLength = it->second;
 	}
 
-	if(methode == "POST" && (ContentType == false || (ContentType == true && ContentLength == false) ))
-		return(statusCode = 400, 1);
+	if(methode == "POST" && (isBoundry || isChuncked) && (ContentType == false || (ContentType == true && ContentLength == false) ))
+		return(puts("qwer"), statusCode = 400, 1);
 	if(transferEncoding == 0 && ContentLength == 0 && methode == "POST")
-		return(statusCode = 400, 1);
+		return(puts("7485"), statusCode = 400, 1);
 
 	if(isChuncked == true)
 		if(parseChuncked())
