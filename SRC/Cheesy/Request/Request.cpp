@@ -76,10 +76,20 @@ int		Request::checkBody()
 
 int		Request::parseChuncked()
 {
-	std::cout << "-----------------------HEADER-------------------" << std::endl;
+	std::cout << "-----------------------HEADER CHUNCKED-------------------" << std::endl;
 	std::cout << header << std::endl;
 	std::cout << "-----------------------BODY-------------------" << std::endl;
 	std::cout << body << std::endl;
+	return(0);
+}
+
+int		Request::parseBoundry()
+{
+	// std::cout << "-----------------------HEADER BOUNDRY-------------------" << std::endl;
+	// std::cout << header << std::endl;
+	// std::cout << "-----------------------BODY-------------------" << std::endl;
+	// std::cout << body << std::endl;
+
 	return(0);
 }
 
@@ -87,9 +97,13 @@ int		Request::checkHeader()
 {
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
+	size_t find = 0;
 	bool isChuncked = false;
-	// bool isBoundry = false;
-	int transferEncoding = 0, contentLength = 0;
+	bool isBoundry = false;
+	bool ContentLength = false;
+	bool ContentType = false;
+	bool transferEncoding = false;
+
 	for (; it != HeaderData.end(); it++)
 	{
 		if(it->second.size() == 0)
@@ -102,10 +116,18 @@ int		Request::checkHeader()
 			isChuncked = true;
 
 		if(it->first == "Transfer-Encoding")
-			transferEncoding = 1;
+			transferEncoding = true;
 
 		if(it->first == "Content-Length")
-			contentLength = 1;
+			ContentLength = true;
+
+		if(methode == "POST" &&  it->first == "Content-Type")
+		{
+			ContentType = true;
+			find = it->second.find("multipart/form-data; boundary=");
+			if(find != it->second.npos)
+				isBoundry = true;
+		}
 
 		if(it->first == "Host" && it->second.size())
 			Req.Host = it->second;
@@ -119,11 +141,18 @@ int		Request::checkHeader()
 			Req.ContentLength = it->second;
 	}
 
-	if(transferEncoding == 0 && contentLength == 0 && methode == "POST")
+	if(methode == "POST" && (ContentType == false || (ContentType == true && ContentLength == false) ))
+		return(statusCode = 400, 1);
+	if(transferEncoding == 0 && ContentLength == 0 && methode == "POST")
 		return(statusCode = 400, 1);
 
 	if(isChuncked == true)
-		parseChuncked();
+		if(parseChuncked())
+			return 1;
+
+	if(isBoundry == true)
+		if(parseBoundry())
+			return 1;
 	return(0);
 }
 

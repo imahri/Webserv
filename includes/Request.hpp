@@ -86,6 +86,8 @@ class Request
         void                                Reset();
         void                                FillCgi();
         int                                 GenerateRedirection();
+        int                                 parseBoundry();
+
 
 
 
