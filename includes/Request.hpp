@@ -57,7 +57,6 @@ class Request
         Request &operator=(const Request &other);
         ~Request();
         
-        int                                 createServer(Parsing &parsing);
         int                                 getRequest(std::string buffer);
         int                                 fillHeaderAndBody(std::string buffer);
         int                                 parseRequest();
@@ -105,3 +104,5 @@ class Request
         std::string                         &ft_trim(std::string& s, char c);
         std::string                         ft_trim(std::string s, std::string delimiter);
         int                                 readFile(std::string &fileName, std::string &Tostore);
+        int                                 CovertHexaToDecimal(const std::string &hexString);
+    

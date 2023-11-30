@@ -144,12 +144,12 @@ int     Request::GenerateResponse()
     }
     else if(statusCode >= 0 && statusCode < 400)
     {
-        if(Req.ContentType.size())
-        {
-            std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
-            ResponseHeaders += Req.MimeType + "\r\n";
-        }
-        else
+        // if(Req.ContentType.size())
+        // {
+        //     std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
+        //     ResponseHeaders += Req.MimeType + "\r\n";
+        // }
+        // else
             ResponseHeaders += "text/html\r\n";
             
         if(ResponseBody.length())
