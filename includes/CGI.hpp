@@ -24,6 +24,14 @@ typedef struct L
         
 }  LOCATION;
 
+struct Rawr
+{
+    std::string                                             code;
+    std::string                                             header;
+    std::string                                             body;
+    std::vector < std::pair <std::string , std::string > >  mapap;
+};
+
 
 class CGI
 {
@@ -39,6 +47,7 @@ class CGI
     	std::string                         Query;
         std::string                         root;
         LOCATION                            locationData;
+        Rawr                                ret;
         
     CGI(){};
 
@@ -72,6 +81,12 @@ class CGI
         this->locationData.client_body_max_size = obj.locationData.client_body_max_size;
         this->locationData.cgi = obj.locationData.cgi;
         this->locationData.redirect = obj.locationData.redirect;
+
+        this->ret.code = obj.ret.code;
+        this->ret.header = obj.ret.header;
+        this->ret.body = obj.ret.body;
+        this->ret.mapap = obj.ret.mapap;
+        
         return(*this);
     };
 

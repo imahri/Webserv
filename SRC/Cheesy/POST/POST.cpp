@@ -2,119 +2,102 @@
 
 int     Request::Upload()
 {
-    
+    statusCode = 201;
+    // ResponseBody.clear();
+    // ResponseBody += "\r\n";
     return(0);
 }
 
 int     Request::CheckRessource()
 {
-	struct stat fileStat;
-
-    if (stat(RequestPath.c_str(), &fileStat) == 0)
-	{
-		if (S_ISDIR(fileStat.st_mode))
-			IsDirectory = true;
-		else if (S_ISREG(fileStat.st_mode))
-			IsDirectory = false;
-		else
-			return(statusCode = 404, 1);
-	}
-    else
-		return(statusCode = 404, 1);
-
-    return(0);
-}
-
-int     Request::GetRessource()
-{
-    if(IsDirectory == true && (URI[URI.size() - 1] != '/' || URI != "/"))
-		return(statusCode = 301, 1);
-    if(URI[URI.size() - 1] == '/' || URI == "/")
-	{
-		// std::cout << "POST DIR" << std::endl;
-		if(GetDirectory())
-			return(1);
-	}
-	else
-	{
-		// std::cout << "POST File" << std::endl;
-		File = URI;
-		if(GetFile())
-			return(1);
-	}
 
     return(0);
 }
 
 int     Request::PostFile()
 {
-    std::vector < std::pair <std::string, std::string > > srv = Server.getLocationMultiple(ServerIndex, locationIndex, "cgi");
-    if(srv.size())
+    if(Loc.CheckCGI)
     {
-        //Run CGI on requested file
-        // std::vector < std::pair <std::string, std::string > >::iterator srvIT = srv.begin();
+        FillCgi();
+        ResponseBody =  Server.CgiResult(cgi);
     }
     else
         return(statusCode = 403, 1);
-    
+
     return(0);
 }
 
 int     Request::PostDir()
 {
-    std::vector < std::string> it;
-	if(locationIndex != 0)
-		it = Server.getLocationSingle(ServerIndex, locationIndex, "index");
-	if(it.size())//If index files are present
+    ResponseBody.clear();
+    std::string filename = Loc.root + "index.html";
+    if(isFile(filename, false))
+        return(RequestPath = filename, PostFile());
+    else if(Loc.CheckIndex)
+    {
+        filename = Loc.root + Loc.index;
+        if(isFile(filename, false))
+            return(RequestPath = filename, PostFile());
+        else
+            return(statusCode = 403, 1);
+    }
+    else
+        return(statusCode = 403, 1);
+    return(0);
+}
+
+int     Request::GetRessource()
+{
+    struct stat fileStat;
+
+	size_t find = URI.find("/Users/");
+	if(find != URI.npos)
+		RequestPath = URI;
+	else if(URI != "/")
+		RequestPath = Loc.root + URI.substr(1, URI.size());
+	else
+		RequestPath = Loc.root;
+	
+	if (stat(RequestPath.c_str(), &fileStat) == 0)
 	{
-		File = it[0];
-		if(PostFile())
+		if (S_ISDIR(fileStat.st_mode))
+			IsDirectory = true;
+		else if (S_ISREG(fileStat.st_mode))
+			IsDirectory = false;
+	}
+	else
+		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
+
+	std::cout << "RequestPath IS: " << RequestPath << std::endl;
+
+	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
+		return(GenerateRedirection(), statusCode = 301, 1);
+
+    if(IsDirectory)
+	{
+		if(PostDir())
 			return(1);
 	}
 	else
-        return(statusCode = 403, 1);
-
+	{
+		File = URI;
+		if(PostFile())
+			return(1);
+	}
     return(0);
 }
 
 int		Request::POST()
 {
-    if(locationIndex != 0)//LOCATION
+    if(Loc.CheckUploadDir)
     {
-        std::vector < std::string >	vec =  Server.getLocationSingle(ServerIndex, locationIndex, "upload_dir");
-        if(vec.size())//IF SUPPORT UPLOAD
-        {
-            UploadDir = *vec.begin();
-            if(Upload())
-                return(1);
-        }
-        else
-        {
-            std::vector < std::string> it = Server.getLocationSingle(ServerIndex, locationIndex, "root");
-            Loc.root = it[0];
-            if(URI != "/")
-                RequestPath = Loc.root + URI;
-            else
-                RequestPath = Loc.root;
-            if(CheckRessource())
-                    return(1);
-        }
+        if(Upload())
+            return (1);
     }
-    else//SERVER
+    else
     {
-        std::string str =  Server.getServerDataSingle(ServerIndex, "upload_dir");
-        if(str.size())//IF SUPPORT UPLOAD
-        {
-            UploadDir = str;
-            if(Upload())
-                return(1);
-        }
-        else
-        {
-		    RequestPath = Server.getServerDataSingle(ServerIndex, "root") + URI;
-            if(CheckRessource())
-                return(1);
-        }
+        if(GetRessource())
+            return (1);
     }
 	return(0);
 }

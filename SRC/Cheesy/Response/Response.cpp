@@ -34,24 +34,6 @@ std::string    GetStatusCode(int index)
             return ( "See Other" );
         case 304:
             return ( "Not Modified" );
-        case 500:
-            return ( "Internal Server Error" );
-        case 501:
-            return ( "Not Implemented" );
-        case 502:
-            return ( "Bad Gateway" );
-        case 503:
-            return ( "Service Unavailable" );
-        case 504:
-            return ( "Gateway Timeout" );
-        case 505:
-            return ( "HTTP Version Not Supported" );
-        case 508:
-            return ( "Loop Detected" );
-        case 510:
-            return ( "Not Extended" );
-        case 511:
-            return ( "Network Authentication Required" );
         case 400:
             return ( "Bad Request" );
         case 401:
@@ -88,6 +70,24 @@ std::string    GetStatusCode(int index)
             return ( "Unprocessable Entity" );
         case 451:
             return ( "Unavailable For Legal Reasons" );
+        case 500:
+            return ( "Internal Server Error" );
+        case 501:
+            return ( "Not Implemented" );
+        case 502:
+            return ( "Bad Gateway" );
+        case 503:
+            return ( "Service Unavailable" );
+        case 504:
+            return ( "Gateway Timeout" );
+        case 505:
+            return ( "HTTP Version Not Supported" );
+        case 508:
+            return ( "Loop Detected" );
+        case 510:
+            return ( "Not Extended" );
+        case 511:
+            return ( "Network Authentication Required" );
         default:
             return ( "NOT FOUND" );
     }
@@ -134,7 +134,7 @@ int     Request::GenerateResponse()
 
     ResponseHeaders += "Content-Type: ";
 
-    if(statusCode >= 300 && statusCode <= 600)
+    if(statusCode >= 400 && statusCode <= 600)
     {
         ResponseHeaders += "text/html\r\n";
         ResponseBody.clear();
@@ -142,27 +142,25 @@ int     Request::GenerateResponse()
         ResponseBody += "\r\n";
         ResponseHeaders += "Content-Length: " +  std::to_string(ResponseBody.length() - 2) + "\r\n";
     }
-    else if(statusCode >= 0 && statusCode < 300)
+    else if(statusCode >= 0 && statusCode < 400)
     {
-        if(Req.ContentType.size())
-        {
-            std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
-            ResponseHeaders += Req.MimeType + "\r\n";
-        }
-        else
-            ResponseHeaders += "text/html\r\n";
-
-        if(Req.ContentLength.length())
-            ResponseHeaders += "Content-Length: " + Req.ContentLength + "\r\n";
-        else if(ResponseBody.length())
+        // if(methode == "POST" && statusCode == 201)
+        //     ResponseHeaders += "text/html\r\n";
+        // else if(Req.ContentType.size())
+        // {
+        //     std::cout << "CONTENT TYPE: " << Req.ContentType << std::endl;
+        //     std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
+        //     ResponseHeaders += Req.MimeType + "\r\n";
+        // }
+        // else
+            ResponseHeaders += "video/mp4\r\n";
+            
+        if(ResponseBody.length())
             ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
     }
     ResponseHeaders += "\r\n";
     return(0);
 }
-
-//"<a class=\"icon dir\" href=\"" + it->second + "\">" + "Redirect to" + it->second + "</a><br>";
-// ResponseBody += "<meta http-equiv=\"Refresh\" content=\"0; url='" + it->second + "'\" />";
 
 int     Request::GetMimeType()
 {
@@ -175,3 +173,12 @@ int     Request::GetMimeType()
 	}
     return(0);
 }
+
+
+int     Request::GenerateRedirection()
+{
+    ResponseBody.clear();
+    ResponseBody = "<meta http-equiv=\"Refresh\" content=\"0; url='" + URI + "/" + "'\" />\r\n";
+    return(0);
+}
+// 200 400 500

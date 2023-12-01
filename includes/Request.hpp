@@ -3,6 +3,8 @@
 #include "CGI.hpp"
 #include "Webserv.hpp"
 
+#define MEGA 1000000
+
 typedef struct R
 {
     std::string     Host;
@@ -55,7 +57,6 @@ class Request
         Request &operator=(const Request &other);
         ~Request();
         
-        int                                 createServer(Parsing &parsing);
         int                                 getRequest(std::string buffer);
         int                                 fillHeaderAndBody(std::string buffer);
         int                                 parseRequest();
@@ -84,6 +85,9 @@ class Request
         int                                 FillResponseBody();
         void                                Reset();
         void                                FillCgi();
+        int                                 GenerateRedirection();
+        int                                 parseBoundry();
+
 
 
 
@@ -102,3 +106,5 @@ class Request
         std::string                         &ft_trim(std::string& s, char c);
         std::string                         ft_trim(std::string s, std::string delimiter);
         int                                 readFile(std::string &fileName, std::string &Tostore);
+        int                                 CovertHexaToDecimal(const std::string &hexString);
+    
