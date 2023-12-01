@@ -35,11 +35,16 @@ struct locationConfigData
 	int upload_dir;			  // ~
 };
 
+struct resCGI
+{
+	int	status;
+	
+};
+
+
 class Parsing
 {
 	public:
-		std::map< std::string, std::string > cgiENV;
-		std::map<std::string, std::string> headers;
 
 		std::vector< std::vector<std::string > > servers;
 		std::map< std::string, std::vector<std::string > > responseTypes;
@@ -85,12 +90,17 @@ class Parsing
 
 		//-------------------------------------CGI------------------------------------------------------//
 		CGI			cgi;
-		void	envInit();
-		std::string	getEnvHeader(const std::string&  s);
-		void	splitHeaders();
-		void	convertMap();
+		std::map< std::string, std::string >	cgiENV;
+		std::map<std::string, std::string>		headers;
 		char	**execEnv;
-		std::string  CgiResult(CGI &c);
+
+		std::string								CgiResult(CGI &c);
+		std::string								getEnvHeader(const std::string&  s);
+		std::string								handleCGIres(const std::string& outFileName);
+		
+		void									envInit();
+		void									splitHeaders();
+		void									convertMap();
 };
 
 
