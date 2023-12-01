@@ -120,6 +120,14 @@ int IoMultiplexing::checkServer(int fd)
     return fin->index;
 }
 
+int checkKeepAlive(std::string &buff)
+{
+    size_t find = buff.find("Connection: keep-alive");
+    if(find != buff.npos)
+        return(1);
+    return(0);
+}
+
 int WaitForFullRequest(std::string& buff)
 {
     std::string substringToFind = "\r\n\r\n";
@@ -128,6 +136,11 @@ int WaitForFullRequest(std::string& buff)
 
     if (found != std::string::npos)
     {
+        std::string STR = buff.substr(0, found);
+        // if(checkKeepAlive(STR))
+        //     return(0);
+
+
         size_t index = buff.find('\n');
         if (index == std::string::npos)
             return (0);
@@ -233,8 +246,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             {
                 if (net[j].revents & POLLIN)
                 {
-                    bzero(buffer, 50000);
-                    int tt = recv(net[j].fd, buffer, 50000, 0);
+                    bzero(buffer, 1024);
+                    int tt = recv(net[j].fd, buffer, 1024, 0);
                     if (tt == 0)
                         close(net[j].fd);
                     if (tt == -1)
@@ -262,46 +275,15 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 }
                 else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
                 {
-                    std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
-                    std::cout << re.request_msg[net[j].fd].second << std::endl;
-                    std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
-                    std::cout << "BODY SIZE: " << rq.ResponseBody.length() << std::endl;
+                    usleep(100);
+                    send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 30000, re.request_msg[net[j].fd].second.length()), 0);
+                    re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 30000 ? re.request_msg[net[j].fd].second.length() : 30000);
+                    if (re.request_msg[net[j].fd].second.size() == 0)
+                        net[j].revents = POLLIN;
+                    continue;
 
-                    std::string response = rq.ResponseHeaders;
-                    send(net[j].fd, &response[0], response.length(), 0);
-
-                    //Change this to send algo to send whole body
-                    std::string message = rq.ResponseBody;
-                    send(net[j].fd, &message[0], message.length(), 0);
-
-                    net[j].events = POLLIN;
                 }
-                //     // if (net[j].revents & POLLERR | POLLHUP)
-                //     // {
-                //     //     //close clien and erase it
-                //     // }
             }
-
-            // ret--;
         }
     }
 }
-
-// std::fstream ff(rq.RequestPath); 
-// std::stringstream ss;
-// ss << ff.rdbuf();
-// std::string buff ;
-// buff = ss.str();
-
-// ssize_t sendbytes = send(net[j].fd, buff.c_str(), buff.length(), 0);
-// ssize_t oldsendbytes;
-
-// while(sendbytes > 0)
-// {
-//     oldsendbytes =  sendbytes;
-//     std::string newbuff = buff.substr(oldsendbytes);
-//     if(newbuff.length() > 0) 
-//         sendbytes = send(net[j].fd, newbuff.c_str(),newbuff.length(), 0);
-//     else
-//         break;
-// }

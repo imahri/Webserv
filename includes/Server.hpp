@@ -7,8 +7,9 @@ class Client
     public:
         int fd;
         bool isEnd;
+        bool keepAlive;
         char *buffer[1024];
-        Client(int fd):fd(fd),isEnd(false){};
+        Client(int fd):fd(fd),isEnd(false),keepAlive(false){};
         ~Client();
 };
 

@@ -144,16 +144,16 @@ int     Request::GenerateResponse()
     }
     else if(statusCode >= 0 && statusCode < 400)
     {
-        if(methode == "POST" && statusCode == 201)
-            ResponseHeaders += "text/html\r\n";
-        else if(Req.ContentType.size())
-        {
-            std::cout << "CONTENT TYPE: " << Req.ContentType << std::endl;
-            std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
-            ResponseHeaders += Req.MimeType + "\r\n";
-        }
-        else
-            ResponseHeaders += "text/html\r\n";
+        // if(methode == "POST" && statusCode == 201)
+        //     ResponseHeaders += "text/html\r\n";
+        // else if(Req.ContentType.size())
+        // {
+        //     std::cout << "CONTENT TYPE: " << Req.ContentType << std::endl;
+        //     std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
+        //     ResponseHeaders += Req.MimeType + "\r\n";
+        // }
+        // else
+            ResponseHeaders += "video/mp4\r\n";
             
         if(ResponseBody.length())
             ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
@@ -181,3 +181,4 @@ int     Request::GenerateRedirection()
     ResponseBody = "<meta http-equiv=\"Refresh\" content=\"0; url='" + URI + "/" + "'\" />\r\n";
     return(0);
 }
+// 200 400 500
