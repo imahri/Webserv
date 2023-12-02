@@ -153,7 +153,7 @@ int     Request::GenerateResponse()
         //     ResponseHeaders += Req.MimeType + "\r\n";
         // }
         // else
-            ResponseHeaders += "video/mp4\r\n";
+            ResponseHeaders += "text/html\r\n";
             
         if(ResponseBody.length())
             ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";

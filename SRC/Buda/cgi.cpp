@@ -171,27 +171,19 @@ void	 Parsing::envInit()
 	this->cgiENV["CONTENT_TYPE"] = getEnvHeader("Content-Type");
 
 	std::string s = getEnvHeader("Host");
-	this->cgiENV["SERVER_PORT"] = ft_split(s, ':')[1];
+	if (s.size())
+		this->cgiENV["SERVER_PORT"] = ft_split(s, ':')[1];
 
 	this->cgiENV["PATH_TRANSLATED"] = cgi.RequestPath;
 	this->cgiENV["PATH_INFO"] = cgi.URI;
-
-
-
-	// this->cgiENV["PATH_TRANSLATED"] = "/Users/ytaqsi/Desktop/";
-	// this->cgiENV["PATH_INFO"] = "/";
-	// this->cgiENV["PATH_INFO"] = path_info;
-	// this->cgiENV["PATH_TRANSLATED"] = root + path_info;
 }
 
 void	Parsing::splitHeaders()
 {
-	if (headers.size())
-		headers.clear();
 	std::vector <std::string> s = ft_split(cgi.header, "\n\r");
-	
 	for (size_t i = 0; i < s.size(); i++)
 	{
+
 		size_t f = s[i].find(':');
 		if (f != std::string::npos)
 		{
@@ -236,79 +228,74 @@ std::string	getFileName()
     return oss.str();
 }
 
-std::string   Parsing::handleCGIres(const std::string& outFileName)
-{
-	
+// void	Parsing::fillResHeaders(std::string& resHeaders)
+// {
+// 	std::vector <std::string> s = ft_split(resHeaders, "\n\r");
+// }
 
-	// red the output file and store the content in the res
+void   Parsing::handleCGIres(const std::string& outFileName)
+{
 	std::ifstream resFile(outFileName.c_str(), std::ios::binary);
 	if (!resFile.is_open())
-		std::cerr << "Error opening file: " << outFileName << std::endl;
+	{
+		this->cgi.ret.code = "500";
+		return ;
+	}
+
 	
 	std::stringstream iss;
 	iss << resFile.rdbuf();
 
-	std::cout << "-----------------------------------------------CGI Res-----------------------------------------" << std::endl;
+	std::string line;
+	std::string resHeaders;
+	bool		header = true;
+	while(std::getline(iss, line))
+	{
+		if (line.empty() || line == "\r" || line == "\r\n" || line == "\r\n\r\n")
+			header = false;
 
-	// check if correct header
-
-
-
-		// std::cout << iss.str() << std::endl;
-		std::string line;
-		std::string resHeaders;
-		std::string resBody;
-		bool		header = true;
-		while(std::getline(iss, line))
+		if (header)
 		{
-			if (line.empty() || line == "\r" || line == "\r\n" || line == "\r\n\r\n")
-				header = false;
-
-			if (header)
+			size_t f = line.find(':');
+			if (f == std::string::npos)
 			{
-				if (line.find(':') == std::string::npos)
-					return "Content-Type: text/plain\r\nStatus: 400 Bad Request\r\n\r\nBad Request: Invalid headers\r\n";
-				resHeaders += line;
+				this->cgi.ret.code = "400";
+				return;
 			}
-			else
-				resBody += line;
+			cgi.ret.mapap.push_back(std::make_pair(line.substr(0, f), line.substr(f + 2)));
+			resHeaders += line;
 		}
-		cgi.header = resHeaders;
-		splitHeaders();
-		headers["Content-Length"] = std::to_string(resBody.length());
+		else
+			cgi.ret.body += line;
+	}
+	cgi.ret.mapap.push_back(std::make_pair("Content-Length", std::to_string(cgi.ret.body.length())));
+	cgi.ret.code = "200";
+	cgi.ret.header = resHeaders;
 
-	std::cout << "-----------------------------------------------CGI Res headers-----------------------------------------" << std::endl;
-
-	std::cout << "-----------------------------------------------CGI Res headers end-----------------------------------------" << std::endl;
-	// 	std::cout << resHeaders << std::endl;
-	// std::cout << "-----------------------------------------------CGI Res Body-----------------------------------------" << std::endl;
-	// 	std::cout << resBody << std::endl;
-
-		std::cout << iss.str() << std::endl;
-	std::cout << "-----------------------------------------------CGI end Res-----------------------------------------" << std::endl;
-
-
-
-	// close all files
 	resFile.close();
-
-	// remove all files
 	std::remove(outFileName.c_str());
-	// std::remove(inFileName.c_str());
-	// return resBody;
-	return iss.str();
+
 }
 
-std::string  Parsing::CgiResult(CGI &c)
+Rawr  Parsing::CgiResult(CGI &c)
 {
-
+	Rawr res;
 	cgi = c;
+
 	splitHeaders();
 	envInit();
 	convertMap();
 
-	// in and out files
-	// std::string inFileName = "inFile" + getFileName();
+
+	std::map<std::string, std::string>::iterator it = cgiENV.find("CONTENT_LENGTH");
+	if (!it->second.empty())
+	{
+		std::string inFileName = "/tmp/inFile" + getFileName();
+		std::ofstream outFile(inFileName.c_str());
+		outFile << cgi.body;
+	}
+
+	
 	std::string outFileName = "/tmp/outFile" + getFileName();
 
 	// av
@@ -318,6 +305,7 @@ std::string  Parsing::CgiResult(CGI &c)
     av[2] = NULL;
 
 	// in and out backup
+	// int outBackUp = dup(STDOUT_FILENO);
 	int outBackUp = dup(STDOUT_FILENO);
 	int outFileFD = open(outFileName.c_str(), O_WRONLY | O_CREAT, 0777);
 
@@ -332,17 +320,30 @@ std::string  Parsing::CgiResult(CGI &c)
 			perror("dup2");
 
 		execve(av[0], av, execEnv);
-		std::cerr << "------------------------------------------l*waaaaaaaaaa------------------------------------------------" << std::endl;
+		cgi.ret.code = "500";
+		exit(1);
 	}
 	// wait and return the original val of fds
 	waitpid(pid, NULL, 0);
-	dup2(outBackUp, 1);
+	if (dup2(outBackUp, 1) == -1)
+			perror("dup2");
     close(outFileFD);
 
 
 	// for cgi res
-	std::string resBody = handleCGIres(outFileName);
-	// free the env
+	handleCGIres(outFileName);
+
+	std::cout << "-------------------------------------------CGI-------------------------------------------" << std::endl;
+			
+	std::cout << "-------------------------------------------HEADERS-------------------------------------------" << std::endl;
+			for (size_t i = 0; i < cgi.ret.mapap.size(); i++)
+			{
+				std::cout << cgi.ret.mapap[i].first << "\t\t" << cgi.ret.mapap[i].second << std::endl;
+			}
+	std::cout << "-------------------------------------------BODY-------------------------------------------" << std::endl;
+				std::cout << cgi.ret.body << std::endl;
+			
+	std::cout << "-------------------------------------------CGI-------------------------------------------" << std::endl;
 	if (execEnv != nullptr) 
 	{
         for (size_t i = 0; execEnv[i] != nullptr; ++i)
@@ -350,5 +351,5 @@ std::string  Parsing::CgiResult(CGI &c)
         delete[] execEnv;
     }
 	
-	return(resBody);
+	return(cgi.ret);
 };

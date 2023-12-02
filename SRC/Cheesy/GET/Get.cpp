@@ -100,7 +100,7 @@ int		Request::GetFile()
 		if(Loc.CheckCGI)
 		{
 			FillCgi();
-			ResponseBody =  Server.CgiResult(cgi) + "\r\n";
+			ResponseBody =  Server.CgiResult(cgi).body + "\r\n";
 			statusCode = 200;
 			//Run CGI on requested file
 		}

@@ -19,7 +19,7 @@ int     Request::PostFile()
     if(Loc.CheckCGI)
     {
         FillCgi();
-        ResponseBody =  Server.CgiResult(cgi);
+        ResponseBody =  Server.CgiResult(cgi).body;
     }
     else
         return(statusCode = 403, 1);

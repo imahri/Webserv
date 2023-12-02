@@ -94,10 +94,11 @@ class Parsing
 		std::map<std::string, std::string>		headers;
 		char	**execEnv;
 
-		std::string								CgiResult(CGI &c);
+		Rawr									CgiResult(CGI &c);
 		std::string								getEnvHeader(const std::string&  s);
-		std::string								handleCGIres(const std::string& outFileName);
-		
+		void									handleCGIres(const std::string& outFileName);
+		void									fillResHeaders(std::string& resHeaders);
+
 		void									envInit();
 		void									splitHeaders();
 		void									convertMap();
