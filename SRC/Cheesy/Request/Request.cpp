@@ -13,7 +13,7 @@ int     Request::fillHeaderAndBody(std::string buffer)
 	for (; oldIndex < index; oldIndex++)
 		header += buffer[oldIndex];
 
-	for (oldIndex = index; oldIndex < buffer.size(); oldIndex++)
+	for (oldIndex = index + 4; oldIndex < buffer.size(); oldIndex++)
 		body += buffer[oldIndex];
 
 	std::vector<std::string> vec = ft_split(header, "\n\r");
@@ -98,16 +98,64 @@ int		Request::parseChuncked()
 	return(0);
 }
 
-int		Request::parseBoundry()
+std::vector<std::string> Request::GetNextBoundry(std::string& base)
 {
-	// std::cout << "-----------------------HEADER BOUNDRY-------------------" << std::endl;
-	// std::cout << header << std::endl;
-	// std::cout << "-----------------------BODY-------------------" << std::endl;
-	// std::cout << body << std::endl;
-	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
-
-	return(0);
+    std::vector<std::string> vec;
+    
+    size_t first = 0;
+    for (size_t i = 0; i + BoundryEnd.length() <= base.length(); i += BoundryEnd.length())
+    {
+        std::string sub = base.substr(first, BoundryEnd.length());
+        if (sub == BoundryStart || sub == BoundryEnd)
+        {
+            vec.push_back(sub);
+            first = i + BoundryEnd.length();
+        }
+    }
+    
+    return vec;
 }
+
+int Request::parseBoundry()
+{
+    std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
+    std::cout << header << std::endl;
+    std::cout << "-----------------------BODY-------------------" << std::endl;
+    std::cout << body << std::endl;
+    std::cout << "-----------------------END OF BODY-------------------" << std::endl;
+
+    DoneWithBoundry = false;
+    size_t find = Req.ContentType.find("boundary=");
+    if (find == std::string::npos)
+        return 1;
+
+    Boundry = Req.ContentType.substr(find + 9);
+    if (Boundry.empty())
+        return 1;
+    BoundryStart = "--" + Boundry;
+    BoundryEnd = BoundryStart + "--";
+
+    findFirst = 0;
+    findLast = 0;
+
+    std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
+	std::vector<std::string> vec = GetNextBoundry(body);
+	std::vector<std::string>::iterator it = vec.begin();
+	for (; it != vec.end(); it++)
+	{
+		std::cout << *it << std::endl;
+        std::cout << "---------------------------------------------------" << std::endl;
+	}
+    std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
+	
+
+
+    return 0;
+}
+
+
+
+
 
 int		Request::checkHeader()
 {

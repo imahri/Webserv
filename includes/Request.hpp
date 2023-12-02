@@ -53,6 +53,16 @@ class Request
         bool                                CheckExtension;
         std::string                         Extension;
         std::string                         ttew;
+        //--------------------POST VARS-----------------------//
+        std::string                         Boundry;
+        std::string                         BoundryStart;
+        std::string                         BoundryEnd;
+        std::string                         Chunk;
+        std::vector <std::string>           GetNextBoundry(std::string &base);
+        bool                                DoneWithBoundry;
+        size_t                              findFirst;
+        size_t                              findLast;
+        //-------------------------------------------//
         
         Request();
         Request(const Request &obj);

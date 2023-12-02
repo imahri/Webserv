@@ -46,5 +46,5 @@ re: fclean all
 fuck:  fclean
 	$(FRM) Webserv.dSYM .vscode
 	
-nik : fclean fuck re
+nik : fuck re
 	

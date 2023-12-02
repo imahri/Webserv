@@ -34,7 +34,7 @@ int Request::FillResponseBodyFromFile()
     if (!fileStream)
     {
         std::cerr << "Error: Unable to open the file " << RequestPath << std::endl;
-        statusCode = 404;
+        statusCode = 403;
         return 1;
     }
 
@@ -48,7 +48,10 @@ int Request::FillResponseBodyFromFile()
     ResponseBody.clear();
 
     while (fileStream.read(buffer, bufferSize))
+	{
+
         ResponseBody.append(buffer, bufferSize);
+	}
 
     ResponseBody.append(buffer, fileStream.gcount());
 
