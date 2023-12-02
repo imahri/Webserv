@@ -144,15 +144,9 @@ int     Request::GenerateResponse()
     }
     else if(statusCode >= 0 && statusCode < 400)
     {
-        // if(methode == "POST" && statusCode == 201)
-        //     ResponseHeaders += "text/html\r\n";
-        // else if(Req.ContentType.size())
-        // {
-        //     std::cout << "CONTENT TYPE: " << Req.ContentType << std::endl;
-        //     std::cout << "MIME TYPE: " << Req.MimeType << std::endl;
-        //     ResponseHeaders += Req.MimeType + "\r\n";
-        // }
-        // else
+        if(CheckExtension)
+            ResponseHeaders += Req.MimeType + "\r\n";
+        else
             ResponseHeaders += "text/html\r\n";
             
         if(ResponseBody.length())
@@ -168,7 +162,7 @@ int     Request::GetMimeType()
 	for (; it != Server.responseTypes.end(); it++)
 	{
 		for (size_t j = 0; j < it->second.size(); j++)
-            if(Req.ContentType.size() && Req.ContentType == it->second[j])
+            if(CheckExtension && Extension == it->second[j])
                 return(Req.MimeType = it->first, 1);
 	}
     return(0);
@@ -181,4 +175,4 @@ int     Request::GenerateRedirection()
     ResponseBody = "<meta http-equiv=\"Refresh\" content=\"0; url='" + URI + "/" + "'\" />\r\n";
     return(0);
 }
-// 200 400 500
+// 200 400

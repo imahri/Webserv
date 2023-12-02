@@ -25,6 +25,19 @@ int     Request::fillHeaderAndBody(std::string buffer)
     return (0);
 }
 
+int		Request::GetExtension()
+{
+	size_t dotPos = URI.find_last_of('.');
+	CheckExtension = false;
+    if (dotPos != std::string::npos && dotPos < URI.length() - 1)
+	{
+		CheckExtension = true;
+		Extension = &URI[dotPos + 1];
+		if(GetMimeType() == 0)
+			CheckExtension = false;
+	}
+	return(0);
+}
 int		Request::checkHttp()
 {
 	std::string		search = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
@@ -64,6 +77,8 @@ int		Request::checkHttp()
 		std::cout << "Query: " << Query << std::endl;
 		URI = URI.substr(0, find);
 	}
+
+	GetExtension();
 	return(0);
 }
 

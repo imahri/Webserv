@@ -50,6 +50,8 @@ class Request
         bool                                ClientIsDone;
         std::string                         ds;
         bool                                RequestIsDone;
+        bool                                CheckExtension;
+        std::string                         Extension;
         std::string                         ttew;
         
         Request();
@@ -87,6 +89,7 @@ class Request
         void                                FillCgi();
         int                                 GenerateRedirection();
         int                                 parseBoundry();
+        int                                 GetExtension();
 
 
 
