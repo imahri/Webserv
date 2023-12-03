@@ -431,3 +431,18 @@ std::string Parsing::getMimeTypes(const std::string& s)
     }   
     return "";
 }
+
+int	Parsing::getServerServerName(const std::string& s)
+{
+	for (size_t i = 0; i < this->servers.size(); i++)
+	{
+		for (size_t j = 0; j < servers[i].size(); j++)
+		{
+			std::vector < std::string > line = ft_split(servers[i][j]);
+			if (line[0] == "server_name" && line[1] == s)
+				return line.clear(), i + 1;
+			line.clear();
+		}
+	}
+	return -1;
+}

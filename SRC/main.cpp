@@ -8,7 +8,7 @@ int main(int ac, char **av)
        	if (!wbs.parsing(ac, av) || !wbs.fillServerList() || !wbs.finalConfigFileParsing())
 			return (std::cout << "ERROR IN CONFIG FILE." << std::endl, 1);
 		wbs.fillResponseTypes();
-
+        std::cout << "--------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << wbs.getServerServerName("test1.com") << std::endl;
 
         IoMultiplexing io;
         if(io.StartTheMatrix(wbs))

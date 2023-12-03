@@ -87,6 +87,8 @@ class Parsing
 		// get one of location data ==> methods, cgi, redirect
 		std::vector< std::pair < std::string, std::string > > getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string data);
 
+		// get the index of the server with a specific server_name
+		int	getServerServerName(const std::string& s);
 
 		//-------------------------------------CGI------------------------------------------------------//
 		CGI			cgi;
