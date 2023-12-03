@@ -21,8 +21,6 @@ int		readFile(std::string &fileName, std::string &Tostore)
         Tostore.append(buffer, bufferSize);
     Tostore.append(buffer, fileStream.gcount());
 
-    std::cout << "FILE SIZE: " << FileSize << " BODY SIZE: " << Tostore.length() << std::endl;
-
     fileStream.close();
     return 0;
 }
@@ -54,8 +52,6 @@ int Request::FillResponseBodyFromFile()
 	}
 
     ResponseBody.append(buffer, fileStream.gcount());
-
-    std::cout << "FILE SIZE: " << FileSize << " BODY SIZE: " << ResponseBody.length() << std::endl;
 
     ResponseBody += "\r\n";
 
@@ -178,8 +174,6 @@ int		Request::GET()
 	}
 	else
 		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
-
-	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(GenerateRedirection(), statusCode = 301, 1);

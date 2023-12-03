@@ -73,8 +73,7 @@ int		Request::checkHttp()
 			Query = URI.substr(find + 1, URI.length());
 		else
 			Query = URI.substr(find, URI.length());
-		
-		std::cout << "Query: " << Query << std::endl;
+
 		URI = URI.substr(0, find);
 	}
 
@@ -89,108 +88,13 @@ int		Request::checkBody()
 	return(0);
 }
 
-int		Request::parseChuncked()
-{
-	std::cout << "-----------------------HEADER CHUNCKED-------------------" << std::endl;
-	std::cout << header << std::endl;
-	std::cout << "-----------------------BODY-------------------" << std::endl;
-	std::cout << body << std::endl;
-	return(0);
-}
-
-std::vector<std::string> Divide(const std::string& input, const std::string& delimiter)
-{
-    std::vector<std::string> substrings;
-
-    size_t start = 0;
-    size_t end = input.find(delimiter);
-
-    while (end != std::string::npos)
-	{
-        substrings.push_back(input.substr(start, end - start));
-        start = end + delimiter.length();
-        end = input.find(delimiter, start);
-    }
-    substrings.push_back(input.substr(start));
-    return substrings;
-}
-
-int		Request::GetNextBoundry(std::string &base)
-{
-	bool	isFileName = false;
-	size_t find = base.find("\r\n");
-	if(find == base.npos)
-		return(1);
-	std::string ContentDisposition = base.substr(0, find);
-	std::string	FileName;
-	std::cout << ContentDisposition << std::endl;
-
-	std::vector<std::string> vec = Divide(ContentDisposition, ";");
-	std::cout << "VEC SIZE: " << vec.size() << std::endl;
-	for (size_t i = 0; i < vec.size(); i++)
-	{
-		std::cout << "VEC: " << vec[i] << std::endl;
-		if(vec.size() == 3)
-		{
-			find = vec[i].find("filename=\"");
-			if(find != vec[i].npos)
-			{
-				isFileName = true;
-				FileName = vec[i].substr(find, vec[i].length());
-			}
-		}
-	}
-	if(isFileName == true)
-	{
-		if(Loc.CheckUploadDir)
-			std::string path = UploadDir + FileName;
-	}
-	std:: cout << "-----------------------------------------------------------------------"<< std::endl;
-
-	return(0);
-}
-
-int Request::parseBoundry()
-{
-    std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
-    std::cout << header << std::endl;
-    std::cout << "-----------------------BODY-------------------" << std::endl;
-    std::cout << body << std::endl;
-    std::cout << "-----------------------END OF BODY-------------------" << std::endl;
-
-    size_t find = Req.ContentType.find("boundary=");
-    if (find == std::string::npos)
-        return 1;
-
-    Boundry = Req.ContentType.substr(find + 9);
-    if (Boundry.empty())
-        return 1;
-    BoundryStart = "--" + Boundry;
-    BoundryEnd = BoundryStart + "--";
-
-
-    std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
-	std::string Fakebody = body;
-	std::string str =  BoundryStart + "\r\n";
-	BoundryVec = Divide(body, str);
-
-	for (size_t i = 0; i < BoundryVec.size(); i++)
-	{
-		if(BoundryVec[i].size() != 0 || checkWhiteSpace(BoundryVec[i]) == 1)
-			if(GetNextBoundry(BoundryVec[i]))
-				return(1);
-	}
-    std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
-    return 0;
-}
-
 int		Request::checkHeader()
 {
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
 	size_t find = 0;
 	bool isChuncked = false;
-	bool isBoundry = false;
+	isBoundry = false;
 	bool ContentLength = false;
 	bool ContentType = false;
 	bool transferEncoding = false;
@@ -239,10 +143,6 @@ int		Request::checkHeader()
 
 	if(isChuncked == true)
 		if(parseChuncked())
-			return 1;
-
-	if(isBoundry == true)
-		if(parseBoundry())
 			return 1;
 	return(0);
 }

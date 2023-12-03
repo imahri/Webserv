@@ -68,7 +68,7 @@ int     Request::GetRessource()
 	else
 		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
 
-	std::cout << "RequestPath IS: " << RequestPath << std::endl;
+	// std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(GenerateRedirection(), statusCode = 301, 1);
@@ -91,6 +91,10 @@ int		Request::POST()
 {
     if(Loc.CheckUploadDir)
     {
+        if(isBoundry == true)
+		    if(parseBoundry())
+			    return 1;
+                
         if(Upload())
             return (1);
     }

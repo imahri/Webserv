@@ -41,7 +41,6 @@ class Request
         int                                 locationIndex;
         bool                                IsDirectory;
         std::string                         File;
-        std::string                         UploadDir;
         size_t                              ServerIndex;
         bool                                SendFile;
         size_t                              FileSize;
@@ -57,6 +56,7 @@ class Request
         std::string                         Boundry;
         std::string                         BoundryStart;
         std::string                         BoundryEnd;
+        bool                                isBoundry;
         int                                 GetNextBoundry(std::string &base);
         std::vector <std::string>           BoundryVec;
         //-------------------------------------------//
@@ -117,4 +117,5 @@ class Request
         std::string                         ft_trim(std::string s, std::string delimiter);
         int                                 readFile(std::string &fileName, std::string &Tostore);
         int                                 CovertHexaToDecimal(const std::string &hexString);
+        std::vector<std::string>            Divide(const std::string& input, const std::string& delimiter);
     

@@ -18,7 +18,6 @@ void    Request::Reset()
     locationIndex = 0;
     IsDirectory = 0;
     File.clear();
-    UploadDir.clear();
     PathToSaveFile.clear();
     ds.clear();
     ServerIndex = 1;

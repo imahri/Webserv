@@ -158,3 +158,20 @@ int CovertHexaToDecimal(const std::string &hexString)
 
     return (decimalValue);
 }
+
+std::vector<std::string> Divide(const std::string& input, const std::string& delimiter)
+{
+    std::vector<std::string> substrings;
+
+    size_t start = 0;
+    size_t end = input.find(delimiter);
+
+    while (end != std::string::npos)
+	{
+        substrings.push_back(input.substr(start, end - start));
+        start = end + delimiter.length();
+        end = input.find(delimiter, start);
+    }
+    substrings.push_back(input.substr(start));
+    return substrings;
+}
