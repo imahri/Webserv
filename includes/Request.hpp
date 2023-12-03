@@ -57,11 +57,8 @@ class Request
         std::string                         Boundry;
         std::string                         BoundryStart;
         std::string                         BoundryEnd;
-        std::string                         Chunk;
         int                                 GetNextBoundry(std::string &base);
-        bool                                DoneWithBoundry;
-        size_t                              findFirst;
-        size_t                              findLast;
+        std::vector <std::string>           BoundryVec;
         //-------------------------------------------//
         
         Request();

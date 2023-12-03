@@ -115,6 +115,41 @@ std::vector<std::string> Divide(const std::string& input, const std::string& del
     return substrings;
 }
 
+int		Request::GetNextBoundry(std::string &base)
+{
+	bool	isFileName = false;
+	size_t find = base.find("\r\n");
+	if(find == base.npos)
+		return(1);
+	std::string ContentDisposition = base.substr(0, find);
+	std::string	FileName;
+	std::cout << ContentDisposition << std::endl;
+
+	std::vector<std::string> vec = Divide(ContentDisposition, ";");
+	std::cout << "VEC SIZE: " << vec.size() << std::endl;
+	for (size_t i = 0; i < vec.size(); i++)
+	{
+		std::cout << "VEC: " << vec[i] << std::endl;
+		if(vec.size() == 3)
+		{
+			find = vec[i].find("filename=\"");
+			if(find != vec[i].npos)
+			{
+				isFileName = true;
+				FileName = vec[i].substr(find, vec[i].length());
+			}
+		}
+	}
+	if(isFileName == true)
+	{
+		if(Loc.CheckUploadDir)
+			std::string path = UploadDir + FileName;
+	}
+	std:: cout << "-----------------------------------------------------------------------"<< std::endl;
+
+	return(0);
+}
+
 int Request::parseBoundry()
 {
     std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
@@ -123,7 +158,6 @@ int Request::parseBoundry()
     std::cout << body << std::endl;
     std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 
-    DoneWithBoundry = false;
     size_t find = Req.ContentType.find("boundary=");
     if (find == std::string::npos)
         return 1;
@@ -134,19 +168,17 @@ int Request::parseBoundry()
     BoundryStart = "--" + Boundry;
     BoundryEnd = BoundryStart + "--";
 
-    findFirst = 0;
-    findLast = 0;
 
     std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
 	std::string Fakebody = body;
 	std::string str =  BoundryStart + "\r\n";
-	std::vector <std::string> vec = Divide(body, str);
+	BoundryVec = Divide(body, str);
 
-	for (size_t i = 0; i < vec.size(); i++)
+	for (size_t i = 0; i < BoundryVec.size(); i++)
 	{
-		std:: cout << "-----------------------------------------------------------------------"<< std::endl;
-		std:: cout << vec[i] << std::endl;
-		std:: cout << "-----------------------------------------------------------------------"<< std::endl;
+		if(BoundryVec[i].size() != 0 || checkWhiteSpace(BoundryVec[i]) == 1)
+			if(GetNextBoundry(BoundryVec[i]))
+				return(1);
 	}
     std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
     return 0;
