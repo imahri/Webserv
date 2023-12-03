@@ -98,22 +98,21 @@ int		Request::parseChuncked()
 	return(0);
 }
 
-std::vector<std::string> Request::GetNextBoundry(std::string& base)
+std::vector<std::string> Divide(const std::string& input, const std::string& delimiter)
 {
-    std::vector<std::string> vec;
-    
-    size_t first = 0;
-    for (size_t i = 0; i + BoundryEnd.length() <= base.length(); i += BoundryEnd.length())
-    {
-        std::string sub = base.substr(first, BoundryEnd.length());
-        if (sub == BoundryStart || sub == BoundryEnd)
-        {
-            vec.push_back(sub);
-            first = i + BoundryEnd.length();
-        }
+    std::vector<std::string> substrings;
+
+    size_t start = 0;
+    size_t end = input.find(delimiter);
+
+    while (end != std::string::npos)
+	{
+        substrings.push_back(input.substr(start, end - start));
+        start = end + delimiter.length();
+        end = input.find(delimiter, start);
     }
-    
-    return vec;
+    substrings.push_back(input.substr(start));
+    return substrings;
 }
 
 int Request::parseBoundry()
@@ -139,23 +138,18 @@ int Request::parseBoundry()
     findLast = 0;
 
     std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
-	std::vector<std::string> vec = GetNextBoundry(body);
-	std::vector<std::string>::iterator it = vec.begin();
-	for (; it != vec.end(); it++)
+	std::string Fakebody = body;
+	std::string str =  BoundryStart + "\r\n";
+	std::vector <std::string> vec = Divide(body, str);
+
+	for (size_t i = 0; i < vec.size(); i++)
 	{
-		std::cout << *it << std::endl;
-        std::cout << "---------------------------------------------------" << std::endl;
+		std:: cout << vec[i] << std::endl;
+		std:: cout << "-----------------------------------------------------------------------"<< std::endl;
 	}
     std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
-	
-
-
     return 0;
 }
-
-
-
-
 
 int		Request::checkHeader()
 {
