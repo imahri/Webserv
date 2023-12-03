@@ -1,5 +1,11 @@
 #include "../../includes/Webserv.hpp"
 
+std::string	toString(size_t i)
+{
+	std::stringstream ss;
+    ss << i;
+	return ss.str();
+}
 
 bool	ft_isAllSpace(std::string& s)
 {

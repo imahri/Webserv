@@ -102,6 +102,7 @@ class Parsing
 		void									envInit();
 		void									splitHeaders();
 		void									convertMap();
+		void									freeENV();
 };
 
 
@@ -121,4 +122,5 @@ bool isValidLocationPath(const std::string &uri);
 bool isValidLocationMethods(std::vector<std::string> &data);
 bool isValidLocationCGI(const std::string &cgi, const std::string &cgiFile);
 bool checkServerData(std::vector<std::string> &data);
+std::string	toString(size_t i);
 
