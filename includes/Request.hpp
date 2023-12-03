@@ -57,7 +57,7 @@ class Request
         std::string                         BoundryStart;
         std::string                         BoundryEnd;
         bool                                isBoundry;
-        int                                 GetNextBoundry(std::string &base);
+        int                                 GetNextBoundry(std::string &base, bool check);
         std::vector <std::string>           BoundryVec;
         //-------------------------------------------//
         

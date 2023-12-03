@@ -10,7 +10,7 @@ int		Request::parseChuncked()
 	return(0);
 }
 
-int		Request::GetNextBoundry(std::string &base)
+int		Request::GetNextBoundry(std::string &base, bool check)
 {
 	size_t find = base.find("\r\n");
 	if(find == base.npos)
@@ -21,7 +21,12 @@ int		Request::GetNextBoundry(std::string &base)
 	if(find == base.npos)
 		return(1);
 
-	std::string newStr = base.substr(find + 4, base.length());
+	std::string newStr;
+	if(!check)
+		newStr = base.substr(find + 4, base.length());
+	else
+		newStr = base.substr(find + 4, base.length());
+
 	
 	std::string	FileName;
 
@@ -49,6 +54,7 @@ int		Request::GetNextBoundry(std::string &base)
 		return(std::cout << "Can't create file" << std::endl, 2);
 	file << newStr;
 
+	std:: cout << newStr << std::endl;
 	std:: cout << "-----------------------------------------------------------------------"<< std::endl;
 
 	return(0);
@@ -56,11 +62,11 @@ int		Request::GetNextBoundry(std::string &base)
 
 int Request::parseBoundry()
 {
-    // std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
-    // std::cout << header << std::endl;
-    // std::cout << "-----------------------BODY-------------------" << std::endl;
-    // std::cout << body << std::endl;
-    // std::cout << "-----------------------END OF BODY-------------------" << std::endl;
+    std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
+    std::cout << header << std::endl;
+    std::cout << "-----------------------BODY-------------------" << std::endl;
+    std::cout << body << std::endl;
+    std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 
     size_t find = Req.ContentType.find("boundary=");
     if (find == std::string::npos)
@@ -74,7 +80,7 @@ int Request::parseBoundry()
     BoundryEnd = BoundryStart + "--";
 
 
-    // std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
+    std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
 	std::string Fakebody = body;
 	std::string str =  BoundryStart + "\r\n";
 	BoundryVec = Divide(body, str);
@@ -82,9 +88,19 @@ int Request::parseBoundry()
 	for (size_t i = 0; i < BoundryVec.size(); i++)
 	{
 		if(BoundryVec[i].size() != 0 || checkWhiteSpace(BoundryVec[i]) == 1)
-			if(GetNextBoundry(BoundryVec[i]))
-				return(1);
+		{
+			if(i == BoundryVec.size() - 1)
+			{
+				if(GetNextBoundry(BoundryVec[i], true))
+					return(1);
+			}
+			else
+			{
+				if(GetNextBoundry(BoundryVec[i], false))
+					return(1);
+			}
+		}
 	}
-    // std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
+    std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
     return 0;
 }
