@@ -60,6 +60,7 @@ class Request
         bool                                isChuncked;
         int                                 GetNextBoundry(std::string &base, bool check);
         std::vector <std::string>           BoundryVec;
+        int                                 GetReverseMimeType();
         //-------------------------------------------//
         
         Request();

@@ -1,5 +1,16 @@
 #include "../../../includes/Request.hpp"
 
+int     Request::GetReverseMimeType()
+{
+    std::map < std::string, std::vector < std::string > >::iterator it = Server.responseTypes.begin();
+	for (; it != Server.responseTypes.end(); it++)
+	{
+        if(Req.ContentType == it->first)
+            return(Req.MimeType = it->second[0], 1);
+	}
+    return(0);
+}
+
 int		Request::parseChuncked()
 {
     std::string NewBody;
@@ -28,9 +39,16 @@ int		Request::parseChuncked()
 
         i += j + 4;
     }
-    
-    std::cout << "-------aaaaffff-------" << std::endl;
-    std::cout << NewBody << std::endl;
-    std::cout << "-------weeeeeee-------" << std::endl;
+
+    if(GetReverseMimeType() == 0)
+        return(1);
+
+
+    std::string path = Loc.upload_dir + "yyy." + Req.MimeType;
+    std::cout << "PATH: " << path << std::endl;
+	std::ofstream file(path, std::ios::binary);
+	if(!file)
+		return(std::cout << "Can't create file" << std::endl, 2);
+	file << NewBody;
 	return(0);
 }
