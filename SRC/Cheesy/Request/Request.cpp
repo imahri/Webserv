@@ -158,17 +158,19 @@ int		Request::parseRequest()
 {
 	if(checkHttp())
 		return(1);
+
 	std::cout << "-----------------------HEADER-------------------" << std::endl;
 	std::cout << header << std::endl;
 	std::cout << "-----------------------BODY-------------------" << std::endl;
-	std::cout << body << std::endl;
-	std::cout << "-----------------------END OF BODY-------------------" << std::endl;
+	// std::cout << body << std::endl;
+	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 	if(checkHeader())
 		return(1);
 	if(checkLocations())
 		return(1);
+
 	if(checkBody())
-		return(1);
+		return(1);	
 	if(methode == "GET")
 	{
 		if(GET())
