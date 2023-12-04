@@ -48,52 +48,51 @@ int     Request::GetReverseMimeType()
 // 	std::ofstream file(path, std::ios::binary);
 // 	if(!file)
 // 		return(std::cout << "Can't create file" << std::endl, 2);
+//     std::cout << "size: " << NewBody.length() << std::endl;
 // 	file << NewBody;
 
 // 	return(0);
 // }
 
 
-//----------------------test//////////////////////////
-
-
-int Request::parseChuncked()
+int     Request::parseChuncked()
 {
-    std::string NewBody;
-    size_t end = body.find("\r\0\r\n");
-    if (end == body.npos)
-        return (puts("hnanan1"), 1);
-
-    for (size_t i = 0; i < end;)
+    std::cout << "-----------------------------" << std::endl;
+    std::string requestBody = body;
+    std::istringstream iss(requestBody);
+    std::ostringstream oss;
+    
+    std::string line;
+    while (std::getline(iss, line))
     {
-        size_t find = body.find("\r\n", i);
-        if (find == body.npos)
-            return (puts("hnanan2"), 1);
-
-        std::string str = body.substr(i, find - i);
-        if (str.length() == 0)
-            return (puts("hnanan3"), 1);
-
-        size_t count = CovertHexaToDecimal(str);
-        if (count == 0)
+        if (line.empty())
             break;
 
-        size_t j = find + 2;
+        size_t semicolonPos = line.find(';');
+        if (semicolonPos != std::string::npos)
+            line = line.substr(0, semicolonPos);
 
-        for (; j < (count + find + 2); j++)
-            NewBody += body[j];
+        std::istringstream hexStream(line);
+        size_t chunkSize;
+        hexStream >> std::hex >> chunkSize;
 
-        i = j + 4;
+        std::string chunkData(chunkSize, '\0');
+        iss.read(&chunkData[0], chunkSize);
+        oss << chunkData;
+
+        std::getline(iss, line);
     }
 
-    if (GetReverseMimeType() == 0)
-        return (puts("hnanan5"), 1);
+    if(GetReverseMimeType() == 0)
+        return(1);
 
     std::string path = Loc.upload_dir + "yyy." + Req.MimeType;
     std::ofstream file(path, std::ios::binary);
-    if (!file)
-        return (std::cout << "Can't create file" << std::endl, 2);
-    file.write(NewBody.data(), NewBody.size());
+    if(!file)
+        return(std::cout << "Can't create file" << std::endl, 2);
+    std::string str =  oss.str();
+    std::cout << "size: " << str.length() << std::endl;
+    file << str;
 
-    return 0;
+    return (0);
 }
