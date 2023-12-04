@@ -52,6 +52,7 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 	std::ofstream file(path, std::ios::binary);
 	if(!file)
 		return(std::cout << "Can't create file" << std::endl, 2);
+	// std::cout << "FILESIZE: " << newStr.length() << std::endl;
 	file << newStr;
 	return(0);
 }
@@ -76,7 +77,7 @@ int Request::parseBoundry()
     BoundryEnd = BoundryStart + "--";
 
 
-    // std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
+    std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
 	std::string Fakebody = body;
 	std::string str =  BoundryStart + "\r\n";
 	BoundryVec = Divide(body, str);
@@ -97,6 +98,6 @@ int Request::parseBoundry()
 			}
 		}
 	}
-    // std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
+    std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
     return 0;
 }

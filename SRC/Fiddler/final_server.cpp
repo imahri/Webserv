@@ -162,7 +162,7 @@ int WaitForFullRequest(std::string& buff)
                     if (end != std::string::npos)
                     {
                         std::string val = buff.substr(second, end - second);
-                        int contentLength = std::stoi(val);
+                        int contentLength = std::atoi(val.c_str());
 
                         if (buff.size() >= found + substringToFind.size() + contentLength)
                             return 1;
@@ -246,8 +246,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             {
                 if (net[j].revents & POLLIN)
                 {
-                    bzero(buffer, 1024);
-                    int tt = recv(net[j].fd, buffer, 1024, 0);
+                    bzero(buffer, 50000);
+                    int tt = recv(net[j].fd, buffer, 50000, 0);
                     if (tt == 0)
                         close(net[j].fd);
                     if (tt == -1)
@@ -262,13 +262,15 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         bu.clear();
                         if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
                         {
-                            // std::cout << "---------------------START OF REQUEST---------------------"<< std::endl;
+                            std::cout << "---------------------START OF REQUEST---------------------"<< std::endl;
                             // std::cerr << re.request_msg[net[j].fd].first << std::endl;
-                            // std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
+                            // std::cout << "message lenght: " << re.request_msg[net[j].fd].first.length() << std::endl;
                             re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
+                            // std::cerr << rq.header << std::endl;
                             // std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
                             // std::cout << rq.ResponseHeaders << std::endl;
                             // std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
+                            std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
                             re.request_msg[net[j].fd].first.clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;

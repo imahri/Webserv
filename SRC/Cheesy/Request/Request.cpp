@@ -93,7 +93,7 @@ int		Request::checkHeader()
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
 	size_t find = 0;
-	bool isChuncked = false;
+	isChuncked = false;
 	isBoundry = false;
 	bool ContentLength = false;
 	bool ContentType = false;
@@ -141,9 +141,6 @@ int		Request::checkHeader()
 	if(transferEncoding == 0 && ContentLength == 0 && methode == "POST")
 		return(puts("7485"), statusCode = 400, 1);
 
-	if(isChuncked == true)
-		if(parseChuncked())
-			return 1;
 	return(0);
 }
 

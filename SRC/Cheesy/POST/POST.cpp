@@ -92,9 +92,15 @@ int		Request::POST()
     if(Loc.CheckUploadDir)
     {
         if(isBoundry == true)
+        {
 		    if(parseBoundry())
 			    return 1;
-                
+        }
+        else if(isChuncked == true)
+        {
+            if(parseChuncked())
+                return 1;
+        }
         if(Upload())
             return (1);
     }
