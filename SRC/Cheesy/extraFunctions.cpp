@@ -148,10 +148,10 @@ size_t convertToCharacters(std::string sizeString)
     return (size * factor);
 }
 
-int CovertHexaToDecimal(const std::string &hexString)
+size_t	CovertHexaToDecimal(const std::string &hexString)
 {
     std::stringstream	ss;
-    int					decimalValue;
+    size_t				decimalValue;
 
     ss << std::hex << hexString;
     ss >> decimalValue;

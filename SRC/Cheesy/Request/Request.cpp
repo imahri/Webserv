@@ -138,9 +138,9 @@ int		Request::checkHeader()
 
 	if(methode == "POST" && (isBoundry || isChuncked) && (ContentType == false || (ContentType == true && ContentLength == false) ))
 		return(puts("qwer"), statusCode = 400, 1);
+
 	if(transferEncoding == 0 && ContentLength == 0 && methode == "POST")
 		return(puts("7485"), statusCode = 400, 1);
-
 	return(0);
 }
 
@@ -158,11 +158,11 @@ int		Request::parseRequest()
 {
 	if(checkHttp())
 		return(1);
-	// std::cout << "-----------------------HEADER-------------------" << std::endl;
-	// std::cout << header << std::endl;
-	// std::cout << "-----------------------BODY-------------------" << std::endl;
-	// std::cout << body << std::endl;
-	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
+	std::cout << "-----------------------HEADER-------------------" << std::endl;
+	std::cout << header << std::endl;
+	std::cout << "-----------------------BODY-------------------" << std::endl;
+	std::cout << body << std::endl;
+	std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 	if(checkHeader())
 		return(1);
 	if(checkLocations())

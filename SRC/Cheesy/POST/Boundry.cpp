@@ -1,15 +1,5 @@
 #include "../../../includes/Request.hpp"
 
-
-int		Request::parseChuncked()
-{
-// 	std::cout << "-----------------------HEADER CHUNCKED-------------------" << std::endl;
-// 	std::cout << header << std::endl;
-// 	std::cout << "-----------------------BODY-------------------" << std::endl;
-// 	std::cout << body << std::endl;
-	return(0);
-}
-
 int		Request::GetNextBoundry(std::string &base, bool check)
 {
 	size_t find = base.find("\r\n");
@@ -59,12 +49,6 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 
 int Request::parseBoundry()
 {
-    // std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
-    // std::cout << header << std::endl;
-    // std::cout << "-----------------------BODY-------------------" << std::endl;
-    // std::cout << body << std::endl;
-    // std::cout << "-----------------------END OF BODY-------------------" << std::endl;
-
     size_t find = Req.ContentType.find("boundary=");
     if (find == std::string::npos)
         return 1;

@@ -24,6 +24,7 @@ SRC = 	SRC/main.cpp\
 		SRC/Cheesy/GET/Get.cpp \
 		SRC/Cheesy/POST/POST.cpp \
 		SRC/Cheesy/POST/Boundry.cpp \
+		SRC/Cheesy/POST/Chunked.cpp \
 		SRC/Cheesy/Request/CheckLocation.cpp \
 		SRC/Cheesy/Request/Request.cpp \
 		SRC/Cheesy/Request/InitRequest.cpp \

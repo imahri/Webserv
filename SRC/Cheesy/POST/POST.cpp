@@ -8,12 +8,6 @@ int     Request::Upload()
     return(0);
 }
 
-int     Request::CheckRessource()
-{
-
-    return(0);
-}
-
 int     Request::PostFile()
 {
     if(Loc.CheckCGI)

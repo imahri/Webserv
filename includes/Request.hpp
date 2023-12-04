@@ -81,7 +81,6 @@ class Request
         int                                 GetDirectory();
         int                                 parseChuncked();
         int                                 Upload();
-        int                                 CheckRessource();
         int                                 GetRessource();
         int                                 PostFile();
         int                                 PostDir();
@@ -117,6 +116,6 @@ class Request
         std::string                         &ft_trim(std::string& s, char c);
         std::string                         ft_trim(std::string s, std::string delimiter);
         int                                 readFile(std::string &fileName, std::string &Tostore);
-        int                                 CovertHexaToDecimal(const std::string &hexString);
+        size_t                              CovertHexaToDecimal(const std::string &hexString);
         std::vector<std::string>            Divide(const std::string& input, const std::string& delimiter);
     
