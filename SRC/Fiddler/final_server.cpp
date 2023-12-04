@@ -266,9 +266,9 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                             // std::cerr << re.request_msg[net[j].fd].first << std::endl;
                             // std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
                             re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
-                            std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
-                            std::cout << rq.ResponseHeaders << std::endl;
-                            std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
+                            // std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
+                            // std::cout << rq.ResponseHeaders << std::endl;
+                            // std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
                             re.request_msg[net[j].fd].first.clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;

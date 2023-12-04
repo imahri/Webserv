@@ -58,11 +58,11 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 
 int Request::parseBoundry()
 {
-    std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
-    std::cout << header << std::endl;
-    std::cout << "-----------------------BODY-------------------" << std::endl;
-    std::cout << body << std::endl;
-    std::cout << "-----------------------END OF BODY-------------------" << std::endl;
+    // std::cout << "-----------------------HEADER BOUNDARY-------------------" << std::endl;
+    // std::cout << header << std::endl;
+    // std::cout << "-----------------------BODY-------------------" << std::endl;
+    // std::cout << body << std::endl;
+    // std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 
     size_t find = Req.ContentType.find("boundary=");
     if (find == std::string::npos)
@@ -76,7 +76,7 @@ int Request::parseBoundry()
     BoundryEnd = BoundryStart + "--";
 
 
-    std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
+    // std::cout << "-----------------------START OF CHUNKS-------------------" << std::endl;
 	std::string Fakebody = body;
 	std::string str =  BoundryStart + "\r\n";
 	BoundryVec = Divide(body, str);
@@ -97,6 +97,6 @@ int Request::parseBoundry()
 			}
 		}
 	}
-    std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
+    // std::cout << "-----------------------END OF CHUNKS-------------------" << std::endl;
     return 0;
 }
