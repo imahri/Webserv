@@ -21,14 +21,14 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 	if(find == base.npos)
 		return(1);
 
+	std::string	FileName;
 	std::string newStr;
+
 	if(!check)
 		newStr = base.substr(find + 4, base.length());
 	else
-		newStr = base.substr(find + 4, base.length());
-
+		newStr = base.substr(find + 4, base.length() - BoundryEnd.length() - find - 6);
 	
-	std::string	FileName;
 
 	std::vector<std::string> vec = Divide(ContentDisposition, ";");
 	if(vec.size() != 3)
@@ -53,10 +53,6 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 	if(!file)
 		return(std::cout << "Can't create file" << std::endl, 2);
 	file << newStr;
-
-	std:: cout << newStr << std::endl;
-	std:: cout << "-----------------------------------------------------------------------"<< std::endl;
-
 	return(0);
 }
 
