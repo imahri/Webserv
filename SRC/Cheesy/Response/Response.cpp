@@ -64,8 +64,6 @@ std::string    GetStatusCode(int index)
             return ( "Unsupported Media Type" );
         case 416:
             return ( "Requested Range Not Satisfiable" );
-        case 418:
-            return ( "I'm a teapot" );
         case 422:
             return ( "Unprocessable Entity" );
         case 451:

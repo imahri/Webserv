@@ -264,17 +264,15 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
                         {
                             std::cout << "---------------------START OF REQUEST---------------------"<< std::endl;
-                            // std::cerr << re.request_msg[net[j].fd].first << std::endl;
-                            // std::cout << "message lenght: " << re.request_msg[net[j].fd].first.length() << std::endl;
+                            std::cerr << re.request_msg[net[j].fd].first << std::endl;
                             re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
-                            // std::cerr << rq.header << std::endl;
                             std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
                             std::cout << rq.ResponseHeaders << std::endl;
                             std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
-                            std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
                             re.request_msg[net[j].fd].first.clear();
                             net[j].events = POLLOUT;
                             net[j].revents = 0;
+                            std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
                         }
                     }
                     continue;

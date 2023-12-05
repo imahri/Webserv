@@ -1,12 +1,5 @@
 #include "../../../includes/Request.hpp"
 
-int     Request::Upload()
-{
-    // ResponseBody.clear();
-    // ResponseBody += "\r\n";
-    return(0);
-}
-
 int     Request::PostFile()
 {
     if(Loc.CheckCGI)
@@ -60,8 +53,6 @@ int     Request::GetRessource()
 	}
 	else
 		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
-
-	// std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(GenerateRedirection(), statusCode = 301, 1);

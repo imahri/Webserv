@@ -61,6 +61,10 @@ class Request
         int                                 GetNextBoundry(std::string &base, bool check);
         std::vector <std::string>           BoundryVec;
         int                                 GetReverseMimeType();
+        //--------------------DELETE VARS--------------------//
+        int                                 DeleteDir();
+        int                                 DeleteFile();
+        int                                 CheckDirectoryFiles(std::string &directory);
         //-------------------------------------------//
         
         Request();
@@ -81,7 +85,6 @@ class Request
         int                                 GetFile();
         int                                 GetDirectory();
         int                                 parseChuncked();
-        int                                 Upload();
         int                                 GetRessource();
         int                                 PostFile();
         int                                 PostDir();
@@ -92,7 +95,6 @@ class Request
         int                                 FillResponseBodyFromFile();
         int                                 WaitForFullRequest(char *buff);
         std::string                         InitRequest(std::string str, int j, int index, Parsing &ps);
-        int                                 FillResponseBody();
         void                                Reset();
         void                                FillCgi();
         int                                 GenerateRedirection();
