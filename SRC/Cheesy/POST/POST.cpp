@@ -2,7 +2,6 @@
 
 int     Request::Upload()
 {
-    statusCode = 201;
     // ResponseBody.clear();
     // ResponseBody += "\r\n";
     return(0);
@@ -95,8 +94,7 @@ int		Request::POST()
             if(parseChuncked())
                 return 1;
         }
-        if(Upload())
-            return (1);
+        statusCode = 201;
     }
     else
     {

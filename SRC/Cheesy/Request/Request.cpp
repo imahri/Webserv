@@ -187,7 +187,6 @@ int		Request::parseRequest()
 	return(0);
 }
 
-
 int		Request::WaitForFullRequest(char *buff)
 {
 	if(RequestIsDone == false)

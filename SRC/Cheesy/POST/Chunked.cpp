@@ -72,9 +72,7 @@ int     Request::parseChuncked()
         if (semicolonPos != std::string::npos)
             line = line.substr(0, semicolonPos);
 
-        std::istringstream hexStream(line);
-        size_t chunkSize;
-        hexStream >> std::hex >> chunkSize;
+        size_t chunkSize = CovertHexaToDecimal(line);
 
         std::string chunkData(chunkSize, '\0');
         iss.read(&chunkData[0], chunkSize);
