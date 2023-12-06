@@ -19,7 +19,6 @@ void    Request::Reset()
     IsDirectory = 0;
     File.clear();
     PathToSaveFile.clear();
-    ds.clear();
     ServerIndex = 1;
     bzero(&Loc, sizeof(LOCATION));
     bzero(&Req, sizeof(Response));

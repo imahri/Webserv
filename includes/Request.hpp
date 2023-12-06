@@ -3,8 +3,6 @@
 #include "CGI.hpp"
 #include "Webserv.hpp"
 
-#define MEGA 1000000
-
 typedef struct R
 {
     std::string     Host;
@@ -47,11 +45,9 @@ class Request
         std::string                         PathToSaveFile;
         int                                 offset;
         bool                                ClientIsDone;
-        std::string                         ds;
         bool                                RequestIsDone;
         bool                                CheckExtension;
         std::string                         Extension;
-        std::string                         ttew;
         //--------------------POST VARS-----------------------//
         std::string                         Boundry;
         std::string                         BoundryStart;
@@ -64,7 +60,6 @@ class Request
         //--------------------DELETE VARS--------------------//
         int                                 DeleteDir();
         int                                 DeleteFile();
-        // int                                 CheckDirectoryFiles(std::string &directory);
         int                                 CheckDirectoryFiles(std::string& directory, std::vector<std::string>& filesToDelete);
         //-------------------------------------------//
         
@@ -94,18 +89,12 @@ class Request
         int                                 GetMimeType();
         int                                 FillFromHtmlFile();
         int                                 FillResponseBodyFromFile();
-        int                                 WaitForFullRequest(char *buff);
         std::string                         InitRequest(std::string str, int j, int index, Parsing &ps);
         void                                Reset();
         void                                FillCgi();
         int                                 GenerateRedirection();
         int                                 parseBoundry();
         int                                 GetExtension();
-
-
-
-
-
 };
 
         //extra functions

@@ -20,7 +20,7 @@ int		Request::DELETE()
 			IsDirectory = false;
 	}
 	else
-		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
+		return(statusCode = 404, 1);
 
 	std::cout << "RequestPath IS: " << RequestPath << std::endl;
 
@@ -29,13 +29,11 @@ int		Request::DELETE()
 
     if(IsDirectory)
 	{
-		puts("diririririri");
 		if(DeleteDir())
 			return(1);
 	}
 	else
 	{
-		puts("filefilefilefile");
 		File = URI;
 		if(DeleteFile())
 			return(1);
@@ -91,12 +89,6 @@ int Request::CheckDirectoryFiles(std::string& directory, std::vector<std::string
 	return 0;
 }
 
-bool fileOrFolderExists(const std::string& path)
-{
-    struct stat buffer;
-    return (stat (path.c_str(), &buffer) == 0);
-}
-
 int Request::DeleteDir()
 {
 	if (Loc.CheckCGI)
@@ -121,8 +113,6 @@ int Request::DeleteDir()
 		if (CheckDirectoryFiles(RequestPath, filesToDelete) != 0)
 			return 1;
 
-		// filesToDelete.push_back(RequestPath);
-
 		std::cout << "filesToDelete.size(): " << filesToDelete.size() << std::endl;
 
 		bool hasWriteAccess = true;
@@ -139,14 +129,8 @@ int Request::DeleteDir()
 		if (hasWriteAccess)
 		{
 			for (size_t i = 0; i < filesToDelete.size(); i++)
-			{
 				if(remove(filesToDelete[i].c_str()) == -1)
-				{
-					std::cout << "file2: " << filesToDelete[i] << std::endl;
-					return (puts("hanhana"), statusCode = 401, 1);
-				}
-			}
-			std::cout << "file3: " << RequestPath << std::endl;
+					return (std::cout << "failed to delete: " << filesToDelete[i] << std::endl, statusCode = 501, 1);
 			remove(RequestPath.c_str());
 		}
 		else

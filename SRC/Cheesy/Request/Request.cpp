@@ -38,6 +38,7 @@ int		Request::GetExtension()
 	}
 	return(0);
 }
+
 int		Request::checkHttp()
 {
 	std::string		search = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
@@ -137,10 +138,16 @@ int		Request::checkHeader()
 	}
 
 	if(methode == "POST" && (isBoundry || isChuncked) && (ContentType == false || (ContentType == true && ContentLength == false) ))
-		return(puts("qwer"), statusCode = 400, 1);
+		return(statusCode = 400, 1);
+
+	if((isBoundry || isChuncked )&& methode != "POST")
+		return(statusCode = 400, 1);
 
 	if(transferEncoding == 0 && ContentLength == 0 && methode == "POST")
-		return(puts("7485"), statusCode = 400, 1);
+		return(statusCode = 400, 1);
+
+	if(methode != "POST" && body.size() > 0)
+		return(statusCode = 400, 1);
 	return(0);
 }
 
@@ -168,9 +175,8 @@ int		Request::parseRequest()
 		return(1);
 	if(checkLocations())
 		return(1);
-
 	if(checkBody())
-		return(1);	
+		return(1);
 	if(methode == "GET")
 	{
 		if(GET())
@@ -187,18 +193,3 @@ int		Request::parseRequest()
 	return(0);
 }
 
-int		Request::WaitForFullRequest(char *buff)
-{
-	if(RequestIsDone == false)
-	{
-		ds += buff;
-		size_t	 first = ds.find_first_of("\r\n\r\n");
-		if(first != ds.npos)
-		{
-			size_t	 last = ds.find_last_of("\r\n\r\n");
-			if(last != ds.npos)
-				RequestIsDone = true;
-		}
-	}
-	return(0);
-}
