@@ -43,60 +43,6 @@ int		Request::DELETE()
 	return(0);
 }
 
-int		Request::CheckDirectoryFiles(std::string &directory)
-{
-	DIR 			*dir;
-	struct dirent 	*entry;
-
-	dir = opendir(directory.c_str());
-	if (dir == NULL)
-		return (statusCode = 404, std::cout << "Failed to open directory." << std::endl, 1);
-
-	std::string path;
-	while ((entry = readdir(dir)) != NULL)
-	{
-		std::string str = entry->d_name;
-		std::cout << "str: " << str << std::endl;
-		if(str != "." || str != "..")
-		{
-			path = directory + str;
-			if(isDirectory(path))
-				path += "/";
-			std::cout << path << std::endl;
-		}
-	}
-	closedir(dir);
-	return(0);
-}
-
-int		Request::DeleteDir()
-{
-	if(Loc.CheckCGI)
-	{
-		if(Loc.CheckIndex)
-		{
-			RequestPath = Loc.root + Loc.index;
-			if(isFile(RequestPath, false))
-			{
-				FillCgi();
-				ResponseBody =  Server.CgiResult(cgi);
-			}
-			else
-				return(statusCode = 403, 1);
-		}
-		else
-			return(statusCode = 403, 1);
-	}
-	else
-	{
-		if(CheckDirectoryFiles(RequestPath))
-			return(1);
-		else
-			return(statusCode = 204, 1);
-	}
-	return(0);
-}
-
 int		Request::DeleteFile()
 {
 	if(Loc.CheckCGI)
@@ -112,4 +58,81 @@ int		Request::DeleteFile()
 			return(statusCode = 204, 1);
 	}
 	return(0);
+}
+
+int Request::CheckDirectoryFiles(std::string& directory, std::vector<std::string>& filesToDelete)
+{
+	DIR* dir;
+	struct dirent* entry;
+
+	dir = opendir(directory.c_str());
+	if (dir == NULL)
+		return (statusCode = 403, std::cout << "Failed to open directory." << std::endl, 1);
+
+	std::string path;
+	while ((entry = readdir(dir)) != NULL)
+	{
+		std::string str = entry->d_name;
+		if (str == "." || str == ".." || str[0] == '.')
+			continue;
+		path = directory + str;
+		if (isDirectory(path))
+		{
+			path += "/";
+			if (CheckDirectoryFiles(path, filesToDelete) != 0)
+				return (closedir(dir), 1);
+		}
+		filesToDelete.push_back(path);
+	}
+	filesToDelete.push_back(directory);
+	closedir(dir);
+	return 0;
+}
+
+int Request::DeleteDir()
+{
+	if (Loc.CheckCGI)
+	{
+		if (Loc.CheckIndex)
+		{
+			RequestPath = Loc.root + Loc.index;
+			if (isFile(RequestPath, false))
+			{
+				FillCgi();
+				ResponseBody = Server.CgiResult(cgi);
+			}
+			else
+				return (statusCode = 403, 1);
+		}
+		else
+			return (statusCode = 403, 1);
+	}
+	else
+	{
+		std::vector<std::string> filesToDelete;
+		if (CheckDirectoryFiles(RequestPath, filesToDelete) != 0)
+			return 1;
+		std::cout << "filesToDelete.size(): " << filesToDelete.size() << std::endl;
+
+		bool hasWriteAccess = true;
+		for (size_t i = 0; i < filesToDelete.size(); i++)
+		{
+			if (access(filesToDelete[i].c_str(), W_OK) != 0)
+			{
+				std::cout << "file: " << filesToDelete[i] << std::endl;
+				hasWriteAccess = false;
+				break;
+			}
+		}
+
+		if (hasWriteAccess)
+		{
+			for (size_t i = 0; i < filesToDelete.size(); i++)
+				remove(filesToDelete[i].c_str());
+					// return (puts("hanhana"), statusCode = 401, 1);
+		}
+		else
+			return (statusCode = 403, std::cout << "Not deleting files due to lack of write access." << std::endl, 1);
+	}
+	return (statusCode = 204, 1);
 }

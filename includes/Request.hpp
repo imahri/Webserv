@@ -64,7 +64,8 @@ class Request
         //--------------------DELETE VARS--------------------//
         int                                 DeleteDir();
         int                                 DeleteFile();
-        int                                 CheckDirectoryFiles(std::string &directory);
+        // int                                 CheckDirectoryFiles(std::string &directory);
+        int                                 CheckDirectoryFiles(std::string& directory, std::vector<std::string>& filesToDelete);
         //-------------------------------------------//
         
         Request();
