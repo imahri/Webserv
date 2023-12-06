@@ -14,7 +14,6 @@ typedef struct R
 }  Response;
 
 
-
 class Request
 {
     public:
@@ -38,11 +37,9 @@ class Request
 		Parsing								Server;
         int                                 locationIndex;
         bool                                IsDirectory;
-        std::string                         File;
         size_t                              ServerIndex;
         bool                                SendFile;
         size_t                              FileSize;
-        std::string                         PathToSaveFile;
         int                                 offset;
         bool                                ClientIsDone;
         bool                                RequestIsDone;

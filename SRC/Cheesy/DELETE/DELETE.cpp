@@ -34,7 +34,6 @@ int		Request::DELETE()
 	}
 	else
 	{
-		File = URI;
 		if(DeleteFile())
 			return(1);
 	}

@@ -64,7 +64,6 @@ int     Request::GetRessource()
 	}
 	else
 	{
-		File = URI;
 		if(PostFile())
 			return(1);
 	}

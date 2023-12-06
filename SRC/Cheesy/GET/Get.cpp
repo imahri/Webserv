@@ -173,7 +173,7 @@ int		Request::GET()
 			IsDirectory = false;
 	}
 	else
-		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
+		return(statusCode = 404, 1);
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(GenerateRedirection(), statusCode = 301, 1);
@@ -185,7 +185,6 @@ int		Request::GET()
 	}
 	else
 	{
-		File = URI;
 		if(GetFile())
 			return(1);
 	}

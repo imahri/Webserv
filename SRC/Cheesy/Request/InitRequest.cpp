@@ -2,7 +2,9 @@
 
 void    Request::Reset()
 {
-    HeaderData.clear();
+    bzero(&Loc, sizeof(LOCATION));
+    bzero(&Req, sizeof(Response));
+    bzero(&cgi, sizeof(CGI));
     header.clear();
     body.clear();
     line.clear();
@@ -10,24 +12,29 @@ void    Request::Reset()
     httpVersion.clear();
     methode.clear();
     URI.clear();
+    Query.clear();
     RequestPath.clear();
     ResponseHeaders.clear();
     ResponseBody.clear();
-    index = 0;
+    Boundry.clear();
+    BoundryStart.clear();
+    BoundryEnd.clear();
+    Extension.clear();
     statusCode = 200;
+    HeaderData.clear();
+    index = 0;
     locationIndex = 0;
     IsDirectory = 0;
-    File.clear();
-    PathToSaveFile.clear();
     ServerIndex = 1;
-    bzero(&Loc, sizeof(LOCATION));
-    bzero(&Req, sizeof(Response));
     SendFile = 0;
     FileSize = 0;
     offset = 0;
     ClientIsDone = false;
     RequestIsDone = false;
-    PathToSaveFile = "/Users/eamghar/Desktop/send";
+    CheckExtension = false;
+    isBoundry = false;
+    isChuncked = false;
+    BoundryVec.clear();
 }
 
 std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &ps)
