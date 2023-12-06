@@ -80,13 +80,21 @@ int Request::CheckDirectoryFiles(std::string& directory, std::vector<std::string
 		{
 			path += "/";
 			if (CheckDirectoryFiles(path, filesToDelete) != 0)
-				return (closedir(dir), 1);
+				return (closedir(dir),1);
+			else
+				filesToDelete.push_back(path);
 		}
-		filesToDelete.push_back(path);
+		else
+			filesToDelete.push_back(path);
 	}
-	filesToDelete.push_back(directory);
 	closedir(dir);
 	return 0;
+}
+
+bool fileOrFolderExists(const std::string& path)
+{
+    struct stat buffer;
+    return (stat (path.c_str(), &buffer) == 0);
 }
 
 int Request::DeleteDir()
@@ -112,14 +120,17 @@ int Request::DeleteDir()
 		std::vector<std::string> filesToDelete;
 		if (CheckDirectoryFiles(RequestPath, filesToDelete) != 0)
 			return 1;
+
+		// filesToDelete.push_back(RequestPath);
+
 		std::cout << "filesToDelete.size(): " << filesToDelete.size() << std::endl;
 
 		bool hasWriteAccess = true;
 		for (size_t i = 0; i < filesToDelete.size(); i++)
 		{
+			std::cout << "file1: " << filesToDelete[i] << std::endl;
 			if (access(filesToDelete[i].c_str(), W_OK) != 0)
 			{
-				std::cout << "file: " << filesToDelete[i] << std::endl;
 				hasWriteAccess = false;
 				break;
 			}
@@ -128,8 +139,15 @@ int Request::DeleteDir()
 		if (hasWriteAccess)
 		{
 			for (size_t i = 0; i < filesToDelete.size(); i++)
-				remove(filesToDelete[i].c_str());
-					// return (puts("hanhana"), statusCode = 401, 1);
+			{
+				if(remove(filesToDelete[i].c_str()) == -1)
+				{
+					std::cout << "file2: " << filesToDelete[i] << std::endl;
+					return (puts("hanhana"), statusCode = 401, 1);
+				}
+			}
+			std::cout << "file3: " << RequestPath << std::endl;
+			remove(RequestPath.c_str());
 		}
 		else
 			return (statusCode = 403, std::cout << "Not deleting files due to lack of write access." << std::endl, 1);
