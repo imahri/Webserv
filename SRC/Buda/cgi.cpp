@@ -191,7 +191,6 @@ void	Parsing::splitHeaders()
 	std::vector <std::string> s = ft_split(cgi.header, "\n\r");
 	for (size_t i = 0; i < s.size(); i++)
 	{
-
 		size_t f = s[i].find(':');
 		if (f != std::string::npos)
 		{
@@ -204,16 +203,29 @@ void	Parsing::splitHeaders()
 }
 
 
-void	Parsing::convertMap()
+bool	Parsing::convertMap()
 {
 	std::map< std::string, std::string >::iterator it = cgiENV.begin();
 	execEnv = new char *[cgiENV.size() + 1];
+	if (execEnv == NULL)
+	{
+		clearCGI("500");
+		return false;
+	}
 	size_t i = 0;
 	size_t j;
 	for (; it != cgiENV.end(); it++)
 	{
 		std::string s = it->first + "=" + it->second;
 		execEnv[i] = new char[s.length() + 1];
+		if (execEnv[i] == NULL)
+		{
+			for (size_t j = 0; j < i; j++)
+				delete[] execEnv[j];
+			delete[] execEnv;
+			clearCGI("500");
+			return false;
+		}
 		j = 0;
 		for (; j < s.length(); j++)
 			execEnv[i][j] = s[j];
@@ -221,6 +233,7 @@ void	Parsing::convertMap()
 		i++;
 	}
 	execEnv[i] = NULL;
+	return true;
 }
 
 std::string	getFileName()
@@ -235,28 +248,20 @@ std::string	getFileName()
     return oss.str();
 }
 
-// void	Parsing::fillResHeaders(std::string& resHeaders)
-// {
-// 	std::vector <std::string> s = ft_split(resHeaders, "\n\r");
-// }
-
 void   Parsing::handleCGIres(const std::string& outFileName)
 {
 	std::ifstream resFile(outFileName.c_str(), std::ios::binary);
 	if (!resFile.is_open())
 	{
-		this->cgi.ret.code = "500";
+		clearCGI("500");
 		return ;
 	}
 
-	
-	std::stringstream iss;
-	iss << resFile.rdbuf();
-
+	resFile.seekg(0, std::ios::beg);
 	std::string line;
 	std::string resHeaders;
 	bool		header = true;
-	while(std::getline(iss, line))
+	while(std::getline(resFile, line))
 	{
 		if (line.empty() || line == "\r" || line == "\r\n" || line == "\r\n\r\n")
 		{
@@ -269,19 +274,17 @@ void   Parsing::handleCGIres(const std::string& outFileName)
 			size_t f = line.find(':');
 			if (f == std::string::npos)
 			{
-				this->cgi.ret.code = "400";
+				clearCGI("400");
 				return;
 			}
 			cgi.ret.mapap.push_back(std::make_pair(line.substr(0, f), line.substr(f + 2)));
-			resHeaders += line;
+			cgi.ret.header += line;
 		}
 		else
 			cgi.ret.body += line;
 	}
 	cgi.ret.body += "\r\n";
 	cgi.ret.mapap.push_back(std::make_pair("Content-Length", toString(cgi.ret.body.length() - 2)));
-	cgi.ret.header = resHeaders;
-
 	resFile.close();
 	std::remove(outFileName.c_str());
 }
@@ -295,15 +298,24 @@ void	Parsing::freeENV()
         delete[] execEnv;
     }
 }
+void	Parsing::clearCGI(const std::string& code)
+{
+	cgi.ret.code = code;
+	cgi.ret.mapap.clear();
+	cgi.ret.header.clear();
+	cgi.ret.body.clear();
+	cgi.ret.header = "\r\n";
+	cgi.ret.body = "\r\n";
+}
 
 
 Rawr  Parsing::CgiResult(CGI &c)
 {
 	cgi = c;
-
 	splitHeaders();
 	envInit();
-	convertMap();
+	if (!convertMap())
+		return cgi.ret;
 	
 	int inFileFD;
 	bool ifBody = false;
@@ -331,16 +343,13 @@ Rawr  Parsing::CgiResult(CGI &c)
 	int outFileFD = open(outFileName.c_str(), O_WRONLY | O_CREAT, 0777);
 
     if (outFileFD == -1)
-        return (freeENV(),  freeENV(), cgi.ret.code = "500", perror("open"), cgi.ret);
+        return (freeENV(),  clearCGI("500"), cgi.ret);
 
 	int pid = fork();
 	if (pid == 0)
 	{
 		if (dup2(outFileFD, STDOUT_FILENO) == -1)
-		{
-			freeENV(); 
 			exit(500);
-		}
 		if (ifBody)
 			dup2(inFileFD, STDIN_FILENO);
 		alarm(30);
@@ -351,31 +360,25 @@ Rawr  Parsing::CgiResult(CGI &c)
 	int status;
 	waitpid(pid, &status, 0);
 	if (dup2(outBackUp, 1) == -1)
-		return (freeENV(),  cgi.ret.code = "500", perror("dup2"), cgi.ret);
+		return (freeENV(),  clearCGI("500"), cgi.ret);
 	if (dup2(inBackUp, 0) == -1)
-		return (freeENV(),  cgi.ret.code = "500", perror("dup2"), cgi.ret);
-    close(outFileFD);
+		return (freeENV(),  clearCGI("500"), cgi.ret);
+	close(outFileFD);
 	if (ifBody)
-    	close(inFileFD);
+		close(inFileFD);
 	if (WIFEXITED(status))
 	{
 		int exit_code = WEXITSTATUS(status);
-		if (exit_code == 500)
-		{
-			cgi.ret.code = "500";
-			return (freeENV(),  cgi.ret);
-		}
-		if (exit_code == 1)
-			cgi.ret.code = "200";	
+		if (exit_code == 0)
+			cgi.ret.code = "200";
+		else
+			return (freeENV(), clearCGI("500"), cgi.ret);
 	}
 	else if (WIFSIGNALED(status))
-	{
-		cgi.ret.code = "504";
-		return (freeENV(),  cgi.ret);
-	}
+		return (freeENV(), clearCGI("504"), cgi.ret);
+
 	handleCGIres(outFileName);
 	if (ifBody)
 		std::remove(inFileName.c_str());
-
 	return (freeENV(), cgi.ret);
 };

@@ -100,8 +100,9 @@ int		Request::GetFile()
 		if(Loc.CheckCGI)
 		{
 			FillCgi();
-			ResponseBody =  Server.CgiResult(cgi).body + "\r\n";
-			statusCode = 200;
+			Rawr r = Server.CgiResult(cgi);
+			ResponseBody =  r.body;
+			statusCode = std::atoi(r.code.c_str());
 			//Run CGI on requested file
 		}
 		else if(FillResponseBodyFromFile())

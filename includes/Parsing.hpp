@@ -99,12 +99,12 @@ class Parsing
 		Rawr									CgiResult(CGI &c);
 		std::string								getEnvHeader(const std::string&  s);
 		void									handleCGIres(const std::string& outFileName);
-		void									fillResHeaders(std::string& resHeaders);
+		void									clearCGI(const std::string& code);
 
 		void									envInit();
 		void									splitHeaders();
-		void									convertMap();
 		void									freeENV();
+		bool									convertMap();
 };
 
 
@@ -125,4 +125,7 @@ bool isValidLocationMethods(std::vector<std::string> &data);
 bool isValidLocationCGI(const std::string &cgi, const std::string &cgiFile);
 bool checkServerData(std::vector<std::string> &data);
 std::string	toString(size_t i);
+std::string	getFileName();
+
+
 
