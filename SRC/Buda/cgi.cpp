@@ -256,7 +256,11 @@ void   Parsing::handleCGIres(const std::string& outFileName)
 		clearCGI("500");
 		return ;
 	}
-
+	if (resFile.peek() == std::ifstream::traits_type::eof()) 
+	{
+		clearCGI("500");
+		return ;
+	}
 	resFile.seekg(0, std::ios::beg);
 	std::string line;
 	std::string resHeaders;
