@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "fstream": "cpp",
-        "iosfwd": "cpp",
-        "memory": "cpp",
-        "utility": "cpp",
-        "map": "cpp"
-    }
-}
