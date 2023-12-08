@@ -93,17 +93,21 @@ int		Request::checkHeader()
 {
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
-	size_t find = 0;
-	isChuncked = false;
-	isBoundry = false;
 	bool ContentLength = false;
 	bool ContentType = false;
 	bool transferEncoding = false;
+	size_t find = 0;
+	isChuncked = false;
+	isBoundry = false;
+	KeepAlive = false;
 
 	for (; it != HeaderData.end(); it++)
 	{
 		if(it->second.size() == 0)
 			return(statusCode = 400, 1);
+
+		if(it->first == "Connection" && it->second ==  "keep-alive")
+			KeepAlive = true;
 
 		if(it->first == "Transfer-Encoding" && it->second != "chunked")
 			return(statusCode = 501, 1);

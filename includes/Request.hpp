@@ -41,11 +41,9 @@ class Request
         bool                                SendFile;
         size_t                              FileSize;
         int                                 offset;
-        bool                                ClientIsDone;
-        bool                                RequestIsDone;
         bool                                CheckExtension;
         std::string                         Extension;
-        //--------------------POST VARS-----------------------//
+        //--------------------POST VARS----------------------//
         std::string                         Boundry;
         std::string                         BoundryStart;
         std::string                         BoundryEnd;
@@ -58,7 +56,10 @@ class Request
         int                                 DeleteDir();
         int                                 DeleteFile();
         int                                 CheckDirectoryFiles(std::string& directory, std::vector<std::string>& filesToDelete);
-        //-------------------------------------------//
+        //--------------------FIDDLER'S----------------------//
+        bool                                KeepAlive;
+        bool                                RequestIsDone;
+        //---------------------------------------------------//
         
         Request();
         Request(const Request &obj);
