@@ -12,6 +12,8 @@ void Server::start()
 {
     nbr_srv++;
     index = 0;
+    serverName = "server" + std::to_string(nbr_srv);
+
     this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
     bzero(&this->serverAddr, sizeof(this->serverAddr));
     this->serverAddr.sin_family = AF_INET;
@@ -86,6 +88,7 @@ void IoMultiplexing::acceptNewClient(int fd)
         Client *cr = new Client(clientSocket);
         sudo_apt[finder].sudo_client.push_back(cr);
     }
+    std::cout << "New client connected to server " << sudo_apt[finder].serverName << " <<\t>>" << finder << std::endl;
 }
 
 std::vector<Client *>::iterator IoMultiplexing::checkClient(int fd)

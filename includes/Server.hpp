@@ -19,6 +19,7 @@ class Server
         int port;
         std::string ip;
         int serversocket;
+        std::string serverName;
         struct sockaddr a;
         std::vector<Client *> sudo_client;
         sockaddr_in serverAddr;
