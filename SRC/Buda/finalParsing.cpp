@@ -141,17 +141,15 @@ bool Parsing::checkRepetedServers()
 		std::string port = getServerDataSingle(i + 1, "listen");
 		std::string key = ft_split(port, ':' )[1];
 		std::string val = getServerDataSingle(i + 1, "server_name");
-		std::map < std::string, std::string >::iterator it = serverPort.find(key);
-		if (it != serverPort.end() && it->second == val)
-		{
 
+		std::map < std::string, std::string >::iterator it = serverPort.find(key);
+		if (it != serverPort.end() && (it->second.empty() || val.empty() || it->second == val))
 			return false;
-		}
 		serverPort[key] = val;
 	}
 
 	for (std::map  < std::string, std::string >::iterator i = serverPort.begin();
-	 i != serverPort.end(); i++)
+	i != serverPort.end(); i++)
 	{
 		std::cout << "listen: " + i->first << "\t\t\t" << "server_name: "+ i->second << std::endl;
 	}
@@ -249,7 +247,8 @@ bool Parsing::finalConfigFileParsing()
 		}
 	}
 
-	checkRepetedServers();
+	if (!checkRepetedServers())
+		return false;
 
 	return true;
 }

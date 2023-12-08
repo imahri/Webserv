@@ -9,7 +9,6 @@ int main(int ac, char **av)
 			return (std::cout << "ERROR IN CONFIG FILE." << std::endl, 1);
 		wbs.fillResponseTypes();
 
-
         IoMultiplexing io;
         if(io.StartTheMatrix(wbs))
             return(1);

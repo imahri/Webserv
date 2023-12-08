@@ -35,9 +35,17 @@ struct locationConfigData
 	int upload_dir;			  // ~
 };
 
+struct resCGI
+{
+	int	status;
+	
+};
+
+
 class Parsing
 {
 	public:
+
 		std::vector< std::vector<std::string > > servers;
 		std::map< std::string, std::vector<std::string > > responseTypes;
 		std::vector< std::string > httpStatusCodes;
@@ -78,9 +86,25 @@ class Parsing
 
 		// get one of location data ==> methods, cgi, redirect
 		std::vector< std::pair < std::string, std::string > > getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string data);
+
+		// get the index of the server with a specific server_name
+		int	getServerServerName(const std::string& s);
+
 		//-------------------------------------CGI------------------------------------------------------//
 		CGI			cgi;
-		std::string  CgiResult(CGI &c);
+		std::map< std::string, std::string >	cgiENV;
+		std::map<std::string, std::string>		headers;
+		char	**execEnv;
+
+		Rawr									CgiResult(CGI &c);
+		std::string								getEnvHeader(const std::string&  s);
+		void									handleCGIres(const std::string& outFileName);
+		void									clearCGI(const std::string& code);
+
+		void									envInit();
+		void									splitHeaders();
+		void									freeENV();
+		bool									convertMap();
 };
 
 
@@ -100,4 +124,8 @@ bool isValidLocationPath(const std::string &uri);
 bool isValidLocationMethods(std::vector<std::string> &data);
 bool isValidLocationCGI(const std::string &cgi, const std::string &cgiFile);
 bool checkServerData(std::vector<std::string> &data);
+std::string	toString(size_t i);
+std::string	getFileName();
+
+
 
