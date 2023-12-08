@@ -104,6 +104,9 @@ int		Request::GetFile()
 			std::cout << "------------------------------BUDA HEADERS--------------------"<< std::endl;
 			std::cout << r.header << std::endl;
 			std::cout << "------------------------------END OF BUDA HEADERS--------------------"<< std::endl;
+			std::cout << "------------------------------BUDA BODY--------------------"<< std::endl;
+			std::cout << r.header << std::endl;
+			std::cout << "------------------------------END OF BUDA BODY--------------------"<< std::endl;
 		}
 		else if(FillResponseBodyFromFile())
 			return(1);

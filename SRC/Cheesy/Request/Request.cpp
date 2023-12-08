@@ -84,8 +84,6 @@ int		Request::checkHttp()
 
 int		Request::checkBody()
 {
-	std::cout << "BODY SIZE: " << body.size() << std::endl;
-	std::cout << "Location SIZE: " << Loc.client_body_max_size << std::endl;
 	if(body.size() > Loc.client_body_max_size)
 		return(statusCode = 413, 1);
 	return(0);

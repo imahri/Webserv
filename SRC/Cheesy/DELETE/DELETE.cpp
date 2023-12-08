@@ -27,6 +27,8 @@ int		Request::DELETE()
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(statusCode = 409, 1);
 
+	if(IsDirectory == true && RequestPath == Loc.root)
+		return(statusCode = 403, 1);
     if(IsDirectory)
 	{
 		if(DeleteDir())
