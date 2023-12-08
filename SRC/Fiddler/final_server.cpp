@@ -1,5 +1,7 @@
 #include "../../includes/Server.hpp"
 
+#include <sys/time.h>
+
 int Server::nbr_srv = 0;
 
 Server::Server(int port, std::string ip)
@@ -15,6 +17,7 @@ void Server::start()
     serverName = "server" + std::to_string(nbr_srv);
 
     this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
+    this->fd = this->serversocket;
     bzero(&this->serverAddr, sizeof(this->serverAddr));
     this->serverAddr.sin_family = AF_INET;
     this->serverAddr.sin_port = htons(this->port);
@@ -210,6 +213,16 @@ int WaitForFullRequest(std::string& buff)
 }
 
 
+bool found_it(int fd, std::vector<class Server> &vec_serve)
+{
+    for(size_t y = 0; y < vec_serve.size(); y++)
+    {
+        if (vec_serve[y].fd == fd)
+            return true;
+    }
+    return false;
+}
+
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
     IoMultiplexing re;
@@ -236,62 +249,79 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
     }
     std::string sttrr;
     signal(SIGPIPE, SIG_IGN);
+    struct pollfd tmp;
     while (true)
     {
-        int ret = poll(net.data(), net.size(), 0);
-        for (size_t j = 0; j < net.size() && ret; j++)
+        struct timeval timeout;
+        timeout.tv_sec = 5; 
+        timeout.tv_usec = 1;
+        int timeout_ms = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
+        int ret = poll(net.data(), net.size(), timeout_ms);
+        if (ret == -1)
         {
-            if (re.isServer(net[j].fd) && net[j].revents & POLLIN)
+            continue;
+        }
+        if (ret == 0 || net.size() >= 10000)
+        {
+            for (size_t yt = re.sudo_apt.size(); yt < net.size(); yt++)
+                close(net[yt].fd);
+            net.clear();
+            for (size_t i = 0; i < re.sudo_apt.size(); i++) 
             {
-                re.acceptNewClient(net[j].fd);
-                continue;
+                tmp.fd = re.sudo_apt[i].fd;
+                tmp.events = POLLIN;
+                net.push_back(tmp);
             }
-            else if (j >= (size_t)Server::nbr_srv)
+        }
+        for (size_t j = 0; j < net.size(); j++)
+        {
+            if (net[j].revents & POLLIN)
             {
-                if (net[j].revents & POLLIN)
+                if (found_it(net[j].fd, re.sudo_apt) && net[j].revents & POLLIN)
                 {
-                    bzero(buffer, 50000);
-                    int tt = recv(net[j].fd, buffer, 50000, 0);
-                    if (tt == 0)
-                        close(net[j].fd);
-                    if (tt == -1)
+                    int clientSocket = accept(net[j].fd, NULL, 0);
+                    if (clientSocket == -1)
+                        break;
+                    struct pollfd tmps;
+                    tmps.fd = clientSocket;
+                    tmps.events = POLLIN;
+                    fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+                    IoMultiplexing::net.push_back(tmps);
+                    continue;
+                }
+                bzero(buffer, 50000);
+                int tt = recv(net[j].fd, buffer, 50000, 0);
+                if (tt == 0){
+                    close(net[j].fd);
+                    continue;
+                }
+                if (tt == -1)
+                {
+                    perror("webserv: ");
+                    continue;
+                }
+                else
+                {
+                    std::string bu(buffer, tt);
+                    re.request_msg[net[j].fd].first += bu;
+                    bu.clear();
+                    if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
                     {
-                        perror("webserv: ");
-                        continue;
-                    }
-                    else
-                    {
-                        std::string bu(buffer, tt);
-                        re.request_msg[net[j].fd].first += bu;
-                        bu.clear();
-                        if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
-                        {
-                            std::cout << "---------------------START OF REQUEST---------------------"<< std::endl;
-                            std::cerr << re.request_msg[net[j].fd].first << std::endl;
-                            re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
-                            std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
-                            std::cout << rq.ResponseHeaders << std::endl;
-                            std::cout << "---------------------START OF RESPONSE BODY---------------------"<< std::endl;
-                            std::cout << rq.ResponseBody << std::endl;
-                            std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
-                            re.request_msg[net[j].fd].first.clear();
-                            net[j].events = POLLOUT;
-                            net[j].revents = 0;
-                            std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
-                        }
+                        re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
+                        re.request_msg[net[j].fd].first.clear();
+                        net[j].events = POLLOUT;
                     }
                     continue;
                 }
-                else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
-                {
-                    usleep(100);
-                    send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 30000, re.request_msg[net[j].fd].second.length()), 0);
-                    re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 30000 ? re.request_msg[net[j].fd].second.length() : 30000);
-                    if (re.request_msg[net[j].fd].second.size() == 0)
-                        net[j].revents = POLLIN;
-                    continue;
-
-                }
+            }
+            else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
+            {
+                usleep(100);
+                send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 30000, re.request_msg[net[j].fd].second.length()), 0);
+                re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 30000 ? re.request_msg[net[j].fd].second.length() : 30000);
+                if (re.request_msg[net[j].fd].second.size() == 0)
+                    net[j].revents = POLLIN;
+                continue;
             }
         }
     }
