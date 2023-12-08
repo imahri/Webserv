@@ -43,6 +43,7 @@ class Request
         int                                 offset;
         bool                                CheckExtension;
         std::string                         Extension;
+        bool                                 CgiIsDone;
         //--------------------POST VARS----------------------//
         std::string                         Boundry;
         std::string                         BoundryStart;
@@ -109,4 +110,7 @@ class Request
         int                                 readFile(std::string &fileName, std::string &Tostore);
         size_t                              CovertHexaToDecimal(const std::string &hexString);
         std::vector<std::string>            Divide(const std::string& input, const std::string& delimiter);
+        std::string                         intToString(int number);
+std::string    GetStatusCode(int index);
+
     

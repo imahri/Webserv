@@ -107,12 +107,12 @@ int		Request::GetFile()
 			Rawr r = Server.CgiResult(cgi);
 			ResponseBody =  r.body;
 			statusCode = std::atoi(r.code.c_str());
-			std::cout << "------------------------------BUDA HEADERS--------------------"<< std::endl;
-			std::cout << r.header << std::endl;
-			std::cout << "------------------------------END OF BUDA HEADERS--------------------"<< std::endl;
-			std::cout << "------------------------------BUDA BODY--------------------"<< std::endl;
-			std::cout << r.header << std::endl;
-			std::cout << "------------------------------END OF BUDA BODY--------------------"<< std::endl;
+			ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+			std::time_t currentTime = std::time(0);
+			std::string str = (std::ctime(&currentTime));
+			ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
+			ResponseHeaders += r.header;
+		    CgiIsDone = true;
 		}
 		else
 		{

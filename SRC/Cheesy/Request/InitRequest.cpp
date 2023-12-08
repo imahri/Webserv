@@ -35,6 +35,7 @@ void    Request::Reset()
     isBoundry = false;
     isChuncked = false;
     BoundryVec.clear();
+    CgiIsDone = false;
 }
 
 std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &ps)
