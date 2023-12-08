@@ -4,12 +4,12 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 {
 	size_t find = base.find("\r\n");
 	if(find == base.npos)
-		return(1);
+        return (statusCode = 400, 1);
 
 	std::string ContentDisposition = base.substr(0, find);
 	find = base.find("\r\n", find + 4);
 	if(find == base.npos)
-		return(1);
+        return (statusCode = 400, 1);
 
 	std::string	FileName;
 	std::string newStr;
@@ -22,7 +22,7 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 
 	std::vector<std::string> vec = Divide(ContentDisposition, ";");
 	if(vec.size() != 3)
-		return(1);
+        return (statusCode = 400, 1);
 
 	for (size_t i = 0; i < vec.size(); i++)
 	{
@@ -33,7 +33,7 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 			{
 				FileName = vec[i].substr(find + 10, vec[i].length() - find - 11);
 				if(FileName.length() == 0)
-					return(1);
+        			return (statusCode = 400, 1);
 			}
 		}
 	}
@@ -41,7 +41,7 @@ int		Request::GetNextBoundry(std::string &base, bool check)
 	std::string path = Loc.upload_dir + FileName;
 	std::ofstream file(path, std::ios::binary);
 	if(!file)
-		return(std::cout << "Can't create file" << std::endl, 2);
+		return(std::cout << "Can't create file" << std::endl, statusCode = 500, 2);
 	file << newStr;
 	return(0);
 }
@@ -50,16 +50,15 @@ int Request::parseBoundry()
 {
     size_t find = Req.ContentType.find("boundary=");
     if (find == std::string::npos)
-        return 1;
+        return (statusCode = 400, 1);
 
     Boundry = Req.ContentType.substr(find + 9);
     if (Boundry.empty())
-        return 1;
+        return (statusCode = 400, 1);
 
     BoundryStart = "--" + Boundry;
     BoundryEnd = BoundryStart + "--";
 
-	std::string Fakebody = body;
 	std::string str =  BoundryStart + "\r\n";
 	BoundryVec = Divide(body, str);
 

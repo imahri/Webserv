@@ -5,7 +5,9 @@ int     Request::PostFile()
     if(Loc.CheckCGI)
     {
         FillCgi();
-        ResponseBody =  Server.CgiResult(cgi).body;
+        Rawr r = Server.CgiResult(cgi);
+        ResponseBody =  r.body;
+        statusCode = std::atoi(r.code.c_str());
     }
     else
         return(statusCode = 403, 1);
@@ -52,7 +54,7 @@ int     Request::GetRessource()
 			IsDirectory = false;
 	}
 	else
-		return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
+		return(statusCode = 404, 1);
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(GenerateRedirection(), statusCode = 301, 1);
@@ -74,6 +76,7 @@ int		Request::POST()
 {
     if(Loc.CheckUploadDir)
     {
+        statusCode = 201;
         if(isBoundry == true)
         {
 		    if(parseBoundry())
@@ -84,7 +87,6 @@ int		Request::POST()
             if(parseChuncked())
                 return 1;
         }
-        statusCode = 201;
     }
     else
     {
