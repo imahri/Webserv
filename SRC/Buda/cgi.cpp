@@ -169,29 +169,29 @@ void   Parsing::handleCGIres(const std::string& outFileName)
 		clearCGI("502");
 		return ;
 	}
-	if (!cpForCL)
-		cgi.ret.mapap.push_back(std::make_pair("Content-Length:", toString(cgi.ret.body.length())));
 
 	if (cpForCL)
 		cgi.ret.body = respo[1].substr(0, std::atoi(contentLenght.c_str())) + "\r\n";
 	else
 		cgi.ret.body = respo[1] + "\r\n";
+		
+	if (!cpForCL)
+		cgi.ret.mapap.push_back(std::make_pair("Content-Length:", toString(cgi.ret.body.length())));
 
 	cgi.ret.header.clear();
 	for (size_t i = 0; i < cgi.ret.mapap.size(); i++)
 		cgi.ret.header += cgi.ret.mapap[i].first + " " + cgi.ret.mapap[i].second + "\r\n";
 	cgi.ret.header += "\r\n";
 
-	std::cout << "|" + cgi.ret.header + "|" <<std::endl;
 	resFile.close();
 	std::remove(outFileName.c_str());
 }
 
 void	Parsing::freeENV()
 {
-	if (execEnv != nullptr) 
+	if (execEnv != NULL) 
 	{
-        for (size_t i = 0; execEnv[i] != nullptr; ++i)
+        for (size_t i = 0; execEnv[i] != NULL; ++i)
             delete[] execEnv[i];
         delete[] execEnv;
     }
@@ -207,7 +207,7 @@ void	Parsing::clearCGI(const std::string& code)
 
 Rawr  Parsing::CgiResult(CGI &c)
 {
-	std::cout << "======================================================CGI=============================================" <<std::endl;
+
 	cgi = c;
 	splitHeaders();
 	envInit();
