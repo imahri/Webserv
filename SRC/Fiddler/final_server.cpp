@@ -317,8 +317,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
             {
                 usleep(100);
-                send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 30000, re.request_msg[net[j].fd].second.length()), 0);
-                re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 30000 ? re.request_msg[net[j].fd].second.length() : 30000);
+                send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 50000, re.request_msg[net[j].fd].second.length()), 0);
+                re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 50000 ? re.request_msg[net[j].fd].second.length() : 50000);
                 if (re.request_msg[net[j].fd].second.size() == 0)
                     net[j].revents = POLLIN;
                 continue;
