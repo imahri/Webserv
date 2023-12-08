@@ -101,9 +101,6 @@ int		Request::GetFile()
 			Rawr r = Server.CgiResult(cgi);
 			ResponseBody =  r.body;
 			statusCode = std::atoi(r.code.c_str());
-			std::cout << "------------------------------BUDA HEADERS--------------------"<< std::endl;
-			std::cout << r.header << std::endl;
-			std::cout << "------------------------------END OF BUDA HEADERS--------------------"<< std::endl;
 		}
 		else if(FillResponseBodyFromFile())
 			return(1);
