@@ -41,11 +41,10 @@ class Request
         bool                                SendFile;
         size_t                              FileSize;
         int                                 offset;
-        bool                                ClientIsDone;
-        bool                                RequestIsDone;
         bool                                CheckExtension;
         std::string                         Extension;
-        //--------------------POST VARS-----------------------//
+        bool                                 CgiIsDone;
+        //--------------------POST VARS----------------------//
         std::string                         Boundry;
         std::string                         BoundryStart;
         std::string                         BoundryEnd;
@@ -58,7 +57,10 @@ class Request
         int                                 DeleteDir();
         int                                 DeleteFile();
         int                                 CheckDirectoryFiles(std::string& directory, std::vector<std::string>& filesToDelete);
-        //-------------------------------------------//
+        //--------------------FIDDLER'S----------------------//
+        bool                                KeepAlive;
+        bool                                RequestIsDone;
+        //---------------------------------------------------//
         
         Request();
         Request(const Request &obj);
@@ -108,4 +110,7 @@ class Request
         int                                 readFile(std::string &fileName, std::string &Tostore);
         size_t                              CovertHexaToDecimal(const std::string &hexString);
         std::vector<std::string>            Divide(const std::string& input, const std::string& delimiter);
+        std::string                         intToString(int number);
+std::string    GetStatusCode(int index);
+
     

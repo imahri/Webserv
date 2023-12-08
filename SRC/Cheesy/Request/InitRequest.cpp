@@ -29,12 +29,13 @@ void    Request::Reset()
     SendFile = 0;
     FileSize = 0;
     offset = 0;
-    ClientIsDone = false;
     RequestIsDone = false;
     CheckExtension = false;
+    KeepAlive = false;
     isBoundry = false;
     isChuncked = false;
     BoundryVec.clear();
+    CgiIsDone = false;
 }
 
 std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &ps)
@@ -49,5 +50,6 @@ std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &p
     GenerateResponse();
     std::cout << "StatusCode: " << statusCode << std::endl;
     std::string ret = ResponseHeaders + ResponseBody;
+    RequestIsDone = true;
     return(ret);
 }

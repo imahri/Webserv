@@ -29,7 +29,6 @@ SRC = 	SRC/main.cpp\
 		SRC/Cheesy/Request/Request.cpp \
 		SRC/Cheesy/Request/InitRequest.cpp \
 		SRC/Cheesy/Response/Response.cpp \
-		SRC/Cheesy/SENDFILE/sendFile.cpp \
 
 		
 all: $(NAME)

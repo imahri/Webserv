@@ -1,27 +1,12 @@
 <?php
-header("Content-type: text/html");
+// Set a cookie
+$cookie_name = "test_cookie";
+$cookie_value = "Hello, CGI!";
+setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
 
-echo "<html>";
-echo "<head>";
-echo "<title>My PHP Page</title>";
-echo "</head>";
-echo "<body>";
-echo "<h1>Hello, PHP!</h1>";
-echo "<p>This is a simple PHP script that generates HTML content.</p>";
-echo "</body>";
-echo "</html>";
+// Retrieve the cookie
+$retrieved_cookie = $_COOKIE[$cookie_name];
 
+// Display the result
+echo "Cookie set successfully. Retrieved value: " . $retrieved_cookie;
 ?>
-
-<!-- <body>
-<link rel="stylesheet" href="./style.css">
-    <div class="container">
-        <a href="/"><h1>WebServ</h1></a>
-        <p>CGI Get COOKIES Test</p>
-<?php
-echo "Hello " . $_COOKIE["username"] . " " . $_COOKIE["nik"] . " !";
-?>
-</div>
-</section>
-</body>
-</html> -->

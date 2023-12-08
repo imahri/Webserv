@@ -38,23 +38,23 @@ int     Request::GetRessource()
 {
     struct stat fileStat;
 
-    size_t find = URI.find("/Users/");
-    if(find != URI.npos)
-        RequestPath = URI;
-    else if(URI != "/")
-        RequestPath = Loc.root + URI.substr(1, URI.size());
-    else
-        RequestPath = Loc.root;
-    
-    if (stat(RequestPath.c_str(), &fileStat) == 0)
-    {
-        if (S_ISDIR(fileStat.st_mode))
-            IsDirectory = true;
-        else if (S_ISREG(fileStat.st_mode))
-            IsDirectory = false;
-    }
-    else
-        return(puts("hehrhherehrehrehr"), statusCode = 404, 1);
+	size_t find = URI.find("/Users/");
+	if(find != URI.npos)
+		RequestPath = URI;
+	else if(URI != "/")
+		RequestPath = Loc.root + URI.substr(1, URI.size());
+	else
+		RequestPath = Loc.root;
+	
+	if (stat(RequestPath.c_str(), &fileStat) == 0)
+	{
+		if (S_ISDIR(fileStat.st_mode))
+			IsDirectory = true;
+		else if (S_ISREG(fileStat.st_mode))
+			IsDirectory = false;
+	}
+	else
+		return(statusCode = 404, 1);
 
     if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
         return(GenerateRedirection(), statusCode = 301, 1);
@@ -76,6 +76,7 @@ int		Request::POST()
 {
     if(Loc.CheckUploadDir)
     {
+        statusCode = 201;
         if(isBoundry == true)
         {
             if(parseBoundry())
@@ -86,7 +87,6 @@ int		Request::POST()
             if(parseChuncked())
                 return 1;
         }
-        statusCode = 201;
     }
     else
     {

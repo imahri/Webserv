@@ -13,7 +13,6 @@ int     Request::GetReverseMimeType()
 
 int     Request::parseChuncked()
 {
-    std::cout << "-----------------------------" << std::endl;
     std::string requestBody = body;
     std::istringstream iss(requestBody);
     std::ostringstream oss;

@@ -25,16 +25,11 @@ int		readFile(std::string &fileName, std::string &Tostore)
     return 0;
 }
 
-
 int Request::FillResponseBodyFromFile()
 {
     std::ifstream fileStream(RequestPath, std::ios::binary);
     if (!fileStream)
-    {
-        std::cerr << "Error: Unable to open the file " << RequestPath << std::endl;
-        statusCode = 403;
-        return 1;
-    }
+        return (std::cerr << "Error: Unable to open the file " << RequestPath << std::endl, statusCode = 403, 1);
 
     fileStream.seekg(0, fileStream.end);
     FileSize = fileStream.tellg();
@@ -46,10 +41,7 @@ int Request::FillResponseBodyFromFile()
     ResponseBody.clear();
 
     while (fileStream.read(buffer, bufferSize))
-	{
-
         ResponseBody.append(buffer, bufferSize);
-	}
 
     ResponseBody.append(buffer, fileStream.gcount());
 
@@ -57,7 +49,7 @@ int Request::FillResponseBodyFromFile()
 
     fileStream.close();
 
-    SendFile = true;
+    SendFile = false;
     return 0;
 }
 
@@ -89,6 +81,20 @@ void		Request::FillCgi()
 	this->cgi.locationData.redirect = this->Loc.redirect;
 };
 
+int		GetFileLength(std::string &fileName)
+{
+	struct stat fileStat;
+
+	if (stat(fileName.c_str(), &fileStat) == 0)
+	{
+		std::cout << "File size: " << fileStat.st_size << std::endl;
+		if(fileStat.st_size > 100000000)
+			return(1);
+		return(0);
+	}
+	return(0);
+}
+
 int		Request::GetFile()
 {
 	if(locationIndex == 0)
@@ -101,9 +107,20 @@ int		Request::GetFile()
 			Rawr r = Server.CgiResult(cgi);
 			ResponseBody =  r.body;
 			statusCode = std::atoi(r.code.c_str());
+			ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+			std::time_t currentTime = std::time(0);
+			std::string str = (std::ctime(&currentTime));
+			ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
+			ResponseHeaders += r.header;
+		    CgiIsDone = true;
 		}
-		else if(FillResponseBodyFromFile())
-			return(1);
+		else
+		{
+			if(GetFileLength(RequestPath))
+				return(SendFile = true, statusCode = 200, 1);
+			else if(FillResponseBodyFromFile())
+				return(1);
+		}
 	}
 	return(0);
 }
@@ -121,7 +138,7 @@ int		Request::GetDirectory()
 
 		std::string link;
 		ResponseBody.clear();
-		ResponseBody = "<h1>Name</h1>";
+		ResponseBody = "<h1>" + RequestPath + "</h1>";
 		while ((entry = readdir(dir)) != NULL)
 		{
 			link = RequestPath + entry->d_name;

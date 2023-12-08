@@ -124,33 +124,36 @@ int         Request::FillFromHtmlFile()
 
 int     Request::GenerateResponse()
 {
-    ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
-
-    std::time_t currentTime = std::time(0);
-    std::string str = (std::ctime(&currentTime));
-    ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
-
-    ResponseHeaders += "Content-Type: ";
-
-    if(statusCode >= 400 && statusCode <= 600)
+    if(CgiIsDone == false)
     {
-        ResponseHeaders += "text/html\r\n";
-        ResponseBody.clear();
-        FillFromHtmlFile();
-        ResponseBody += "\r\n";
-        ResponseHeaders += "Content-Length: " +  std::to_string(ResponseBody.length() - 2) + "\r\n";
-    }
-    else if(statusCode >= 0 && statusCode < 400)
-    {
-        if(CheckExtension)
-            ResponseHeaders += Req.MimeType + "\r\n";
-        else
+        ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+
+        std::time_t currentTime = std::time(0);
+        std::string str = (std::ctime(&currentTime));
+        ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
+
+        ResponseHeaders += "Content-Type: ";
+
+        if(statusCode >= 400 && statusCode <= 600)
+        {
             ResponseHeaders += "text/html\r\n";
-            
-        if(ResponseBody.length())
-            ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
+            ResponseBody.clear();
+            FillFromHtmlFile();
+            ResponseBody += "\r\n";
+            ResponseHeaders += "Content-Length: " +  std::to_string(ResponseBody.length() - 2) + "\r\n";
+        }
+        else if(statusCode >= 0 && statusCode < 400)
+        {
+            if(CheckExtension)
+                ResponseHeaders += Req.MimeType + "\r\n";
+            else
+                ResponseHeaders += "text/html\r\n";
+                
+            if(ResponseBody.length())
+                ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
+        }
+        ResponseHeaders += "\r\n";
     }
-    ResponseHeaders += "\r\n";
     return(0);
 }
 
