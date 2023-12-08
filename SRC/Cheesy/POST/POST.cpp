@@ -56,19 +56,19 @@ int     Request::GetRessource()
 	else
 		return(statusCode = 404, 1);
 
-	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
-		return(GenerateRedirection(), statusCode = 301, 1);
+    if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
+        return(GenerateRedirection(), statusCode = 301, 1);
 
     if(IsDirectory)
-	{
-		if(PostDir())
-			return(1);
-	}
-	else
-	{
-		if(PostFile())
-			return(1);
-	}
+    {
+        if(PostDir())
+            return(1);
+    }
+    else
+    {
+        if(PostFile())
+            return(1);
+    }
     return(0);
 }
 
@@ -79,8 +79,8 @@ int		Request::POST()
         statusCode = 201;
         if(isBoundry == true)
         {
-		    if(parseBoundry())
-			    return 1;
+            if(parseBoundry())
+                return 1;
         }
         else if(isChuncked == true)
         {
@@ -93,5 +93,5 @@ int		Request::POST()
         if(GetRessource())
             return (1);
     }
-	return(0);
+    return(0);
 }
