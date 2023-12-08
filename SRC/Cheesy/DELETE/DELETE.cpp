@@ -45,7 +45,9 @@ int		Request::DeleteFile()
 	if(Loc.CheckCGI)
 	{
 		FillCgi();
-		ResponseBody =  Server.CgiResult(cgi);
+		Rawr r = Server.CgiResult(cgi);
+		ResponseBody =  r.body;
+		statusCode = std::atoi(r.code.c_str());
 	}
 	else
 	{
@@ -98,7 +100,9 @@ int Request::DeleteDir()
 			if (isFile(RequestPath, false))
 			{
 				FillCgi();
-				ResponseBody = Server.CgiResult(cgi);
+				Rawr r = Server.CgiResult(cgi);
+				ResponseBody =  r.body;
+				statusCode = std::atoi(r.code.c_str());
 			}
 			else
 				return (statusCode = 403, 1);

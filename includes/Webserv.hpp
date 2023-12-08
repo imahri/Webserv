@@ -13,6 +13,7 @@
 #include <sys/_types/_size_t.h>
 #include <sys/poll.h>
 #include <sys/signal.h>
+#include <netdb.h>
 #include <sys/unistd.h>
 #include <unistd.h>
 #include <sys/socket.h>
