@@ -99,10 +99,10 @@ int		Request::checkHeader()
 {
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
+	size_t find = 0;
 	bool ContentLength = false;
 	bool ContentType = false;
 	bool transferEncoding = false;
-	size_t find = 0;
 	isChuncked = false;
 	isBoundry = false;
 	KeepAlive = false;
