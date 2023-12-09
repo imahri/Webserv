@@ -175,3 +175,15 @@ std::vector<std::string> Divide(const std::string& input, const std::string& del
     substrings.push_back(input.substr(start));
     return substrings;
 }
+
+size_t		GetFileSize(std::string &fileName)
+{
+	struct stat fileStat;
+
+	if (stat(fileName.c_str(), &fileStat) == 0)
+	{
+		return(fileStat.st_size);
+		return(1);
+	}
+	return(0);
+}

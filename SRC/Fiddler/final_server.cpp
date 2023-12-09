@@ -317,19 +317,21 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             }
             else if (net[j].revents & POLLOUT)
             {
-                // if(rq.RequestIsDone)  request is done and the response is ready
-                // if(rq.KeepAlive) // if true the request is of type keep alive else its close
+                // rq.RequestIsDone  request is done and the response is ready
+                // rq.KeepAlive // if true the request is of type keep alive else its close
                 usleep(100);
                 if(rq.SendFile)//send file with big size
                 {
+                    //rq.ResponseHeaders  + 
 
+                    //rq.RequestPath
                 }
                 else//send normal request
                 {
                     send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 50000, re.request_msg[net[j].fd].second.length()), 0);    
                     re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 50000 ? re.request_msg[net[j].fd].second.length() : 50000);
                     if (re.request_msg[net[j].fd].second.size() == 0)
-                        net[j].revents = POLLIN;
+                        net[j].events = POLLIN;
                 }
                 continue;
             }

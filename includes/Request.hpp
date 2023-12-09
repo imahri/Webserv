@@ -111,6 +111,7 @@ class Request
         size_t                              CovertHexaToDecimal(const std::string &hexString);
         std::vector<std::string>            Divide(const std::string& input, const std::string& delimiter);
         std::string                         intToString(int number);
-std::string    GetStatusCode(int index);
+        std::string                         GetStatusCode(int index);
+        size_t                              GetFileSize(std::string &fileName);
 
     
