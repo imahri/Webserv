@@ -1,5 +1,6 @@
 #include "../../includes/Server.hpp"
 
+#include <cstring>
 #include <sys/time.h>
 
 int Server::nbr_srv = 0;
@@ -36,103 +37,6 @@ void Server::start()
 
 int IoMultiplexing::maxfd = 0;
 std::vector<struct pollfd> IoMultiplexing::net;
-
-bool IoMultiplexing::isDoneRequest(char *str)
-{
-    if (strcmp("/r/n/r/n", str))
-        return true;
-    return false;
-}
-
-bool isElementInVector(std::vector<int> &vec, int element)
-{
-    std::vector<int>::iterator itr;
-    itr = std::find(vec.begin(), vec.end(), element);
-
-    return itr != vec.end();
-}
-
-bool IoMultiplexing::isServer(int fd)
-{
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        if (fd == itr->serversocket)
-            return true;
-    }
-    return false;
-}
-
-int IoMultiplexing::foundServer(int fd)
-{
-    int i = 0;
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        if (fd == itr->serversocket)
-            return i;
-        i++;
-    }
-    return -1;
-}
-
-void IoMultiplexing::acceptNewClient(int fd)
-{
-    int clientSocket = accept(fd, NULL, 0);
-    struct pollfd tmp;
-    tmp.fd = clientSocket;
-    tmp.events = POLLIN;
-    fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-    IoMultiplexing::net.push_back(tmp);
-    int finder = foundServer(fd);
-    if (finder != -1)
-    {
-        Client *cr = new Client(clientSocket);
-        sudo_apt[finder].sudo_client.push_back(cr);
-    }
-    std::cout << "New client connected to server " << sudo_apt[finder].serverName << " <<\t>>" << finder << std::endl;
-}
-
-std::vector<Client *>::iterator IoMultiplexing::checkClient(int fd)
-{
-    std::vector<Client *>::iterator fin;
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        std::vector<Client *>::iterator itrs = itr->sudo_client.begin();
-        for (; itrs != itr->sudo_client.end(); itrs++)
-        {
-            if (fd == (*itrs)->fd)
-                fin = itrs;
-        }
-    }
-    return fin;
-}
-
-int IoMultiplexing::checkServer(int fd)
-{
-    std::vector<Server>::iterator fin;
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        std::vector<Client *>::iterator itrs = itr->sudo_client.begin();
-        for (; itrs != itr->sudo_client.end(); itrs++)
-        {
-            if (fd == (*itrs)->fd)
-                fin = itr;
-        }
-    }
-    return fin->index;
-}
-
-int checkKeepAlive(std::string &buff)
-{
-    size_t find = buff.find("Connection: keep-alive");
-    if(find != buff.npos)
-        return(1);
-    return(0);
-}
 
 int WaitForFullRequest(std::string& buff)
 {
@@ -263,7 +167,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             for (size_t yt = re.sudo_apt.size(); yt < net.size(); yt++)
                 close(net[yt].fd);
             net.clear();
-            for (size_t i = 0; i < re.sudo_apt.size(); i++)
+            for (size_t i = 0; i < re.sudo_apt.size(); i++) 
             {
                 tmp.fd = re.sudo_apt[i].fd;
                 tmp.events = POLLIN;
@@ -294,21 +198,23 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     continue;
                 }
                 if (tt == -1)
-                {
-                    perror("webserv: ");
                     continue;
-                }
                 else
                 {
                     std::string bu(buffer, tt);
-                    re.request_msg[net[j].fd].first += bu;
+                    re.request_msg[net[j].fd].c_request += bu;
                     bu.clear();
-                    if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
+                    if ((WaitForFullRequest(re.request_msg[net[j].fd].c_request) == 1))
                     {
                         std::cout << "-------------------------------------------------------" << std::endl;
-                        std::cout << re.request_msg[net[j].fd].first << std::endl;
-                        re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
-                        re.request_msg[net[j].fd].first.clear();
+                        std::cout << re.request_msg[net[j].fd].c_request << std::endl;
+                        re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, net[j].fd, 1, ps);
+                        re.request_msg[net[j].fd].c_request.clear();
+
+                        re.request_msg[net[j].fd].send_file = rq.SendFile;
+                        re.request_msg[net[j].fd].keepAlive = rq.KeepAlive;
+                        re.request_msg[net[j].fd].path = rq.RequestPath;
+
                         net[j].events = POLLOUT;
                         std::cout << "-------------------------------------------------------" << std::endl;
                     }
@@ -317,21 +223,49 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             }
             else if (net[j].revents & POLLOUT)
             {
-                // rq.RequestIsDone  request is done and the response is ready
-                // rq.KeepAlive // if true the request is of type keep alive else its close
-                usleep(100);
-                if(rq.SendFile)//send file with big size
+                if(!re.request_msg[net[j].fd].send_file)
                 {
-                    //rq.ResponseHeaders  + 
-
-                    //rq.RequestPath
-                }
-                else//send normal request
-                {
-                    send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 50000, re.request_msg[net[j].fd].second.length()), 0);    
-                    re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 50000 ? re.request_msg[net[j].fd].second.length() : 50000);
-                    if (re.request_msg[net[j].fd].second.size() == 0)
+                    send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), std::min((size_t) 50000, re.request_msg[net[j].fd].c_response.length()), 0);    
+                    re.request_msg[net[j].fd].c_response = re.request_msg[net[j].fd].c_response.substr(re.request_msg[net[j].fd].c_response.length() < 50000 ? re.request_msg[net[j].fd].c_response.length() : 50000);
+                    if (re.request_msg[net[j].fd].c_response.size() == 0)
+                    {
+                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
                         net[j].events = POLLIN;
+                        if(!re.request_msg[net[j].fd].keepAlive)
+                            close(net[j].fd);
+                    }
+                    continue;
+                }
+                else
+                {
+                    std::cout << "--------  BIG  -------" << std::endl;
+
+                    std::ifstream inputFile(re.request_msg[net[j].fd].path.c_str(), std::ios::binary);
+                    re.request_msg[net[j].fd].initialPosition = inputFile.tellg();
+                    if (!re.request_msg[net[j].fd].header)
+                    {
+                        const char *a = "Content-Length: 493374664\r\n";
+                        send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), re.request_msg[net[j].fd].c_response.length(), 0);
+                        send(net[j].fd, a, strlen(a), 0);
+                        re.request_msg[net[j].fd].header = true;
+                        // std::cout << "--------  hedear 1 -------" << std::endl;
+                        // std::cout << re.request_msg[net[j].fd].c_response << std::endl;
+                        // std::cout << "--------  hedear 1 -------" << std::endl;
+                    }
+                    char resp[4096];
+                    inputFile.read(resp, 4096);
+                    re.request_msg[net[j].fd].bytesRead = inputFile.gcount();
+                    if (re.request_msg[net[j].fd].bytesRead == 0)
+                    {
+                        inputFile.close();
+                        if (!re.request_msg[net[j].fd].keepAlive)
+                            close(net[j].fd);
+                        continue;
+                    }
+                    send(net[j].fd, resp, re.request_msg[net[j].fd].bytesRead, 0);
+                    re.request_msg[net[j].fd].currentPosition = inputFile.tellg();
+                    net[j].events = POLLIN;
+                    continue;
                 }
                 continue;
             }

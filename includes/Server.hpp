@@ -5,12 +5,18 @@
 class Client
 {
     public:
-        int fd;
-        bool isEnd;
+        bool send_file;
+        std::string c_request;
+        std::string c_response;
+        std::string path;
+        std::streampos initialPosition;
+        std::streamsize bytesRead;
+        std::streampos currentPosition;
         bool keepAlive;
-        char *buffer[1024];
-        Client(int fd):fd(fd),isEnd(false),keepAlive(false){};
-        ~Client();
+        bool header;
+        char buffer[1024];
+        Client():send_file(false),keepAlive(false),header(false){};
+        // ~Client();
 };
 
 class Server
@@ -36,7 +42,7 @@ class IoMultiplexing
 {
     public:
         std::vector<Server> sudo_apt;
-        std::map<int, std::pair<std::string, std::string> > request_msg;
+        std::map<int, Client> request_msg;
         static std::vector<struct pollfd> net;
         static int maxfd;
         bool    isServer(int fd);
