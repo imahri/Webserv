@@ -10,7 +10,7 @@ bool isValidPort(const std::string& port)
 
 bool isValidIPAddress(const std::string& ipAddress)
 {
-	if (ipAddress == "127.0.0.1")
+	if (ipAddress == "127.0.0.1" || ipAddress == "localhost" || ipAddress == "0.0.0.0")
 		return true;
 	return false;
 }

@@ -88,7 +88,7 @@ class Parsing
 		std::vector< std::pair < std::string, std::string > > getLocationMultiple(size_t serverIndex, size_t locationIndex, std::string data);
 
 		// get the index of the server with a specific server_name
-		int	getServerServerName(const std::string& s);
+		int	getServerServerName(const std::string& key, const std::string& val);
 
 		//-------------------------------------CGI------------------------------------------------------//
 		CGI			cgi;
