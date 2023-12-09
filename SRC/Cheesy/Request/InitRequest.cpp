@@ -44,7 +44,6 @@ std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &p
     Server = ps;
     (void)fd;
 
-
     // std::cout << "index---->" << ServerIndex << std::endl;
 
     ServerIndex = in;

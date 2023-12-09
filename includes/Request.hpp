@@ -43,7 +43,7 @@ class Request
         int                                 offset;
         bool                                CheckExtension;
         std::string                         Extension;
-        bool                                 CgiIsDone;
+        bool                                CgiIsDone;
         //--------------------POST VARS----------------------//
         std::string                         Boundry;
         std::string                         BoundryStart;
@@ -94,6 +94,7 @@ class Request
         int                                 GenerateRedirection();
         int                                 parseBoundry();
         int                                 GetExtension();
+        int                                 FillFromErrorFile();
 };
 
         //extra functions

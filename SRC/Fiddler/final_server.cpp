@@ -263,7 +263,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             for (size_t yt = re.sudo_apt.size(); yt < net.size(); yt++)
                 close(net[yt].fd);
             net.clear();
-            for (size_t i = 0; i < re.sudo_apt.size(); i++) 
+            for (size_t i = 0; i < re.sudo_apt.size(); i++)
             {
                 tmp.fd = re.sudo_apt[i].fd;
                 tmp.events = POLLIN;

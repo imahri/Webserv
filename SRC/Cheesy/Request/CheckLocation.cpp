@@ -26,6 +26,10 @@ int		Request::GetCorrectLocation()
         Loc.upload_dir = Server.getServerDataSingle(ServerIndex, "upload_dir");
         Loc.root = Server.getServerDataSingle(ServerIndex, "root");
 
+		Loc.error_page = Server.getServerErrorPages(ServerIndex);
+		if(Loc.error_page.size())
+			Loc.CheckErrorPage = true;
+		
         Loc.client_body_max_size = convertToCharacters(Server.getServerDataSingle(ServerIndex, "client_body_max_size"));
 	}
 	else
@@ -77,6 +81,10 @@ int		Request::GetCorrectLocation()
 
 		it = Server.getLocationSingle(ServerIndex, locationIndex, "client_body_max_size");
         Loc.client_body_max_size = convertToCharacters(*it.begin());
+
+		Loc.error_page = Server.getLocationMultiple(ServerIndex, locationIndex, "error_page");
+		if(Loc.error_page.size())
+			Loc.CheckErrorPage = true;
 	}
 
 	return(0);
