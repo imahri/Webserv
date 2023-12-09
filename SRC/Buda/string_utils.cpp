@@ -432,6 +432,7 @@ std::string Parsing::getMimeTypes(const std::string& s)
     return "";
 }
 
+
 int	Parsing::getServerServerName(const std::string& key, const std::string& val)
 {
 	for (size_t i = 0; i < this->servers.size(); i++)
