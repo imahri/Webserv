@@ -143,9 +143,6 @@ int WaitForFullRequest(std::string& buff)
     if (found != std::string::npos)
     {
         std::string STR = buff.substr(0, found);
-        // if(checkKeepAlive(STR))
-        //     return(0);
-
 
         size_t index = buff.find('\n');
         if (index == std::string::npos)
@@ -291,7 +288,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 }
                 bzero(buffer, 50000);
                 int tt = recv(net[j].fd, buffer, 50000, 0);
-                if (tt == 0){
+                if (tt == 0)
+                {
                     close(net[j].fd);
                     continue;
                 }
@@ -307,20 +305,32 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     bu.clear();
                     if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
                     {
+                        std::cout << "-------------------------------------------------------" << std::endl;
+                        std::cout << re.request_msg[net[j].fd].first << std::endl;
                         re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
                         re.request_msg[net[j].fd].first.clear();
                         net[j].events = POLLOUT;
+                        std::cout << "-------------------------------------------------------" << std::endl;
                     }
                     continue;
                 }
             }
-            else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
+            else if (net[j].revents & POLLOUT)
             {
+                // if(rq.RequestIsDone)  request is done and the response is ready
+                // if(rq.KeepAlive) // if true the request is of type keep alive else its close
                 usleep(100);
-                send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 50000, re.request_msg[net[j].fd].second.length()), 0);
-                re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 50000 ? re.request_msg[net[j].fd].second.length() : 50000);
-                if (re.request_msg[net[j].fd].second.size() == 0)
-                    net[j].revents = POLLIN;
+                if(rq.SendFile)//send file with big size
+                {
+
+                }
+                else//send normal request
+                {
+                    send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 50000, re.request_msg[net[j].fd].second.length()), 0);    
+                    re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 50000 ? re.request_msg[net[j].fd].second.length() : 50000);
+                    if (re.request_msg[net[j].fd].second.size() == 0)
+                        net[j].revents = POLLIN;
+                }
                 continue;
             }
         }

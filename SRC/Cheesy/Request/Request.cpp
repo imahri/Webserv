@@ -152,6 +152,7 @@ int		Request::checkHeader()
 
 	if(methode != "POST" && body.size() > 0)
 		return(statusCode = 400, 1);
+
 	return(0);
 }
 
@@ -169,7 +170,6 @@ int		Request::parseRequest()
 {
 	if(checkHttp())
 		return(1);
-
 	// std::cout << "-----------------------HEADER-------------------" << std::endl;
 	// std::cout << header << std::endl;
 	// std::cout << "-----------------------BODY-------------------" << std::endl;
