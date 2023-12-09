@@ -174,9 +174,6 @@ void   Parsing::handleCGIres(const std::string& outFileName)
 		cgi.ret.body = respo[1].substr(0, std::atoi(contentLenght.c_str())) + "\r\n";
 	else
 		cgi.ret.body = respo[1] + "\r\n";
-		
-	if (!cpForCL)
-		cgi.ret.mapap.push_back(std::make_pair("Content-Length:", toString(cgi.ret.body.length())));
 
 	if (!cpForCL)
 		cgi.ret.mapap.push_back(std::make_pair("Content-Length:", toString(cgi.ret.body.length() - 2)));
