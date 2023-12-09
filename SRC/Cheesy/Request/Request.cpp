@@ -186,8 +186,23 @@ int		Request::parseRequest()
 
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 	for (; it != HeaderData.end(); it++)
+	{
 		if(it->first == "Host")
-    		std::cout << "------hna--------->" << Server.getServerServerName("listen", it->second) << std::endl;
+		{
+			int serv = Server.getServerServerName("listen", it->second);
+			if(serv > -1)
+				ServerIndex = serv;
+			else
+			{
+				int serv = Server.getServerServerName("server_name", it->second);
+				if(serv != -1)
+					ServerIndex = serv;
+				else
+					ServerIndex = 1;
+			}
+			std::cout << "------hna--------->" << ServerIndex  << std::endl;
+		}
+	}
 	
 	if(checkLocations())
 		return(1);
