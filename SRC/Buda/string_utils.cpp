@@ -30,7 +30,7 @@ bool	Parsing::parsing(int ac, char **av)
 	this->configFile.open(fileName);
 	if (!this->configFile)
 	{
-		std::cerr << "Unable to open the file " << fileName << std::endl;
+		std::cerr << "Unable to open the file " << std::endl;
 		return false;
 	}
 
@@ -69,9 +69,14 @@ bool	Parsing::parsing(int ac, char **av)
 		}
 		else if (!pars[0].empty() && pars[0] == "location")
 		{
+			if (serverScope && locationScope)
+			{
+				std::cerr << "Error in the server location config " << std::endl;
+				return false;
+			}
 			if (pars.back() != "{")
 			{
-				std::cerr << "Error in the server location config " << fileName << std::endl;
+				std::cerr << "Error in the server location config " << std::endl;
 				return false;
 			}
 			parsingStruct parsingData = {"location", true, false};
@@ -105,7 +110,7 @@ bool	Parsing::parsing(int ac, char **av)
 	{
 		if (parsLast[i].open_bracket == false || parsLast[i].close_bracket == false)
 		{
-			std::cerr << "Error { or } missing" << fileName << std::endl;
+			std::cerr << "Error { or } missing" << std::endl;
 			return false;
 		}
 	}
@@ -148,7 +153,7 @@ bool	Parsing::fillServerList()
 	this->configFile.open(fileName);
 	if (!this->configFile)
 	{
-		std::cerr << "Unable to open the file " << fileName << std::endl;
+		std::cerr << "Unable to open the file " << std::endl;
 		return false;
 	}
 
