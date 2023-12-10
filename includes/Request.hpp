@@ -95,6 +95,7 @@ class Request
         int                                 parseBoundry();
         int                                 GetExtension();
         int                                 FillFromErrorFile();
+        int                                 GetFileLength(std::string &fileName);
 };
 
         //extra functions

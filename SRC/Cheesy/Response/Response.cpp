@@ -179,6 +179,10 @@ int     Request::GenerateResponse()
                 
             if(ResponseBody.length())
                 ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
+            else if(SendFile)
+                ResponseHeaders += "Content-Length: " + std::to_string(FileSize) + "\r\n";
+            else
+                ResponseHeaders += "Content-Length: 0\r\n";
         }
         ResponseHeaders += "\r\n";
     }

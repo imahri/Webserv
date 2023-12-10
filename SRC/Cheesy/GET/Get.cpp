@@ -48,8 +48,6 @@ int Request::FillResponseBodyFromFile()
     ResponseBody += "\r\n";
 
     fileStream.close();
-
-    SendFile = false;
     return 0;
 }
 
@@ -81,14 +79,15 @@ void		Request::FillCgi()
 	this->cgi.locationData.redirect = this->Loc.redirect;
 };
 
-int		GetFileLength(std::string &fileName)
+int		Request::GetFileLength(std::string &fileName)
 {
 	struct stat fileStat;
 
 	if (stat(fileName.c_str(), &fileStat) == 0)
 	{
-		std::cout << "File size: " << fileStat.st_size << std::endl;
-		if(fileStat.st_size > 100000000)
+		FileSize = fileStat.st_size;
+		std::cout << "File size: " << FileSize << std::endl;
+		if(FileSize > 100000000)
 			return(1);
 		return(0);
 	}

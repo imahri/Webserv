@@ -5,13 +5,13 @@
 class Client
 {
     public:
-        bool send_file;
         std::string c_request;
         std::string c_response;
         std::string path;
         std::streampos initialPosition;
         std::streamsize bytesRead;
         std::streampos currentPosition;
+        bool send_file;
         bool keepAlive;
         bool header;
         char buffer[1024];
@@ -54,6 +54,8 @@ class IoMultiplexing
         int     StartTheMatrix(Parsing &ps);
         IoMultiplexing(){};
         ~IoMultiplexing(){};
+    void    clearClinet(int fd, std::map<int, Client> &request_msg);
+
 };
 
 
