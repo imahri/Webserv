@@ -20,7 +20,13 @@ int     Request::fillHeaderAndBody(std::string buffer)
 	for (std::vector<std::string>::iterator it = vec.begin();  it != vec.end(); it++)
 	{
 		std::vector<std::string> vec = ft_split(*it, ':');
-		HeaderData[ft_trim(vec[0], ' ')] = ft_trim(vec[1], ' ');
+
+		index = it->find(':');
+		if(index == it->npos)
+			return(statusCode = 400, 1);
+		std::string left = it->substr(0, index);
+		std::string right = it->substr(index + 1);
+		HeaderData[ft_trim(left, ' ')] = ft_trim(right, ' ');
 	}
     return (0);
 }
@@ -93,10 +99,10 @@ int		Request::checkHeader()
 {
 	std::map<std::string, std::string>::iterator it = HeaderData.begin();
 
+	size_t find = 0;
 	bool ContentLength = false;
 	bool ContentType = false;
 	bool transferEncoding = false;
-	size_t find = 0;
 	isChuncked = false;
 	isBoundry = false;
 	KeepAlive = false;
@@ -152,6 +158,7 @@ int		Request::checkHeader()
 
 	if(methode != "POST" && body.size() > 0)
 		return(statusCode = 400, 1);
+
 	return(0);
 }
 
@@ -169,7 +176,6 @@ int		Request::parseRequest()
 {
 	if(checkHttp())
 		return(1);
-
 	// std::cout << "-----------------------HEADER-------------------" << std::endl;
 	// std::cout << header << std::endl;
 	// std::cout << "-----------------------BODY-------------------" << std::endl;
@@ -177,6 +183,27 @@ int		Request::parseRequest()
 	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
 	if(checkHeader())
 		return(1);
+
+	std::map<std::string, std::string>::iterator it = HeaderData.begin();
+	for (; it != HeaderData.end(); it++)
+	{
+		if(it->first == "Host")
+		{
+			int serv = Server.getServerServerName("listen", it->second);
+			if(serv > -1)
+				ServerIndex = serv;
+			else
+			{
+				int serv = Server.getServerServerName("server_name", it->second);
+				if(serv != -1)
+					ServerIndex = serv;
+				else
+					ServerIndex = 1;
+			}
+			std::cout << "------hna--------->" << ServerIndex  << std::endl;
+		}
+	}
+	
 	if(checkLocations())
 		return(1);
 	if(checkBody())

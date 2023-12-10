@@ -14,6 +14,7 @@ typedef struct L
         bool                                                    CheckRedirect;
         bool                                                    CheckMethods;
         bool                                                    CheckUploadDir;
+        bool                                                    CheckErrorPage;
         
         std::string                                             upload_dir;
         std::string                                             root;
@@ -22,6 +23,7 @@ typedef struct L
         size_t                                                  client_body_max_size;
         std::vector < std::pair <std::string , std::string > >  cgi;
         std::vector < std::pair <std::string , std::string > >  redirect;
+        std::vector < std::pair < std::string, std::string > >  error_page;
         
 }  LOCATION;
 

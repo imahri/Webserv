@@ -44,8 +44,9 @@ std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &p
     Server = ps;
     (void)fd;
 
-    ServerIndex = in;
     // std::cout << "index---->" << ServerIndex << std::endl;
+
+    ServerIndex = in;
     this->getRequest(str);
     GenerateResponse();
     std::cout << "StatusCode: " << statusCode << std::endl;

@@ -122,6 +122,28 @@ int         Request::FillFromHtmlFile()
     return(0);
 }
 
+int     Request::FillFromErrorFile()
+{
+    std::vector < std::pair < std::string, std::string > >::iterator it = Loc.error_page.begin();
+    for (; it != Loc.error_page.end(); it++)
+    {
+        if (statusCode == atoi(it->first.c_str()))
+        {
+            std::string str;
+            std::fstream file;
+
+            file.open(it->second);
+            if (!file)
+                return (std::cerr << "Unable to open the file html " << std::endl, statusCode = 404, 1);
+            while (std::getline(file, str))
+                ResponseBody += str;
+            ResponseBody += "\r\n";
+            return(0);
+        }
+    }
+    return(1);
+}
+
 int     Request::GenerateResponse()
 {
     if(CgiIsDone == false)
@@ -138,7 +160,13 @@ int     Request::GenerateResponse()
         {
             ResponseHeaders += "text/html\r\n";
             ResponseBody.clear();
-            FillFromHtmlFile();
+            if(Loc.CheckErrorPage)
+            {
+                if(FillFromErrorFile())
+                    FillFromHtmlFile();
+            }
+            else
+                FillFromHtmlFile();
             ResponseBody += "\r\n";
             ResponseHeaders += "Content-Length: " +  std::to_string(ResponseBody.length() - 2) + "\r\n";
         }
@@ -151,6 +179,10 @@ int     Request::GenerateResponse()
                 
             if(ResponseBody.length())
                 ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
+            else if(SendFile)
+                ResponseHeaders += "Content-Length: " + std::to_string(FileSize) + "\r\n";
+            else
+                ResponseHeaders += "Content-Length: 0\r\n";
         }
         ResponseHeaders += "\r\n";
     }

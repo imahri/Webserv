@@ -45,7 +45,7 @@ class Request
         int                                 offset;
         bool                                CheckExtension;
         std::string                         Extension;
-        bool                                 CgiIsDone;
+        bool                                CgiIsDone;
         //--------------------POST VARS----------------------//
         std::string                         Boundry;
         std::string                         BoundryStart;
@@ -96,6 +96,8 @@ class Request
         int                                 GenerateRedirection();
         int                                 parseBoundry();
         int                                 GetExtension();
+        int                                 FillFromErrorFile();
+        int                                 GetFileLength(std::string &fileName);
 };
 
         //extra functions
@@ -113,6 +115,7 @@ class Request
         size_t                              CovertHexaToDecimal(const std::string &hexString);
         std::vector<std::string>            Divide(const std::string& input, const std::string& delimiter);
         std::string                         intToString(int number);
-std::string    GetStatusCode(int index);
+        std::string                         GetStatusCode(int index);
+        size_t                              GetFileSize(std::string &fileName);
 
     

@@ -1,5 +1,8 @@
 #include "../../includes/Server.hpp"
 
+#include <cstring>
+#include <sys/time.h>
+
 int Server::nbr_srv = 0;
 
 Server::Server(int port, std::string ip)
@@ -15,6 +18,7 @@ void Server::start()
     serverName = "server" + std::to_string(nbr_srv);
 
     this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
+    this->fd = this->serversocket;
     bzero(&this->serverAddr, sizeof(this->serverAddr));
     this->serverAddr.sin_family = AF_INET;
     this->serverAddr.sin_port = htons(this->port);
@@ -34,88 +38,6 @@ void Server::start()
 int IoMultiplexing::maxfd = 0;
 std::vector<struct pollfd> IoMultiplexing::net;
 
-bool IoMultiplexing::isDoneRequest(char *str)
-{
-    if (strcmp("/r/n/r/n", str))
-        return true;
-    return false;
-}
-
-bool isElementInVector(std::vector<int> &vec, int element)
-{
-    std::vector<int>::iterator itr;
-    itr = std::find(vec.begin(), vec.end(), element);
-
-    return itr != vec.end();
-}
-
-bool IoMultiplexing::isServer(int fd)
-{
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        if (fd == itr->serversocket)
-            return true;
-    }
-    return false;
-}
-
-int IoMultiplexing::foundServer(int fd)
-{
-    int i = 0;
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        if (fd == itr->serversocket)
-            return i;
-        i++;
-    }
-    return -1;
-}
-
-
-
-std::vector<Client *>::iterator IoMultiplexing::checkClient(int fd)
-{
-    std::vector<Client *>::iterator fin;
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        std::vector<Client *>::iterator itrs = itr->sudo_client.begin();
-        for (; itrs != itr->sudo_client.end(); itrs++)
-        {
-            if (fd == (*itrs)->fd)
-                fin = itrs;
-        }
-    }
-    return fin;
-}
-
-int IoMultiplexing::checkServer(int fd)
-{
-    std::vector<Server>::iterator fin;
-    std::vector<Server>::iterator itr = sudo_apt.begin();
-    for (; itr != sudo_apt.end(); itr++)
-    {
-        std::vector<Client *>::iterator itrs = itr->sudo_client.begin();
-        for (; itrs != itr->sudo_client.end(); itrs++)
-        {
-            if (fd == (*itrs)->fd)
-                fin = itr;
-        }
-    }
-    return fin->index;
-}
-
-int checkKeepAlive(std::string &buff)
-{
-    size_t find = buff.find("Connection: keep-alive");
-    if(find != buff.npos)
-        return(1);
-    return(0);
-}
-
 int WaitForFullRequest(std::string& buff)
 {
     std::string substringToFind = "\r\n\r\n";
@@ -125,9 +47,6 @@ int WaitForFullRequest(std::string& buff)
     if (found != std::string::npos)
     {
         std::string STR = buff.substr(0, found);
-        // if(checkKeepAlive(STR))
-        //     return(0);
-
 
         size_t index = buff.find('\n');
         if (index == std::string::npos)
@@ -194,6 +113,27 @@ int WaitForFullRequest(std::string& buff)
     return 0;
 }
 
+bool found_it(int fd, std::vector<class Server> &vec_serve)
+{
+    for(size_t y = 0; y < vec_serve.size(); y++)
+    {
+        if (vec_serve[y].fd == fd)
+            return true;
+    }
+    return false;
+}
+
+void    IoMultiplexing::clearClinet(int fd, std::map<int, Client> &request_msg)
+{
+    std::map<int, Client>::iterator it = request_msg.find(fd);
+    if (it != request_msg.end())
+    {
+        bool keepAlive = it->second.keepAlive;
+
+        bzero(&it->second, sizeof(it->second));
+        it->second.keepAlive = keepAlive;
+    }
+}
 
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
@@ -221,62 +161,125 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
     }
     std::string sttrr;
     signal(SIGPIPE, SIG_IGN);
+    struct pollfd tmp;
     while (true)
     {
-        int ret = poll(net.data(), net.size(), 0);
-        for (size_t j = 0; j < net.size() && ret; j++)
+        struct timeval timeout;
+        timeout.tv_sec = 30; 
+        timeout.tv_usec = 1;
+        int timeout_ms = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
+        int ret = poll(net.data(), net.size(), timeout_ms);
+        if (ret == -1)
         {
-            if (re.isServer(net[j].fd) && net[j].revents & POLLIN)
+            continue;
+        }
+        if (ret == 0 || net.size() >= 10000)
+        {
+            for (size_t yt = re.sudo_apt.size(); yt < net.size(); yt++)
+                close(net[yt].fd);
+            net.clear();
+            for (size_t i = 0; i < re.sudo_apt.size(); i++) 
             {
-                re.acceptNewClient(net[j].fd);
-                continue;
+                tmp.fd = re.sudo_apt[i].fd;
+                tmp.events = POLLIN;
+                net.push_back(tmp);
             }
-            else if (j >= (size_t)Server::nbr_srv)
+        }
+        for (size_t j = 0; j < net.size(); j++)
+        {
+            if (net[j].revents & POLLIN)
             {
-                if (net[j].revents & POLLIN)
+                if (found_it(net[j].fd, re.sudo_apt) && net[j].revents & POLLIN)
                 {
-                    bzero(buffer, 50000);
-                    int tt = recv(net[j].fd, buffer, 50000, 0);
-                    if (tt == 0)
-                        close(net[j].fd);
-                    if (tt == -1)
-                    {
-                        perror("webserv: ");
-                        continue;
-                    }
-                    else
-                    {
-                        std::string bu(buffer, tt);
-                        re.request_msg[net[j].fd].first += bu;
-                        bu.clear();
-                        if ((WaitForFullRequest(re.request_msg[net[j].fd].first) == 1))
-                        {
-                            std::cout << "---------------------START OF REQUEST---------------------"<< std::endl;
-                            std::cerr << re.request_msg[net[j].fd].first << std::endl;
-                            re.request_msg[net[j].fd].second = rq.InitRequest(re.request_msg[net[j].fd].first, net[j].fd, 1, ps);
-                            std::cout << "---------------------START OF RESPONSE---------------------"<< std::endl;
-                            std::cout << rq.ResponseHeaders << std::endl;
-                            std::cout << "---------------------START OF RESPONSE BODY---------------------"<< std::endl;
-                            std::cout << rq.ResponseBody << std::endl;
-                            std::cout << "---------------------END OF RESPONSE---------------------"<< std::endl;
-                            re.request_msg[net[j].fd].first.clear();
-                            net[j].events = POLLOUT;
-                            net[j].revents = 0;
-                            std::cout << "---------------------END OF REQUEST---------------------"<< std::endl;
-                        }
-                    }
+                    int clientSocket = accept(net[j].fd, NULL, 0);
+                    if (clientSocket == -1)
+                        break;
+                    struct pollfd tmps;
+                    tmps.fd = clientSocket;
+                    tmps.events = POLLIN;
+                    fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+                    IoMultiplexing::net.push_back(tmps);
                     continue;
                 }
-                else if (net[j].revents & POLLOUT) //----------------------SEND REQUEST-----------------------
+                bzero(buffer, 50000);
+                int tt = recv(net[j].fd, buffer, 50000, 0);
+                if (tt == 0)
                 {
-                    usleep(100);
-                    send(net[j].fd, re.request_msg[net[j].fd].second.c_str(), std::min((size_t) 30000, re.request_msg[net[j].fd].second.length()), 0);
-                    re.request_msg[net[j].fd].second = re.request_msg[net[j].fd].second.substr(re.request_msg[net[j].fd].second.length() < 30000 ? re.request_msg[net[j].fd].second.length() : 30000);
-                    if (re.request_msg[net[j].fd].second.size() == 0)
-                        net[j].revents = POLLIN;
+                    close(net[j].fd);
                     continue;
+                }
+                if (tt == -1)
+                    continue;
+                else
+                {
+                    std::string bu(buffer, tt);
+                    re.request_msg[net[j].fd].c_request += bu;
+                    bu.clear();
+                    if ((WaitForFullRequest(re.request_msg[net[j].fd].c_request) == 1))
+                    {
+                        std::cout << "-------------------------REQUEST------------------------------" << std::endl;
+                        std::cout << re.request_msg[net[j].fd].c_request << std::endl;
+                        std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
+                        re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, net[j].fd, 1, ps);
+                        re.request_msg[net[j].fd].c_request.clear();
 
+                        re.request_msg[net[j].fd].send_file = rq.SendFile;
+                        re.request_msg[net[j].fd].keepAlive = rq.KeepAlive;
+                        re.request_msg[net[j].fd].path = rq.RequestPath;
+
+                        net[j].events = POLLOUT;
+                        std::cout << "-------------------------RESPONSE------------------------------" << std::endl;
+                        std::cout << rq.ResponseHeaders << std::endl;
+                        std::cout << "-------------------------END OF RESPONSE------------------------------" << std::endl;
+                    }
+                    continue;
                 }
+            }
+            else if (net[j].revents & POLLOUT)
+            {
+                // if(!re.request_msg[net[j].fd].send_file)
+                // {
+                    size_t x_size = send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), std::min((size_t) 1000000, re.request_msg[net[j].fd].c_response.length()), 0);
+                    re.request_msg[net[j].fd].c_response.erase(0, x_size);
+                    if (re.request_msg[net[j].fd].c_response.size() == 0)
+                    {
+                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
+                        net[j].events = POLLIN;
+                        if(!re.request_msg[net[j].fd].keepAlive)
+                            close(net[j].fd);
+                    }
+                    continue;
+                // }
+                // else
+                // {
+                    // // std::cout << "--------  BIG  -------" << std::endl;
+
+                    // std::ifstream inputFile(re.request_msg[net[j].fd].path.c_str(), std::ios::binary);
+                    // re.request_msg[net[j].fd].initialPosition = inputFile.tellg();
+                    // if (!re.request_msg[net[j].fd].header)
+                    // {
+                    //     send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), re.request_msg[net[j].fd].c_response.length(), 0);
+                    //     re.request_msg[net[j].fd].header = true;
+                    // }
+                    
+                    // char resp[4096];
+                    // inputFile.read(resp, 4096);
+                    // re.request_msg[net[j].fd].bytesRead = inputFile.gcount();
+                    // if (re.request_msg[net[j].fd].bytesRead == 0)
+                    // {
+                    //     inputFile.close();
+                    //     if (!re.request_msg[net[j].fd].keepAlive)
+                    //         close(net[j].fd);
+                    //     net[j].events = POLLIN;
+                    //     clearClinet(net[j].fd, re.request_msg);
+                    // }
+                    // else
+                    // {
+                    //     send(net[j].fd, resp, re.request_msg[net[j].fd].bytesRead, 0);
+                    //     re.request_msg[net[j].fd].currentPosition = inputFile.tellg();
+                    // }
+                // }
+                // continue;
             }
         }
     }
