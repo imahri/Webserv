@@ -75,9 +75,9 @@ bool	Parsing::parsing(int ac, char **av)
 			continue;
 		pars = ft_split(line);
 
-		if (!pars[0].empty() && pars[0] != "server" && pars[0] != "location" && pars[0] != "}" && !checkForRepetitve(line))
+		if (!pars.size() && !pars[0].empty() && pars[0] != "server" && pars[0] != "location" && pars[0] != "}" && !checkForRepetitve(line))
 			return false;
-		if (!pars[0].empty() && pars[0] == "server")
+		if (!pars[0].empty() && pars[0] == "server" && pars.size() == 2)
 		{
 			if (serverScope)
 			{
@@ -93,7 +93,7 @@ bool	Parsing::parsing(int ac, char **av)
 			parsLast.push_back(parsingData);
 			serverScope = true;
 		}
-		else if (!pars[0].empty() && pars[0] == "location")
+		else if (!pars[0].empty() && pars[0] == "location" && pars.size() == 3)
 		{
 			if (serverScope && locationScope)
 			{
