@@ -90,27 +90,27 @@ bool checkListen(std::string &data)
 
 bool checkServerData(std::vector<std::string> &data)
 {
-	if (data[0] == "methods" && (data.size() < 2 || !isValidLocationMethods(data)))
+	if (data.size() && data[0] == "methods" && (data.size() < 2 || !isValidLocationMethods(data)))
 		return false;
-	if (data[0] == "listen" && (data.size() != 2 || !checkListen(data[1])))
+	if (data.size() && data[0] == "listen" && (data.size() != 2 || !checkListen(data[1])))
 		return false;
-	if (data[0] == "autoindex" && (data.size() != 2 || !isValidAutoIndex(data[1])))
+	if (data.size() && data[0] == "autoindex" && (data.size() != 2 || !isValidAutoIndex(data[1])))
 		return false;
-	if (data[0] == "upload_dir" && (data.size() != 2 || !isValidUploadDir(data[1])))
+	if (data.size() && data[0] == "upload_dir" && (data.size() != 2 || !isValidUploadDir(data[1])))
 		return false;
-	if (data[0] == "root" && (data.size() != 2 || !isValidRoot(data[1])))
+	if (data.size() && data[0] == "root" && (data.size() != 2 || !isValidRoot(data[1])))
 		return false;
-	if (data[0] == "client_body_max_size" && (data.size() != 2 || !isValidClientBodyMaxSize(data[1])))
+	if (data.size() && data[0] == "client_body_max_size" && (data.size() != 2 || !isValidClientBodyMaxSize(data[1])))
 		return false;
-	if (data[0] == "error_page" && (data.size() != 3 || !isValidErrorPage(data[1])))
+	if (data.size() && data[0] == "error_page" && (data.size() != 3 || !isValidErrorPage(data[1])))
 		return false;
-	if (data[0] == "cgi" && (data.size() != 3 || !isValidLocationCGI(data[1], data[2])))
+	if (data.size() && data[0] == "cgi" && (data.size() != 3 || !isValidLocationCGI(data[1], data[2])))
 		return false;
-	if (data[0] == "server_name" && data.size() != 2)
+	if (data.size() && data[0] == "server_name" && data.size() != 2)
 		return false;
-	if (data[0] == "redirect" && (data.size() != 3 || !isValidErrorPage(data[1])))
+	if (data.size() && data[0] == "redirect" && (data.size() != 3 || !isValidErrorPage(data[1])))
 		return false;
-	if (data[0] == "index" && data.size() != 2)
+	if (data.size() && data[0] == "index" && data.size() != 2)
 		return false;
 	return true;
 }
@@ -160,7 +160,7 @@ bool Parsing::finalConfigFileParsing()
 		for (size_t j = 0; j < servers[i].size(); j++)
 		{
 			std::vector<std::string> line = ft_split(servers[i][j]);
-			if (line[0] == "location" && line.size() != 2)
+			if (line.size() && line[0] == "location" && line.size() != 2)
 			{
 				std::cout << "Error on " << "\033[0;31m" << servers[i][j] << "\033[0m" << std::endl;
 				return false;
@@ -181,6 +181,8 @@ bool Parsing::finalConfigFileParsing()
 		for (size_t j = 0; j < servers[i].size(); j++)
 		{
 			std::vector<std::string> line = ft_split(servers[i][j]);
+			if (!line.size())
+				return false;
 			if (line[0] == "listen")
 				serverCp.listen++;
 			if (line[0] == "root")
@@ -204,6 +206,8 @@ bool Parsing::finalConfigFileParsing()
 				while (j < servers[i].size())
 				{
 					line = ft_split(servers[i][j]);
+					if (!line.size())
+						return false;
 					if (line[0] == "listen")
 						locationCp.listen++;
 					if (line[0] == "root")

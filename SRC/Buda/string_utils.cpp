@@ -17,6 +17,28 @@ bool	ft_isAllSpace(std::string& s)
 	return true;
 }
 
+bool checkForRepetitve(std::string& line)
+{
+	std::string::iterator it = line.begin();
+	std::string::iterator itEnd;
+
+	int cp = 0;
+	for (; it != line.end(); it++)
+	{
+		if (*it == ';')
+		{
+			cp++;
+			if (cp == 1)
+				itEnd = it;
+		}
+	}
+	if (cp != 1)
+		return false;
+	if (itEnd + 1 != line.end())
+		return false;
+	return true;
+}
+
 bool	Parsing::parsing(int ac, char **av)
 {
 	if (ac > 2)
@@ -44,6 +66,7 @@ bool	Parsing::parsing(int ac, char **av)
 	std::vector <std::string>	pars;
 	std::vector <parsingStruct>	parsLast;
 	size_t	j = 0;
+
 	bool serverScope = false;
 	bool locationScope = false;
 	while (std::getline(configFile, line))
@@ -51,6 +74,9 @@ bool	Parsing::parsing(int ac, char **av)
 		if (line.empty() || ft_isAllSpace(line) || (!line.empty() && ft_trim(line, ' ')[0] == '#'))
 			continue;
 		pars = ft_split(line);
+
+		if (!pars[0].empty() && pars[0] != "server" && pars[0] != "location" && pars[0] != "}" && !checkForRepetitve(line))
+			return false;
 		if (!pars[0].empty() && pars[0] == "server")
 		{
 			if (serverScope)
