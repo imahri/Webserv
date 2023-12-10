@@ -142,14 +142,7 @@ bool Parsing::checkRepetedServers()
 		if (it != serverPort.end() && (it->second.empty() || val.empty() || it->second == val))
 			return false;
 		serverPort[key] = val;
-	}
-
-	for (std::map  < std::string, std::string >::iterator i = serverPort.begin();
-	i != serverPort.end(); i++)
-	{
-		std::cout << "listen: " + i->first << "\t\t\t" << "server_name: "+ i->second << std::endl;
-	}
-	
+	}	
 	return true;
 }
 
