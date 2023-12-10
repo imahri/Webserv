@@ -31,8 +31,6 @@ int Request::FillResponseBodyFromFile()
     if (!fileStream)
         return (std::cerr << "Error: Unable to open the file " << RequestPath << std::endl, statusCode = 403, 1);
 
-    fileStream.seekg(0, fileStream.end);
-    FileSize = fileStream.tellg();
     fileStream.seekg(0, fileStream.beg);
 
     const int bufferSize = 4096;
@@ -41,7 +39,10 @@ int Request::FillResponseBodyFromFile()
     ResponseBody.clear();
 
     while (fileStream.read(buffer, bufferSize))
+	{
         ResponseBody.append(buffer, bufferSize);
+		bzero(buffer, bufferSize);
+	}
 
     ResponseBody.append(buffer, fileStream.gcount());
 
@@ -102,16 +103,16 @@ int		Request::GetFile()
 	{
 		if(Loc.CheckCGI)
 		{
-			FillCgi();
-			Rawr r = Server.CgiResult(cgi);
-			ResponseBody =  r.body;
-			statusCode = std::atoi(r.code.c_str());
-			ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
-			std::time_t currentTime = std::time(0);
-			std::string str = (std::ctime(&currentTime));
-			ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
-			ResponseHeaders += r.header;
-		    CgiIsDone = true;
+		// 	FillCgi();
+		// 	Rawr r = Server.CgiResult(cgi);
+		// 	ResponseBody =  r.body;
+		// 	statusCode = std::atoi(r.code.c_str());
+		// 	ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+		// 	std::time_t currentTime = std::time(0);
+		// 	std::string str = (std::ctime(&currentTime));
+		// 	ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
+		// 	ResponseHeaders += r.header;
+		//     CgiIsDone = true;
 		}
 		else
 		{

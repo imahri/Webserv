@@ -1,7 +1,13 @@
 #include "../includes/Webserv.hpp"
 
+void    d()
+{
+    system("leaks Webserv");
+}
+
 int main(int ac, char **av)
 {
+    atexit(d);
     try
     {
         Parsing wbs;
