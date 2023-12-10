@@ -165,7 +165,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
     while (true)
     {
         struct timeval timeout;
-        timeout.tv_sec = 5; 
+        timeout.tv_sec = 30; 
         timeout.tv_usec = 1;
         int timeout_ms = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
         int ret = poll(net.data(), net.size(), timeout_ms);
@@ -237,24 +237,21 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             }
             else if (net[j].revents & POLLOUT)
             {
-                if(!re.request_msg[net[j].fd].send_file)
-                {
-                    // std::cout << "--------  SMALL  -------" << std::endl;
-
-                    send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), std::min((size_t) 50000, re.request_msg[net[j].fd].c_response.length()), 0);    
-                    re.request_msg[net[j].fd].c_response = re.request_msg[net[j].fd].c_response.substr(re.request_msg[net[j].fd].c_response.length() < 50000 ? re.request_msg[net[j].fd].c_response.length() : 50000);
+                // if(!re.request_msg[net[j].fd].send_file)
+                // {
+                    size_t x_size = send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), std::min((size_t) 1000000, re.request_msg[net[j].fd].c_response.length()), 0);
+                    re.request_msg[net[j].fd].c_response.erase(0, x_size);
                     if (re.request_msg[net[j].fd].c_response.size() == 0)
                     {
+                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
                         net[j].events = POLLIN;
                         if(!re.request_msg[net[j].fd].keepAlive)
                             close(net[j].fd);
-                        clearClinet(net[j].fd, re.request_msg);
-                        continue;
                     }
                     continue;
-                }
-                else
-                {
+                // }
+                // else
+                // {
                     // // std::cout << "--------  BIG  -------" << std::endl;
 
                     // std::ifstream inputFile(re.request_msg[net[j].fd].path.c_str(), std::ios::binary);
@@ -281,8 +278,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     //     send(net[j].fd, resp, re.request_msg[net[j].fd].bytesRead, 0);
                     //     re.request_msg[net[j].fd].currentPosition = inputFile.tellg();
                     // }
-                }
-                continue;
+                // }
+                // continue;
             }
         }
     }

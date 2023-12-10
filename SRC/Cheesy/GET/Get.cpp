@@ -115,9 +115,9 @@ int		Request::GetFile()
 		}
 		else
 		{
-			if(GetFileLength(RequestPath))
-				return(SendFile = true, statusCode = 200, 1);
-			else if(FillResponseBodyFromFile())
+			// if(GetFileLength(RequestPath))
+			// 	return(SendFile = true, statusCode = 200, 1);
+			if(FillResponseBodyFromFile())
 				return(1);
 		}
 	}
