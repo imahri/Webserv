@@ -74,22 +74,7 @@ int IoMultiplexing::foundServer(int fd)
     return -1;
 }
 
-void IoMultiplexing::acceptNewClient(int fd)
-{
-    int clientSocket = accept(fd, NULL, 0);
-    struct pollfd tmp;
-    tmp.fd = clientSocket;
-    tmp.events = POLLIN;
-    fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-    IoMultiplexing::net.push_back(tmp);
-    int finder = foundServer(fd);
-    if (finder != -1)
-    {
-        Client *cr = new Client(clientSocket);
-        sudo_apt[finder].sudo_client.push_back(cr);
-    }
-    std::cout << "New client connected to server " << sudo_apt[finder].serverName << " <<\t>>" << finder << std::endl;
-}
+
 
 std::vector<Client *>::iterator IoMultiplexing::checkClient(int fd)
 {

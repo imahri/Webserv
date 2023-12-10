@@ -33,6 +33,7 @@ void	 Parsing::envInit()
 		std::vector <std::string> v =  ft_split(s, ':');
 		this->cgiENV["REMOTE_HOST"] = v[0];
 		this->cgiENV["SERVER_PORT"] = v[1];
+		v.clear();
 	}
 
 	this->cgiENV["REQUEST_METHOD"] = cgi.methode;
@@ -64,7 +65,9 @@ void	Parsing::splitHeaders()
 bool	Parsing::convertMap()
 {
 	std::map< std::string, std::string >::iterator it = cgiENV.begin();
+	execEnv = NULL;
 	execEnv = new char *[cgiENV.size() + 1];
+	std::cout << "new 2 \n";
 	if (execEnv == NULL)
 	{
 		clearCGI("500");
@@ -72,14 +75,16 @@ bool	Parsing::convertMap()
 	}
 	size_t i = 0;
 	size_t j;
+		std::cout << "<-----------------------------!!!----------------------------->" <<std::endl;
 	for (; it != cgiENV.end(); it++)
 	{
 		std::string s = it->first + "=" + it->second;
 		execEnv[i] = new char[s.length() + 1];
+		std::cout << " new 1\n" ;
 		if (execEnv[i] == NULL)
 		{
-			for (size_t j = 0; j < i; j++)
-				delete[] execEnv[j];
+			for (size_t k = 0; k < i; k++)
+				delete[] execEnv[k];
 			delete[] execEnv;
 			clearCGI("500");
 			return false;
@@ -88,8 +93,10 @@ bool	Parsing::convertMap()
 		for (; j < s.length(); j++)
 			execEnv[i][j] = s[j];
 		execEnv[i][j] = '\0';
+		std::cout << "---------->" + it->first + "\t\t" + it->second << std::endl; 
 		i++;
 	}
+		std::cout << "<-----------------------------===----------------------------->" <<std::endl;
 	execEnv[i] = NULL;
 	return true;
 }
@@ -189,12 +196,17 @@ void   Parsing::handleCGIres(const std::string& outFileName)
 
 void	Parsing::freeENV()
 {
-	if (execEnv != NULL) 
-	{
-        for (size_t i = 0; execEnv[i] != NULL; ++i)
-            delete[] execEnv[i];
-        delete[] execEnv;
-    }
+	// if (execEnv != NULL) 
+	// {
+    //     for (size_t i = 0; execEnv[i] != NULL; i++)
+	// 	{
+    //         delete[] execEnv[i];
+	// 		execEnv[i] = NULL;
+	// 	}
+    //     delete[] execEnv;
+	// 	execEnv = NULL;
+    // }
+	cgiENV.clear();
 }
 void	Parsing::clearCGI(const std::string& code)
 {
@@ -209,18 +221,18 @@ Rawr  Parsing::CgiResult(CGI &c)
 {
 
 	cgi = c;
-	splitHeaders();
-	envInit();
-	if (!convertMap())
-		return cgi.ret;
+	// splitHeaders();
+	// envInit();
+	// if (!convertMap())
+	// 	return cgi.ret;
 	
 	int inFileFD;
 	bool ifBody = false;
 	std::map<std::string, std::string>::iterator it = cgiENV.find("CONTENT_LENGTH");
 	std::string inFileName = "/tmp/inFile" + getFileName();
+	std::ofstream outFile(inFileName.c_str());
 	if (!it->second.empty())
 	{
-		std::ofstream outFile(inFileName.c_str());
 		outFile << cgi.body;
 		outFile.close();
 		inFileFD = open(inFileName.c_str(), O_WRONLY, 0777);
@@ -250,7 +262,7 @@ Rawr  Parsing::CgiResult(CGI &c)
 		if (ifBody)
 			dup2(inFileFD, STDIN_FILENO);
 		alarm(30);
-		execve(av[0], av, execEnv);
+		execve(av[0], av, NULL);
 		exit(500);
 	}
 
@@ -276,6 +288,9 @@ Rawr  Parsing::CgiResult(CGI &c)
 
 	handleCGIres(outFileName);
 	if (ifBody)
+	{
+		outFile.close();
 		std::remove(inFileName.c_str());
+	}
 	return (freeENV(), cgi.ret);
 };
