@@ -11,11 +11,17 @@ class Client
         std::streampos initialPosition;
         std::streamsize bytesRead;
         std::streampos currentPosition;
+
         bool send_file;
         bool keepAlive;
         bool header;
         char buffer[1024];
-        Client():send_file(false),keepAlive(false),header(false){};
+        Client():send_file(false),keepAlive(false),header(false)
+        {
+            c_request.clear();
+            c_response.clear();
+            path.clear();
+        };
         // ~Client();
 };
 

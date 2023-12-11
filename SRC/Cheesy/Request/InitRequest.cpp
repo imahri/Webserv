@@ -100,6 +100,6 @@ std::string     Request::InitRequest(std::string &str, Parsing &ps)
     std::string ret = ResponseHeaders + ResponseBody;
     std::cout << "StatusCode: " << statusCode << std::endl;
 
-    Reset();
+    // Reset();
     return(ret);
 }
