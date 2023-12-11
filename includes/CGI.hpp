@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sys/time.h>
 
+#include <fstream>
+#include <sstream>
 typedef struct L
 {
         bool                                                    autoindex;
@@ -51,6 +53,13 @@ class CGI
         std::string                         root;
         LOCATION                            locationData;
         Rawr                                ret;
+
+        //---------------------------
+        std::string inFileName;
+        std::ofstream inFile;
+
+        std::string outFileName;
+        std::ifstream outFile;
         
     CGI(){};
 

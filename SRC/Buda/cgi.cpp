@@ -110,22 +110,22 @@ std::string	getFileName()
     return oss.str();
 }
 
-void   Parsing::handleCGIres(const std::string& outFileName)
+void   Parsing::handleCGIres()
 {
-	std::ifstream resFile(outFileName.c_str(), std::ios::binary);
-	if (!resFile.is_open())
+	this->cgi.outFile.open(cgi.outFileName.c_str(), std::ios::binary);
+	if (!cgi.outFile.is_open())
 	{
 		clearCGI("500");
 		return ;
 	}
-	if (resFile.peek() == std::ifstream::traits_type::eof()) 
+	if (cgi.outFile.peek() == std::ifstream::traits_type::eof()) 
 	{
 		clearCGI("500");
 		return ;
 	}
-	resFile.seekg(0, std::ios::beg);
+	cgi.outFile.seekg(0, std::ios::beg);
 	std::stringstream iss;
-	iss << resFile.rdbuf();
+	iss << cgi.outFile.rdbuf();
 	std::vector<std::string> respo = Divide(iss.str(), "\r\n\r\n");
 	if (respo.size() != 2)
 	{
@@ -187,8 +187,8 @@ void   Parsing::handleCGIres(const std::string& outFileName)
 		cgi.ret.header += cgi.ret.mapap[i].first + " " + cgi.ret.mapap[i].second + "\r\n";
 	cgi.ret.header += "\r\n";
 
-	resFile.close();
-	std::remove(outFileName.c_str());
+	cgi.outFile.close();
+
 }
 
 void	Parsing::freeENV()
@@ -204,9 +204,16 @@ void	Parsing::freeENV()
 		execEnv = NULL;
     }
 	cgiENV.clear();
+	std::remove(cgi.inFileName.c_str());
+    std::remove(cgi.outFileName.c_str());
+	std::cout << "-------------------------------------------> 3aaaaa" << std::endl; 
+	cgi.inFileName.clear();
+	cgi.outFileName.clear();
 }
 void	Parsing::clearCGI(const std::string& code)
 {
+	
+
 	cgi.ret.code = code;
 	cgi.ret.mapap.clear();
 	cgi.ret.header.clear();
@@ -227,17 +234,17 @@ Rawr  Parsing::CgiResult(CGI &c)
 	int inFileFD;
 	bool ifBody = false;
 	std::map<std::string, std::string>::iterator it = cgiENV.find("CONTENT_LENGTH");
-	std::string inFileName = "/tmp/inFile" + getFileName();
-	std::ofstream outFile(inFileName.c_str());
+	cgi.inFileName = "/tmp/inFile" + getFileName();
+	cgi.inFile.open(cgi.inFileName.c_str());
 	if (!it->second.empty())
 	{
-		outFile << cgi.body;
-		outFile.close();
-		inFileFD = open(inFileName.c_str(), O_WRONLY, 0777);
+		cgi.inFile << cgi.body;
+		cgi.inFile.close();
+		inFileFD = open(cgi.inFileName.c_str(), O_WRONLY, 0777);
 		ifBody = true;
 	}
 
-	std::string outFileName = "/tmp/outFile" + getFileName();
+	cgi.outFileName = "/tmp/outFile" + getFileName();
 
 	char *av[3];
     av[0] = (char *)this->cgi.locationData.cgi[0].second.c_str();
@@ -247,7 +254,7 @@ Rawr  Parsing::CgiResult(CGI &c)
 	int inBackUp = dup(STDIN_FILENO);
 	int outBackUp = dup(STDOUT_FILENO);
 
-	int outFileFD = open(outFileName.c_str(), O_WRONLY | O_CREAT, 0777);
+	int outFileFD = open(cgi.outFileName.c_str(), O_WRONLY | O_CREAT, 0777);
 
     if (outFileFD == -1)
         return (freeENV(),  clearCGI("500"), cgi.ret);
@@ -284,12 +291,8 @@ Rawr  Parsing::CgiResult(CGI &c)
 	else if (WIFSIGNALED(status))
 		return (freeENV(), clearCGI("504"), cgi.ret);
 
-	handleCGIres(outFileName);
-	if (ifBody)
-	{
-		outFile.close();
-		std::remove(inFileName.c_str());
-	}
+	handleCGIres();
+
 	std::cout << "------------------------------ANA 5REJT CGI--------------------------" <<std::endl;
 	return (freeENV(), cgi.ret);
 };

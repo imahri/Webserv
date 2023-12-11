@@ -98,7 +98,7 @@ class Parsing
 
 		Rawr									CgiResult(CGI &c);
 		std::string								getEnvHeader(const std::string&  s);
-		void									handleCGIres(const std::string& outFileName);
+		void									handleCGIres();
 		void									clearCGI(const std::string& code);
 
 		void									envInit();
