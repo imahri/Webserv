@@ -90,6 +90,11 @@ class Parsing
 		// get the index of the server with a specific server_name
 		int	getServerServerName(const std::string& key, const std::string& val);
 
+
+
+		// all ports and hosts without duplication
+        std::vector < std::pair < std::string, std::string > > getAllPorts();
+
 		//-------------------------------------CGI------------------------------------------------------//
 		CGI			cgi;
 		std::map< std::string, std::string >	cgiENV;

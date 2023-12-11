@@ -163,7 +163,7 @@ void    IoMultiplexing::clearClinet(int fd, std::map<int, Client> &request_msg)
     }
 }
 
-int SendSmallPart(std::string& fileName, std::string& Tostore)
+int SendSmallPart(std::string& fileName, std::string& ToStore)
 {
     static std::ifstream fileStream;
     static size_t currentPosition;
@@ -173,35 +173,40 @@ int SendSmallPart(std::string& fileName, std::string& Tostore)
     {
         fileStream.open(fileName, std::ios::binary);
         if (!fileStream)
-            return (std::cerr << "Error: Unable to open the file " << fileName << std::endl, 1);
+        {
+            std::cerr << "Error: Unable to open the file " << fileName << std::endl;
+            return 1;
+        }
 
-        fileStream.seekg(0, fileStream.end);
+        fileStream.seekg(0, std::ios::end);
         fileSize = fileStream.tellg();
-        fileStream.seekg(0, fileStream.beg);
+        fileStream.seekg(0, std::ios::beg);
     }
 
     const int bufferSize = 50000;
     char buffer[bufferSize];
 
-    fileStream.seekg(currentPosition, fileStream.beg);
+    fileStream.seekg(currentPosition, std::ios::beg);
     fileStream.read(buffer, bufferSize);
-    ssize_t bytesRead = fileStream.gcount();
+    std::streamsize bytesRead = fileStream.gcount();
 
-    Tostore.assign(buffer, bytesRead);
-
-    currentPosition += bytesRead;
-
-    if (currentPosition >= fileSize)
+    if (bytesRead > 0)
+    {
+        ToStore.assign(buffer, bytesRead);
+        currentPosition += bytesRead;
+        return 0;
+    }
+    else
     {
         std::cout << "File sent" << std::endl;
         std::cout << "currentPosition: " << currentPosition << std::endl;
         fileStream.close();
         currentPosition = 0;
         fileSize = 0;
-        return 1;
+        return 1; 
     }
+    return 0; 
 
-    return 0;
 }
 
 
@@ -209,17 +214,17 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
     IoMultiplexing re;
     Request rq;
-    static size_t sent;
 
     rq.Server = ps;
 
-    for (size_t i = 1; i <= ps.getServersNumber(); i++)
+    std::vector < std::pair < std::string, std::string > > test = ps.getAllPorts();
+    std::vector < std::pair < std::string, std::string > >::iterator it = test.begin();
+    for (; it != test.end(); it++)
     {
-        std::string str = ps.getServerDataSingle(i, "listen");
-        std::vector<std::string> it = ft_split(str, ':');
-        Server qw(std::atoi(it[1].c_str()), it[0]);
+        Server qw(std::atoi(it->second.c_str()), it->first);
         re.sudo_apt.push_back(qw);
     }
+    
     char buffer[50000];
     size_t ll = re.sudo_apt.size();
     for (size_t i = 0; i < ll; i++)
@@ -298,8 +303,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         re.request_msg[net[j].fd].path = rq.RequestPath;
                         re.request_msg[net[j].fd].header = false;
 
-                        std::cout << "-------------------------RESPONSE------------------------------" << std::endl;
-                        std::cout << "sent size: " << sent << std::endl;
                         net[j].events = POLLOUT;
                         std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
                     }
@@ -310,13 +313,11 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             {
                 if (re.request_msg[net[j].fd].send_file == false)
                 {
-                    std::cout << "sending response" << std::endl;
                     size_t x_size = send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), std::min((size_t) 1000000, re.request_msg[net[j].fd].c_response.length()), 0);
                     re.request_msg[net[j].fd].c_response.erase(0, x_size);
 
                     if (re.request_msg[net[j].fd].c_response.size() == 0)
                     {
-                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
                         net[j].events = POLLIN;
 
                         if (!re.request_msg[net[j].fd].keepAlive)
@@ -326,7 +327,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 }
                 else
                 {
-                    std::cout << "sending file" << std::endl;
                     if (re.request_msg[net[j].fd].header == false)
                     {
                         std::cout << send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), re.request_msg[net[j].fd].c_response.length(), 0) << std::endl;
@@ -335,8 +335,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     std::string toSend;
                     if(SendSmallPart(re.request_msg[net[j].fd].path, toSend) == false)
                     {
-                        std::cout << "sending body" << std::endl;
-                        sent += send(net[j].fd, toSend.c_str(), toSend.length(), 0);
+
+                        send(net[j].fd, toSend.c_str(), toSend.length(), 0);
                         toSend.clear();
                     }
                     else
