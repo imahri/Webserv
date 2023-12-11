@@ -10,7 +10,7 @@ int main(int ac, char **av)
 		wbs.fillResponseTypes();
 
     std::cout << "---------------------------------------------------------------------1}}}" << std::endl;
-        wbs.getAllPorts();
+    wbs.getAllPorts();
     std::cout << "---------------------------------------------------------------------2}}}" << std::endl;
 
 
