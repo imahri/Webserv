@@ -11,6 +11,7 @@ class Client
         std::streampos initialPosition;
         std::streamsize bytesRead;
         std::streampos currentPosition;
+        int         fd;
 
         bool send_file;
         bool keepAlive;
