@@ -18,7 +18,7 @@ SRC =	./SRC/main.cpp\
        ./SRC/Buda/finalParsing.cpp \
        ./SRC/Buda/cgi.cpp \
        ./SRC/Buda/string_utils.cpp \
-       ./SRC/Buda/Parsing.cpp \
+       ./SRC/Buda/webserv.cpp \
        ./SRC/Cheesy/extraFunctions.cpp \
        ./SRC/Cheesy/DELETE/DELETE.cpp \
        ./SRC/Cheesy/GET/Get.cpp \

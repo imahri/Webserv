@@ -229,10 +229,10 @@ Rawr  Parsing::CgiResult(CGI &c)
 	int inFileFD;
 	bool ifBody = false;
 	std::map<std::string, std::string>::iterator it = cgiENV.find("CONTENT_LENGTH");
+	cgi.inFileName = "/tmp/inFile" + getFileName();
+	cgi.inFile.open(cgi.inFileName.c_str());
 	if (!it->second.empty())
 	{
-		cgi.inFileName = "/tmp/inFile" + getFileName();
-		cgi.inFile.open(cgi.inFileName.c_str());
 		cgi.inFile << cgi.body;
 		cgi.inFile.close();
 		inFileFD = open(cgi.inFileName.c_str(), O_WRONLY, 0777);
@@ -272,8 +272,6 @@ Rawr  Parsing::CgiResult(CGI &c)
 		return (freeENV(),  clearCGI("500"), cgi.ret);
 	if (dup2(inBackUp, 0) == -1)
 		return (freeENV(),  clearCGI("500"), cgi.ret);
-	close(inBackUp);
-	close(outBackUp);
 	close(outFileFD);
 	if (ifBody)
 		close(inFileFD);

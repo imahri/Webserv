@@ -131,7 +131,7 @@ bool	Parsing::parsing(int ac, char **av)
 			return false;
 		}
 	}
-	
+
 	for (size_t i = 0; i < parsLast.size(); i++)
 	{
 		if (parsLast[i].open_bracket == false || parsLast[i].close_bracket == false)
@@ -232,7 +232,7 @@ bool	Parsing::fillServerList()
 		}
 	}
 
-	configFile.close();
+
 	pars.clear();
 	finalParams.clear();
 	params.clear();
@@ -477,44 +477,4 @@ int	Parsing::getServerServerName(const std::string& key, const std::string& val)
 		}
 	}
 	return -1;
-}
-
-
-std::vector < std::pair < std::string, std::string > > Parsing::getAllPorts()
-{
-	std::vector < std::pair < std::string, std::string > > ports;
-	std::vector < std::string > listen;
-	std::vector < std::string > line;
-	bool dupl;
-	for (size_t i = 0; i < this->servers.size(); i++)
-	{
-		for (size_t j = 0; j < servers[i].size(); j++)
-		{
-			line = ft_split(servers[i][j]);
-			if (line[0] == "listen")
-			{
-				dupl = false;
-				for (size_t k = 0; k < listen.size(); k++)
-				{
-					if (line[1] == listen[k])
-					{
-						dupl = true;
-						break;
-					}
-				}
-				if (!dupl)
-					listen.push_back(line[1]);
-			}
-			line.clear();
-		}
-	}
-	
-	for (size_t k = 0; k < listen.size(); k++)
-	{
-		line.clear();
-		line = ft_split(listen[k], ':');
-		ports.push_back(std::make_pair(line[0], line[1]));
-	}
-	line.clear();
-	return ports;
 }

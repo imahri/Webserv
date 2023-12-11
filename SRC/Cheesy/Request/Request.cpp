@@ -42,9 +42,6 @@ int		Request::GetExtension()
 		if(GetMimeType() == 0)
 			CheckExtension = false;
 	}
-	std::cout << "EX: " << Extension << std::endl;
-	if(Extension == "py" || Extension == "php")
-		CheckExtension = true;
 	return(0);
 }
 
