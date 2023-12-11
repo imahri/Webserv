@@ -212,11 +212,18 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 
     rq.Server = ps;
 
-    for (size_t i = 1; i <= ps.getServersNumber(); i++)
+    // for (size_t i = 1; i <= ps.getServersNumber(); i++)
+    // {
+    //     std::string str = ps.getServerDataSingle(i, "listen");
+    //     std::vector<std::string> it = ft_split(str, ':');
+    //     Server qw(std::atoi(it[1].c_str()), it[0]);
+    //     re.sudo_apt.push_back(qw);
+    // }
+    std::vector < std::pair < std::string, std::string > > test = ps.getAllPorts();
+    std::vector < std::pair < std::string, std::string > >::iterator it = test.begin();
+    for (; it != test.end(); it++)
     {
-        std::string str = ps.getServerDataSingle(i, "listen");
-        std::vector<std::string> it = ft_split(str, ':');
-        Server qw(std::atoi(it[1].c_str()), it[0]);
+        Server qw(std::atoi(it->second.c_str()), it->first);
         re.sudo_apt.push_back(qw);
     }
     char buffer[50000];
