@@ -209,6 +209,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
     IoMultiplexing re;
     Request rq;
+    static size_t sent;
 
     rq.Server = ps;
 
@@ -297,8 +298,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         re.request_msg[net[j].fd].path = rq.RequestPath;
                         re.request_msg[net[j].fd].header = false;
 
-                    std::cout << "-------------------------RESPONSE------------------------------" << std::endl;
-                    std::cout << re.request_msg[net[j].fd].c_response << std::endl;
+                        std::cout << "-------------------------RESPONSE------------------------------" << std::endl;
+                        std::cout << "sent size: " << sent << std::endl;
                         net[j].events = POLLOUT;
                         std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
                     }
@@ -307,8 +308,9 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
             }
             else if (net[j].revents & POLLOUT)
             {
-                if (!re.request_msg[net[j].fd].send_file)
+                if (re.request_msg[net[j].fd].send_file == false)
                 {
+                    std::cout << "sending response" << std::endl;
                     size_t x_size = send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), std::min((size_t) 1000000, re.request_msg[net[j].fd].c_response.length()), 0);
                     re.request_msg[net[j].fd].c_response.erase(0, x_size);
 
@@ -319,27 +321,27 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 
                         if (!re.request_msg[net[j].fd].keepAlive)
                             close(net[j].fd);
-
                         clearClinet(net[j].fd, re.request_msg);
                     }
                 }
                 else
                 {
+                    std::cout << "sending file" << std::endl;
                     if (re.request_msg[net[j].fd].header == false)
                     {
-                        std::cout << "sending header" << std::endl;
                         std::cout << send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), re.request_msg[net[j].fd].c_response.length(), 0) << std::endl;
                         re.request_msg[net[j].fd].header = true;
                     }
                     std::string toSend;
-                    if(!SendSmallPart(re.request_msg[net[j].fd].path, toSend))
+                    if(SendSmallPart(re.request_msg[net[j].fd].path, toSend) == false)
                     {
                         std::cout << "sending body" << std::endl;
-                        std::cout << send(net[j].fd, toSend.c_str(), toSend.length(), 0) << std::endl;
+                        sent += send(net[j].fd, toSend.c_str(), toSend.length(), 0);
                         toSend.clear();
                     }
                     else
                     {
+                        std::cout << "sending end" << std::endl;
                         if (!re.request_msg[net[j].fd].keepAlive)
                             close(net[j].fd);
                         re.request_msg[net[j].fd].c_response.clear();
@@ -347,6 +349,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), re.request_msg[net[j].fd].c_response.length(), 0);
 
                         clearClinet(net[j].fd, re.request_msg);
+                        toSend.clear();
                         net[j].events = POLLIN;
                     }
                 }
