@@ -206,14 +206,11 @@ void	Parsing::freeENV()
 	cgiENV.clear();
 	std::remove(cgi.inFileName.c_str());
     std::remove(cgi.outFileName.c_str());
-	std::cout << "-------------------------------------------> 3aaaaa" << std::endl; 
 	cgi.inFileName.clear();
 	cgi.outFileName.clear();
 }
 void	Parsing::clearCGI(const std::string& code)
 {
-	
-
 	cgi.ret.code = code;
 	cgi.ret.mapap.clear();
 	cgi.ret.header.clear();
@@ -223,8 +220,6 @@ void	Parsing::clearCGI(const std::string& code)
 
 Rawr  Parsing::CgiResult(CGI &c)
 {
-
-	std::cout << "------------------------------ANA D5ALT CGI--------------------------" <<std::endl;
 	cgi = c;
 	splitHeaders();
 	envInit();
@@ -292,7 +287,5 @@ Rawr  Parsing::CgiResult(CGI &c)
 		return (freeENV(), clearCGI("504"), cgi.ret);
 
 	handleCGIres();
-
-	std::cout << "------------------------------ANA 5REJT CGI--------------------------" <<std::endl;
 	return (freeENV(), cgi.ret);
 };
