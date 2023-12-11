@@ -9,6 +9,11 @@ int main(int ac, char **av)
 			return (std::cout << "ERROR IN CONFIG FILE." << std::endl, 1);
 		wbs.fillResponseTypes();
 
+    std::cout << "---------------------------------------------------------------------1}}}" << std::endl;
+        wbs.getAllPorts();
+    std::cout << "---------------------------------------------------------------------2}}}" << std::endl;
+
+
         IoMultiplexing io;
         if(io.StartTheMatrix(wbs))
             return(1);
