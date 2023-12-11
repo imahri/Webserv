@@ -89,19 +89,17 @@ void    Request::Reset()
     Req.ContentLength.clear();
 }
 
-std::string     Request::InitRequest(std::string str, int fd, int in, Parsing &ps)
+std::string     Request::InitRequest(std::string &str, Parsing &ps)
 {
     Reset();
     Server = ps;
-    (void)fd;
 
-    // std::cout << "index---->" << ServerIndex << std::endl;
-
-    ServerIndex = in;
+    statusCode = 200;
     this->getRequest(str);
     GenerateResponse();
-    std::cout << "StatusCode: " << statusCode << std::endl;
     std::string ret = ResponseHeaders + ResponseBody;
-    RequestIsDone = true;
+    std::cout << "StatusCode: " << statusCode << std::endl;
+
+    Reset();
     return(ret);
 }

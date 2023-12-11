@@ -31,8 +31,6 @@ int Request::FillResponseBodyFromFile()
     if (!fileStream)
         return (std::cerr << "Error: Unable to open the file " << RequestPath << std::endl, statusCode = 403, 1);
 
-    fileStream.seekg(0, fileStream.end);
-    FileSize = fileStream.tellg();
     fileStream.seekg(0, fileStream.beg);
 
     const int bufferSize = 4096;
@@ -41,7 +39,10 @@ int Request::FillResponseBodyFromFile()
     ResponseBody.clear();
 
     while (fileStream.read(buffer, bufferSize))
+	{
         ResponseBody.append(buffer, bufferSize);
+		bzero(buffer, bufferSize);
+	}
 
     ResponseBody.append(buffer, fileStream.gcount());
 
@@ -151,14 +152,18 @@ int		Request::GetDirectory()
 	else
 	{
 		ResponseBody.clear();
-		std::string filename = Loc.root + "index.html";
+		std::string filename = Loc.root + URI  + "index.html";
 		if(isFile(filename, false))
 			return(RequestPath = filename, GetFile());
+		else if(isFile(Loc.root + "index.html", false))
+			return(RequestPath = Loc.root + "index.html", GetFile());
 		else if(Loc.CheckIndex)
 		{
-			filename = Loc.root + Loc.index;
+			filename = Loc.root + URI + Loc.index;
 			if(isFile(filename, false))
 				return(RequestPath = filename, GetFile());
+			else if(isFile(Loc.root + Loc.index, false))
+				return(RequestPath = Loc.root + Loc.index, GetFile());
 			else
 				return(statusCode = 403, 1);
 		}

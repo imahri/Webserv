@@ -131,7 +131,16 @@ void    IoMultiplexing::clearClinet(int fd, std::map<int, Client> &request_msg)
     {
         bool keepAlive = it->second.keepAlive;
 
-        bzero(&it->second, sizeof(it->second));
+        it->second.c_request.clear();
+        it->second.c_response.clear();
+        it->second.path.clear();
+        it->second.initialPosition = 0;
+        it->second.bytesRead = 0;
+        it->second.currentPosition = 0;
+        it->second.send_file = 0;
+        it->second.keepAlive = 0;
+        it->second.header = 0;
+
         it->second.keepAlive = keepAlive;
     }
 }
@@ -220,8 +229,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     {
                         std::cout << "-------------------------REQUEST------------------------------" << std::endl;
                         std::cout << re.request_msg[net[j].fd].c_request << std::endl;
-                        std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
-                        re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, net[j].fd, 1, ps);
+                        re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, ps);
                         re.request_msg[net[j].fd].c_request.clear();
 
                         re.request_msg[net[j].fd].send_file = rq.SendFile;
@@ -230,8 +238,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 
                         net[j].events = POLLOUT;
                         std::cout << "-------------------------RESPONSE------------------------------" << std::endl;
-                        std::cout << rq.ResponseHeaders << std::endl;
-                        std::cout << "-------------------------END OF RESPONSE------------------------------" << std::endl;
+                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
+                        std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
                     }
                     continue;
                 }
@@ -248,6 +256,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         net[j].events = POLLIN;
                         if(!re.request_msg[net[j].fd].keepAlive)
                             close(net[j].fd);
+                        clearClinet(net[j].fd, re.request_msg);
                     }
                     continue;
                 // }
@@ -272,7 +281,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     //     if (!re.request_msg[net[j].fd].keepAlive)
                     //         close(net[j].fd);
                     //     net[j].events = POLLIN;
-                    //     clearClinet(net[j].fd, re.request_msg);
                     // }
                     // else
                     // {

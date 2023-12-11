@@ -63,6 +63,8 @@ int		Request::checkHttp()
 
 	if(httpVersion != "HTTP/1.1")
 		return(statusCode = 400, 1);
+	else if(URI == "/favicon.ico")
+		return(std::cout << "uri: " << URI << std::endl, statusCode = 404, 1);
 
 	if(methode != "POST" && methode != "GET" && methode != "DELETE")
 		return(statusCode = 405, 1);
@@ -176,6 +178,7 @@ int		Request::parseRequest()
 {
 	if(checkHttp())
 		return(1);
+	
 	// std::cout << "-----------------------HEADER-------------------" << std::endl;
 	// std::cout << header << std::endl;
 	// std::cout << "-----------------------BODY-------------------" << std::endl;
