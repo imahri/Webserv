@@ -17,6 +17,28 @@ bool	ft_isAllSpace(std::string& s)
 	return true;
 }
 
+bool checkForRepetitve(std::string& line)
+{
+	std::string::iterator it = line.begin();
+	std::string::iterator itEnd;
+
+	int cp = 0;
+	for (; it != line.end(); it++)
+	{
+		if (*it == ';')
+		{
+			cp++;
+			if (cp == 1)
+				itEnd = it;
+		}
+	}
+	if (cp != 1)
+		return false;
+	if (itEnd + 1 != line.end())
+		return false;
+	return true;
+}
+
 bool	Parsing::parsing(int ac, char **av)
 {
 	if (ac > 2)
@@ -30,7 +52,7 @@ bool	Parsing::parsing(int ac, char **av)
 	this->configFile.open(fileName);
 	if (!this->configFile)
 	{
-		std::cerr << "Unable to open the file " << fileName << std::endl;
+		std::cerr << "Unable to open the file " << std::endl;
 		return false;
 	}
 
@@ -44,6 +66,7 @@ bool	Parsing::parsing(int ac, char **av)
 	std::vector <std::string>	pars;
 	std::vector <parsingStruct>	parsLast;
 	size_t	j = 0;
+
 	bool serverScope = false;
 	bool locationScope = false;
 	while (std::getline(configFile, line))
@@ -51,7 +74,10 @@ bool	Parsing::parsing(int ac, char **av)
 		if (line.empty() || ft_isAllSpace(line) || (!line.empty() && ft_trim(line, ' ')[0] == '#'))
 			continue;
 		pars = ft_split(line);
-		if (!pars[0].empty() && pars[0] == "server")
+
+		if (!pars.size() && !pars[0].empty() && pars[0] != "server" && pars[0] != "location" && pars[0] != "}" && !checkForRepetitve(line))
+			return false;
+		if (!pars[0].empty() && pars[0] == "server" && pars.size() == 2)
 		{
 			if (serverScope)
 			{
@@ -67,11 +93,16 @@ bool	Parsing::parsing(int ac, char **av)
 			parsLast.push_back(parsingData);
 			serverScope = true;
 		}
-		else if (!pars[0].empty() && pars[0] == "location")
+		else if (!pars[0].empty() && pars[0] == "location" && pars.size() == 3)
 		{
+			if (serverScope && locationScope)
+			{
+				std::cerr << "Error in the server location config " << std::endl;
+				return false;
+			}
 			if (pars.back() != "{")
 			{
-				std::cerr << "Error in the server location config " << fileName << std::endl;
+				std::cerr << "Error in the server location config " << std::endl;
 				return false;
 			}
 			parsingStruct parsingData = {"location", true, false};
@@ -105,7 +136,7 @@ bool	Parsing::parsing(int ac, char **av)
 	{
 		if (parsLast[i].open_bracket == false || parsLast[i].close_bracket == false)
 		{
-			std::cerr << "Error { or } missing" << fileName << std::endl;
+			std::cerr << "Error { or } missing" << std::endl;
 			return false;
 		}
 	}
@@ -148,7 +179,7 @@ bool	Parsing::fillServerList()
 	this->configFile.open(fileName);
 	if (!this->configFile)
 	{
-		std::cerr << "Unable to open the file " << fileName << std::endl;
+		std::cerr << "Unable to open the file " << std::endl;
 		return false;
 	}
 

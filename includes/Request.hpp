@@ -16,6 +16,8 @@ typedef struct R
 
 class Request
 {
+    private:
+     ///
     public:
         CGI                                 cgi;
         LOCATION                            Loc;

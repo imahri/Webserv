@@ -126,6 +126,7 @@ bool isValidLocationCGI(const std::string &cgi, const std::string &cgiFile);
 bool checkServerData(std::vector<std::string> &data);
 std::string	toString(size_t i);
 std::string	getFileName();
+bool checkForRepetitve(std::string& line);
 
 
 

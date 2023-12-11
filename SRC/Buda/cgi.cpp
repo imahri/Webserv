@@ -33,6 +33,7 @@ void	 Parsing::envInit()
 		std::vector <std::string> v =  ft_split(s, ':');
 		this->cgiENV["REMOTE_HOST"] = v[0];
 		this->cgiENV["SERVER_PORT"] = v[1];
+		v.clear();
 	}
 
 	this->cgiENV["REQUEST_METHOD"] = cgi.methode;
@@ -64,7 +65,9 @@ void	Parsing::splitHeaders()
 bool	Parsing::convertMap()
 {
 	std::map< std::string, std::string >::iterator it = cgiENV.begin();
+	execEnv = NULL;
 	execEnv = new char *[cgiENV.size() + 1];
+	std::cout << "new 2 \n";
 	if (execEnv == NULL)
 	{
 		clearCGI("500");
@@ -76,10 +79,11 @@ bool	Parsing::convertMap()
 	{
 		std::string s = it->first + "=" + it->second;
 		execEnv[i] = new char[s.length() + 1];
+		std::cout << " new 1\n" ;
 		if (execEnv[i] == NULL)
 		{
-			for (size_t j = 0; j < i; j++)
-				delete[] execEnv[j];
+			for (size_t k = 0; k < i; k++)
+				delete[] execEnv[k];
 			delete[] execEnv;
 			clearCGI("500");
 			return false;
@@ -191,10 +195,15 @@ void	Parsing::freeENV()
 {
 	if (execEnv != NULL) 
 	{
-        for (size_t i = 0; execEnv[i] != NULL; ++i)
+        for (size_t i = 0; execEnv[i] != NULL; i++)
+		{
             delete[] execEnv[i];
+			execEnv[i] = NULL;
+		}
         delete[] execEnv;
+		execEnv = NULL;
     }
+	cgiENV.clear();
 }
 void	Parsing::clearCGI(const std::string& code)
 {
@@ -208,6 +217,7 @@ void	Parsing::clearCGI(const std::string& code)
 Rawr  Parsing::CgiResult(CGI &c)
 {
 
+	std::cout << "------------------------------ANA D5ALT CGI--------------------------" <<std::endl;
 	cgi = c;
 	splitHeaders();
 	envInit();
@@ -218,9 +228,9 @@ Rawr  Parsing::CgiResult(CGI &c)
 	bool ifBody = false;
 	std::map<std::string, std::string>::iterator it = cgiENV.find("CONTENT_LENGTH");
 	std::string inFileName = "/tmp/inFile" + getFileName();
+	std::ofstream outFile(inFileName.c_str());
 	if (!it->second.empty())
 	{
-		std::ofstream outFile(inFileName.c_str());
 		outFile << cgi.body;
 		outFile.close();
 		inFileFD = open(inFileName.c_str(), O_WRONLY, 0777);
@@ -276,6 +286,10 @@ Rawr  Parsing::CgiResult(CGI &c)
 
 	handleCGIres(outFileName);
 	if (ifBody)
+	{
+		outFile.close();
 		std::remove(inFileName.c_str());
+	}
+	std::cout << "------------------------------ANA 5REJT CGI--------------------------" <<std::endl;
 	return (freeENV(), cgi.ret);
 };
