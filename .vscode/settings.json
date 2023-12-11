@@ -1,5 +1,9 @@
 {
     "files.associations": {
-        "vector": "cpp"
+        "vector": "cpp",
+        "string": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp",
+        "iostream": "cpp"
     }
 }

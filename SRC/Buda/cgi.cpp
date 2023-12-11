@@ -75,7 +75,6 @@ bool	Parsing::convertMap()
 	}
 	size_t i = 0;
 	size_t j;
-		std::cout << "<-----------------------------!!!----------------------------->" <<std::endl;
 	for (; it != cgiENV.end(); it++)
 	{
 		std::string s = it->first + "=" + it->second;
@@ -93,10 +92,8 @@ bool	Parsing::convertMap()
 		for (; j < s.length(); j++)
 			execEnv[i][j] = s[j];
 		execEnv[i][j] = '\0';
-		std::cout << "---------->" + it->first + "\t\t" + it->second << std::endl; 
 		i++;
 	}
-		std::cout << "<-----------------------------===----------------------------->" <<std::endl;
 	execEnv[i] = NULL;
 	return true;
 }
@@ -196,16 +193,16 @@ void   Parsing::handleCGIres(const std::string& outFileName)
 
 void	Parsing::freeENV()
 {
-	// if (execEnv != NULL) 
-	// {
-    //     for (size_t i = 0; execEnv[i] != NULL; i++)
-	// 	{
-    //         delete[] execEnv[i];
-	// 		execEnv[i] = NULL;
-	// 	}
-    //     delete[] execEnv;
-	// 	execEnv = NULL;
-    // }
+	if (execEnv != NULL) 
+	{
+        for (size_t i = 0; execEnv[i] != NULL; i++)
+		{
+            delete[] execEnv[i];
+			execEnv[i] = NULL;
+		}
+        delete[] execEnv;
+		execEnv = NULL;
+    }
 	cgiENV.clear();
 }
 void	Parsing::clearCGI(const std::string& code)
@@ -220,11 +217,12 @@ void	Parsing::clearCGI(const std::string& code)
 Rawr  Parsing::CgiResult(CGI &c)
 {
 
+	std::cout << "------------------------------ANA D5ALT CGI--------------------------" <<std::endl;
 	cgi = c;
-	// splitHeaders();
-	// envInit();
-	// if (!convertMap())
-	// 	return cgi.ret;
+	splitHeaders();
+	envInit();
+	if (!convertMap())
+		return cgi.ret;
 	
 	int inFileFD;
 	bool ifBody = false;
@@ -262,7 +260,7 @@ Rawr  Parsing::CgiResult(CGI &c)
 		if (ifBody)
 			dup2(inFileFD, STDIN_FILENO);
 		alarm(30);
-		execve(av[0], av, NULL);
+		execve(av[0], av, execEnv);
 		exit(500);
 	}
 
@@ -292,5 +290,6 @@ Rawr  Parsing::CgiResult(CGI &c)
 		outFile.close();
 		std::remove(inFileName.c_str());
 	}
+	std::cout << "------------------------------ANA 5REJT CGI--------------------------" <<std::endl;
 	return (freeENV(), cgi.ret);
 };

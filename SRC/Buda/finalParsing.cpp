@@ -83,7 +83,7 @@ bool checkListen(std::string &data)
 	size_t i = data.find(':');
 	if (i == std::string::npos)
 		return false;
-	if (!isValidIPAddress(data.substr(0, i)) || !isValidPort(data.substr(i + 1)))
+	if ( !isValidPort(data.substr(i + 1)))
 		return false;
 	return true;
 }

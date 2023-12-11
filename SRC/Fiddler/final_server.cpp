@@ -28,6 +28,7 @@ void Server::start()
     setsockopt(this->serversocket, SOL_SOCKET, SO_REUSEADDR, (void *)&opt, sizeof(opt));
     int n;
     n = bind(this->serversocket, (struct sockaddr *)&this->serverAddr, sizeof(this->serverAddr));
+    std::cout << ">? " << n << std::endl;
     if (n < 0)
         perror("wa bzaaaaf");
     fcntl(this->serversocket, F_SETFL, O_NONBLOCK);
