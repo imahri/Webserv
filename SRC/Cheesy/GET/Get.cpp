@@ -103,16 +103,16 @@ int		Request::GetFile()
 	{
 		if(Loc.CheckCGI)
 		{
-		// 	FillCgi();
-		// 	Rawr r = Server.CgiResult(cgi);
-		// 	ResponseBody =  r.body;
-		// 	statusCode = std::atoi(r.code.c_str());
-		// 	ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
-		// 	std::time_t currentTime = std::time(0);
-		// 	std::string str = (std::ctime(&currentTime));
-		// 	ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
-		// 	ResponseHeaders += r.header;
-		//     CgiIsDone = true;
+			FillCgi();
+			Rawr r = Server.CgiResult(cgi);
+			ResponseBody =  r.body;
+			statusCode = std::atoi(r.code.c_str());
+			ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+			std::time_t currentTime = std::time(0);
+			std::string str = (std::ctime(&currentTime));
+			ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
+			ResponseHeaders += r.header;
+		    CgiIsDone = true;
 		}
 		else
 		{
@@ -152,14 +152,18 @@ int		Request::GetDirectory()
 	else
 	{
 		ResponseBody.clear();
-		std::string filename = Loc.root + "index.html";
+		std::string filename = Loc.root + URI  + "index.html";
 		if(isFile(filename, false))
 			return(RequestPath = filename, GetFile());
+		else if(isFile(Loc.root + "index.html", false))
+			return(RequestPath = Loc.root + "index.html", GetFile());
 		else if(Loc.CheckIndex)
 		{
-			filename = Loc.root + Loc.index;
+			filename = Loc.root + URI + Loc.index;
 			if(isFile(filename, false))
 				return(RequestPath = filename, GetFile());
+			else if(isFile(Loc.root + Loc.index, false))
+				return(RequestPath = Loc.root + Loc.index, GetFile());
 			else
 				return(statusCode = 403, 1);
 		}

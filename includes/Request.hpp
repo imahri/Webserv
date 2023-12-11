@@ -88,7 +88,7 @@ class Request
         int                                 GetMimeType();
         int                                 FillFromHtmlFile();
         int                                 FillResponseBodyFromFile();
-        std::string                         InitRequest(std::string str, int j, int index, Parsing &ps);
+        std::string                         InitRequest(std::string &str, Parsing &ps);
         void                                Reset();
         void                                FillCgi();
         int                                 GenerateRedirection();
