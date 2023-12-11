@@ -131,7 +131,7 @@ bool	Parsing::parsing(int ac, char **av)
 			return false;
 		}
 	}
-
+	
 	for (size_t i = 0; i < parsLast.size(); i++)
 	{
 		if (parsLast[i].open_bracket == false || parsLast[i].close_bracket == false)
@@ -232,7 +232,7 @@ bool	Parsing::fillServerList()
 		}
 	}
 
-
+	configFile.close();
 	pars.clear();
 	finalParams.clear();
 	params.clear();
