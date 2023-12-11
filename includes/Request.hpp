@@ -16,8 +16,6 @@ typedef struct R
 
 class Request
 {
-    private:
-     ///
     public:
         CGI                                 cgi;
         LOCATION                            Loc;
@@ -91,6 +89,7 @@ class Request
         int                                 FillFromHtmlFile();
         int                                 FillResponseBodyFromFile();
         std::string                         InitRequest(std::string &str, Parsing &ps);
+
         void                                Reset();
         void                                FillCgi();
         int                                 GenerateRedirection();

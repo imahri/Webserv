@@ -28,9 +28,8 @@ void Server::start()
     setsockopt(this->serversocket, SOL_SOCKET, SO_REUSEADDR, (void *)&opt, sizeof(opt));
     int n;
     n = bind(this->serversocket, (struct sockaddr *)&this->serverAddr, sizeof(this->serverAddr));
-    std::cout << ">? " << n << std::endl;
     if (n < 0)
-        perror("wa bzaaaaf");
+        perror("Erorr in binding");
     fcntl(this->serversocket, F_SETFL, O_NONBLOCK);
     listen(this->serversocket, 1000);
     index = nbr_srv;
@@ -238,7 +237,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 
                         net[j].events = POLLOUT;
                         std::cout << "-------------------------RESPONSE------------------------------" << std::endl;
-                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
+                        // std::cout << re.request_msg[net[j].fd].c_response << std::endl;
                         std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
                     }
                     continue;
