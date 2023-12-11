@@ -237,7 +237,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 
                         net[j].events = POLLOUT;
                         std::cout << "-------------------------RESPONSE------------------------------" << std::endl;
-                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
+                        // std::cout << re.request_msg[net[j].fd].c_response << std::endl;
                         std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
                     }
                     continue;

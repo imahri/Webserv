@@ -208,4 +208,3 @@ int     Request::GenerateRedirection()
     ResponseBody = "<meta http-equiv=\"Refresh\" content=\"0; url='" + URI + "/" + "'\" />\r\n";
     return(0);
 }
-// 200 400

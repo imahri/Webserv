@@ -12,7 +12,7 @@ int		readFile(std::string &fileName, std::string &Tostore)
     FileSize = fileStream.tellg();
     fileStream.seekg(0, fileStream.beg);
 
-    const int bufferSize = 4096;
+    const int bufferSize = 50000;
     char buffer[bufferSize];
 
     Tostore.clear();
@@ -33,7 +33,7 @@ int Request::FillResponseBodyFromFile()
 
     fileStream.seekg(0, fileStream.beg);
 
-    const int bufferSize = 4096;
+    const int bufferSize = 50000;
     char buffer[bufferSize];
 
     ResponseBody.clear();
@@ -87,8 +87,7 @@ int		Request::GetFileLength(std::string &fileName)
 	if (stat(fileName.c_str(), &fileStat) == 0)
 	{
 		FileSize = fileStat.st_size;
-		std::cout << "File size: " << FileSize << std::endl;
-		if(FileSize > 100000000)
+		if(FileSize > 10000000)
 			return(1);
 		return(0);
 	}
@@ -105,14 +104,22 @@ int		Request::GetFile()
 		{
 			FillCgi();
 			Rawr r = Server.CgiResult(cgi);
-			ResponseBody =  r.body;
 			statusCode = std::atoi(r.code.c_str());
-			ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
-			std::time_t currentTime = std::time(0);
-			std::string str = (std::ctime(&currentTime));
-			ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
-			ResponseHeaders += r.header;
-		    CgiIsDone = true;
+			if(statusCode == 200)
+			{
+				std::cout << "---------------------------CGI---------------------" << std::endl;
+				ResponseBody =  r.body;
+				ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+				std::time_t currentTime = std::time(0);
+				std::string str = (std::ctime(&currentTime));
+				ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
+				ResponseHeaders += r.header;
+				std::cout << ResponseHeaders << std::endl;
+				CgiIsDone = true;
+				std::cout << "---------------------------END OF CGI---------------------" << std::endl;
+			}
+			else
+				return(1);
 		}
 		else
 		{
@@ -197,6 +204,9 @@ int		Request::GET()
 
 	if(IsDirectory == true && (URI[URI.size() - 1] != '/'))
 		return(GenerateRedirection(), statusCode = 301, 1);
+	else if(IsDirectory == false && CheckExtension == false)
+		return(statusCode = 415, 1);
+	else
 
 	if(IsDirectory)
 	{

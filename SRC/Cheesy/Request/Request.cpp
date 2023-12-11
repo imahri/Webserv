@@ -63,8 +63,6 @@ int		Request::checkHttp()
 
 	if(httpVersion != "HTTP/1.1")
 		return(statusCode = 400, 1);
-	else if(URI == "/favicon.ico")
-		return(std::cout << "uri: " << URI << std::endl, statusCode = 404, 1);
 
 	if(methode != "POST" && methode != "GET" && methode != "DELETE")
 		return(statusCode = 405, 1);
@@ -167,10 +165,9 @@ int		Request::checkHeader()
 int		Request::getRequest(std::string buffer)
 {
 	if(fillHeaderAndBody(buffer))
-		return(std::cout << "CAUGHT REQUEST1" << std::endl, 1);
+		return(1);
 	if(parseRequest()) 
-		return(std::cout << "CAUGHT REQUEST2" << std::endl, 1);
-	std::cout << "GOOD REQUEST" << std::endl;
+		return(1);
 	return(0);
 }
 
@@ -178,12 +175,7 @@ int		Request::parseRequest()
 {
 	if(checkHttp())
 		return(1);
-	
-	// std::cout << "-----------------------HEADER-------------------" << std::endl;
-	// std::cout << header << std::endl;
-	// std::cout << "-----------------------BODY-------------------" << std::endl;
-	// std::cout << body << std::endl;
-	// std::cout << "-----------------------END OF BODY-------------------" << std::endl;
+
 	if(checkHeader())
 		return(1);
 
@@ -203,7 +195,6 @@ int		Request::parseRequest()
 				else
 					ServerIndex = 1;
 			}
-			std::cout << "------hna--------->" << ServerIndex  << std::endl;
 		}
 	}
 	
