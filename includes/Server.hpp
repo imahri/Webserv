@@ -22,6 +22,7 @@ class Client
 class Server
 {
     public:
+        struct addrinfo hints, *res;
         int port;
         std::string ip;
         int serversocket;
@@ -29,7 +30,6 @@ class Server
         std::string serverName;
         struct sockaddr a;
         std::vector<Client *> sudo_client;
-        sockaddr_in serverAddr;
         Server(){};
         Server(int port, std::string    ip);//set
         ~Server(){};

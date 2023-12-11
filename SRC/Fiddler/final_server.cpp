@@ -7,31 +7,52 @@ int Server::nbr_srv = 0;
 
 Server::Server(int port, std::string ip)
 {
+    res = NULL;
     this->ip = ip;
     this->port = port;
 };
 
 void Server::start()
 {
+    int ret;
+
     nbr_srv++;
     index = 0;
     serverName = "server" + std::to_string(nbr_srv);
 
-    this->serversocket = socket(AF_INET, SOCK_STREAM, 0);
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+
+    ret = getaddrinfo(this->ip.c_str(), std::to_string(port).c_str(), &hints, &res);
+    if (ret != 0)
+    {
+        std::cerr << "Error: " << gai_strerror(ret) << std::endl;
+        freeaddrinfo(res);
+        exit(1);
+    }
+    this->serversocket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     this->fd = this->serversocket;
-    bzero(&this->serverAddr, sizeof(this->serverAddr));
-    this->serverAddr.sin_family = AF_INET;
-    this->serverAddr.sin_port = htons(this->port);
-    this->serverAddr.sin_addr.s_addr = INADDR_ANY;
-    this->serverAddr.sin_zero[7] = '\0';
+    if (serversocket == -1)
+    {
+        freeaddrinfo(res);
+        std::cout << "error" << std::endl;
+        exit(1);
+    }
     int opt = 1;
-    setsockopt(this->serversocket, SOL_SOCKET, SO_REUSEADDR, (void *)&opt, sizeof(opt));
-    int n;
-    n = bind(this->serversocket, (struct sockaddr *)&this->serverAddr, sizeof(this->serverAddr));
-    if (n < 0)
-        perror("Erorr in binding");
-    fcntl(this->serversocket, F_SETFL, O_NONBLOCK);
-    listen(this->serversocket, 1000);
+    setsockopt(serversocket, SOL_SOCKET, SO_REUSEADDR, (void *)&opt, sizeof(opt));
+    if (bind(serversocket, res->ai_addr, res->ai_addrlen) == -1)
+    {
+        freeaddrinfo(res);
+        std::cout << "FAILED TO BIND" << std::endl;
+        close(serversocket);
+        exit(1);
+    }
+    freeaddrinfo(res);
+    fcntl(serversocket, F_SETFL, O_NONBLOCK);
+    listen(serversocket, 1000);
+    fd = serversocket;
     index = nbr_srv;
 }
 
@@ -116,10 +137,8 @@ int WaitForFullRequest(std::string& buff)
 bool found_it(int fd, std::vector<class Server> &vec_serve)
 {
     for(size_t y = 0; y < vec_serve.size(); y++)
-    {
         if (vec_serve[y].fd == fd)
             return true;
-    }
     return false;
 }
 
