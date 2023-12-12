@@ -309,33 +309,20 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     continue;
                 }
             }
-            else if (net[j].revents & POLLOUT)
-            {
+           else if (net[j].revents & POLLOUT)
+           {
                 if (re.request_msg[net[j].fd].send_file == false)
                 {
-                    std::string& response = re.request_msg[net[j].fd].c_response;
-                    size_t response_size = std::min(response.length(), static_cast<size_t>(1000000));
-                    ssize_t bytes_sent = send(net[j].fd, response.c_str(), response_size, 0);
-
-                    if (bytes_sent == -1 || bytes_sent == 0)
+                    size_t x_size = send(net[j].fd, re.request_msg[net[j].fd].c_response.c_str(), std::min((size_t) 1000000, re.request_msg[net[j].fd].c_response.length()), 0);
+                    re.request_msg[net[j].fd].c_response.erase(0, x_size);
+                    if (re.request_msg[net[j].fd].c_response.size() == 0)
                     {
-                        // Error handling: Failed to send response
-                        std::cout << "Error: Unable to send response" << std::endl;
-                        if (!re.request_msg[net[j].fd].keepAlive)
+                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
+                        net[j].events = POLLIN;
+                        if(!re.request_msg[net[j].fd].keepAlive)
                             close(net[j].fd);
-                        clearClinet(net[j].fd, re.request_msg);
                     }
-                    else
-                    {
-                        response.erase(0, bytes_sent);
-                        if (response.empty())
-                        {
-                            net[j].events = POLLIN;
-                            if (!re.request_msg[net[j].fd].keepAlive)
-                                close(net[j].fd);
-                            clearClinet(net[j].fd, re.request_msg);
-                        }
-                    }
+                    continue;
                 }
                 else
                 {
