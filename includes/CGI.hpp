@@ -60,7 +60,8 @@ class CGI
 
         std::string outFileName;
         std::ifstream outFile;
-        
+        int        callCGI(LOCATION& l, std::string& reqPath);
+
     CGI(){};
 
     CGI(const CGI &obj)

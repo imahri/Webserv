@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 import cgi
 
-print("Content-type: text/html\n")
+print("Content-type: text/html\r\n\r\n")
 
 print("<html>")
 print("<head>")

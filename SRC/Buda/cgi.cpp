@@ -41,7 +41,7 @@ void	 Parsing::envInit()
 	this->cgiENV["REDIRECT_STATUS"] = toString(cgi.CodeStatus);
 	this->cgiENV["QUERY_STRING"] = cgi.Query;
 	this->cgiENV["SCRIPT_NAME"] = cgi.RequestPath;
-	this->cgiENV["SCRIPT_FILENAME"] = cgi.RequestPath;
+	this->cgiENV["SCRIPT_FILENAME"] = cgi.RequestPath; 
 	this->cgiENV["PATH_INFO"] = cgi.URI;
 }
 
@@ -67,7 +67,6 @@ bool	Parsing::convertMap()
 	std::map< std::string, std::string >::iterator it = cgiENV.begin();
 	execEnv = NULL;
 	execEnv = new char *[cgiENV.size() + 1];
-	std::cout << "new 2 \n";
 	if (execEnv == NULL)
 	{
 		clearCGI("500");
@@ -79,7 +78,6 @@ bool	Parsing::convertMap()
 	{
 		std::string s = it->first + "=" + it->second;
 		execEnv[i] = new char[s.length() + 1];
-		std::cout << " new 1\n" ;
 		if (execEnv[i] == NULL)
 		{
 			for (size_t k = 0; k < i; k++)
@@ -112,26 +110,16 @@ std::string	getFileName()
 
 void   Parsing::handleCGIres()
 {
-	this->cgi.outFile.open(cgi.outFileName.c_str(), std::ios::binary);
-	if (!cgi.outFile.is_open())
-	{
-		clearCGI("500");
-		return ;
-	}
-	if (cgi.outFile.peek() == std::ifstream::traits_type::eof()) 
-	{
-		clearCGI("500");
-		return ;
-	}
-	cgi.outFile.seekg(0, std::ios::beg);
-	std::stringstream iss;
-	iss << cgi.outFile.rdbuf();
-	std::vector<std::string> respo = Divide(iss.str(), "\r\n\r\n");
+	std::vector<std::string> respo = Divide(resCGI, "\r\n\r\n");
+
 	if (respo.size() != 2)
 	{
-		clearCGI("500");
+		std::cout << "-----------------------------------------------------------------=============>>>>>>> no headers" << std::endl;
+
+		clearCGI("502");
 		return ;
 	}
+
 	std::vector<std::string> resHeader = Divide(respo[0], "\r\n");
 
 	int		cpForCL = 0;
@@ -185,10 +173,9 @@ void   Parsing::handleCGIres()
 	cgi.ret.header.clear();
 	for (size_t i = 0; i < cgi.ret.mapap.size(); i++)
 		cgi.ret.header += cgi.ret.mapap[i].first + " " + cgi.ret.mapap[i].second + "\r\n";
+
 	cgi.ret.header += "\r\n";
-
 	cgi.outFile.close();
-
 }
 
 void	Parsing::freeENV()
@@ -208,6 +195,8 @@ void	Parsing::freeENV()
     std::remove(cgi.outFileName.c_str());
 	cgi.inFileName.clear();
 	cgi.outFileName.clear();
+	cgi.outFile.clear();
+	cgi.inFile.clear();
 }
 void	Parsing::clearCGI(const std::string& code)
 {
@@ -217,9 +206,40 @@ void	Parsing::clearCGI(const std::string& code)
 	cgi.ret.body.clear();
 }
 
+int        CGI::callCGI(LOCATION& l, std::string& reqPath)
+{
+    size_t p = reqPath.find('.');
+	std::string extn = reqPath.substr(p + 1);
+
+	for (size_t i = 0; i < l.cgi.size(); i++)
+	{
+		if (l.cgi[i].first == extn)
+			return i;
+	}
+	return -1;
+}
+
+void	Parsing::initCGI()
+{
+	execEnv = NULL;
+	resCGI.clear();
+	cgiENV.clear();
+	headers.clear();
+
+	cgi.ret.code.clear();
+	cgi.ret.header.clear();
+	cgi.ret.body.clear();
+	cgi.ret.mapap.clear();
+
+	cgi.inFileName.clear();
+	cgi.outFileName.clear();
+	cgi.outFile.clear();
+	cgi.inFile.clear();
+}
 
 Rawr  Parsing::CgiResult(CGI &c)
 {
+	initCGI();
 	cgi = c;
 	splitHeaders();
 	envInit();
@@ -235,26 +255,30 @@ Rawr  Parsing::CgiResult(CGI &c)
 		cgi.inFile.open(cgi.inFileName.c_str());
 		cgi.inFile << cgi.body;
 		cgi.inFile.close();
-		inFileFD = open(cgi.inFileName.c_str(), O_WRONLY, 0777);
+		inFileFD = open(cgi.inFileName.c_str(), O_RDWR, 0777);
 		ifBody = true;
 	}
 
 	cgi.outFileName = "/tmp/outFile" + getFileName();
 
+	int	indexCGI = cgi.callCGI(cgi.locationData, cgi.RequestPath);
+
 	char *av[3];
-    av[0] = (char *)this->cgi.locationData.cgi[0].second.c_str();
+    av[0] = (char *)this->cgi.locationData.cgi[indexCGI].second.c_str();
     av[1] = (char *)cgi.RequestPath.c_str();
     av[2] = NULL;
 
 	int inBackUp = dup(STDIN_FILENO);
 	int outBackUp = dup(STDOUT_FILENO);
+	if (inBackUp == -1 || outBackUp == -1)
+		return (freeENV(),  clearCGI("500"), cgi.ret);
 
-	int outFileFD = open(cgi.outFileName.c_str(), O_WRONLY | O_CREAT, 0777);
-
+	int outFileFD = open(cgi.outFileName.c_str(), O_RDWR | O_CREAT, 0777);
     if (outFileFD == -1)
-        return (freeENV(),  clearCGI("500"), cgi.ret);
+		return (freeENV(),  clearCGI("500"), cgi.ret);
 
 	int pid = fork();
+	int status;
 	if (pid == 0)
 	{
 		if (dup2(outFileFD, STDOUT_FILENO) == -1)
@@ -266,7 +290,6 @@ Rawr  Parsing::CgiResult(CGI &c)
 		exit(500);
 	}
 
-	int status;
 	waitpid(pid, &status, 0);
 	if (dup2(outBackUp, 1) == -1)
 		return (freeENV(),  clearCGI("500"), cgi.ret);
@@ -274,19 +297,27 @@ Rawr  Parsing::CgiResult(CGI &c)
 		return (freeENV(),  clearCGI("500"), cgi.ret);
 	close(inBackUp);
 	close(outBackUp);
-	close(outFileFD);
 	if (ifBody)
 		close(inFileFD);
 	if (WIFEXITED(status))
 	{
 		int exit_code = WEXITSTATUS(status);
 		if (exit_code == 0)
+		{
 			cgi.ret.code = "200";
+        	lseek(outFileFD, 0, SEEK_SET);
+
+			char buff[1024];
+			int n;
+			while ((n = read(outFileFD, buff, 1024)) > 0)
+				resCGI += std::string(buff, n);
+			close(outFileFD);
+		}
 		else
-			return (freeENV(), clearCGI("500"), cgi.ret);
+			return (close(outFileFD), freeENV(), clearCGI("500"), cgi.ret);
 	}
 	else if (WIFSIGNALED(status))
-		return (freeENV(), clearCGI("504"), cgi.ret);
+		return (close(outFileFD), freeENV(), clearCGI("504"), cgi.ret);
 
 	handleCGIres();
 	return (freeENV(), cgi.ret);

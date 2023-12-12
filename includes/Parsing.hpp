@@ -67,10 +67,7 @@ class Parsing
 		int checkForLocation(size_t serverIndex, const std::string &);
 
 		bool checkRepetedServers();
-
-
-		// all ports and hosts without duplication
-		std::vector < std::pair < std::string, std::string > > getAllPorts();
+		std::vector < std::string > getAllCGI();
 
 		// get all of this ==>> listen,  server_name,  autoindex,  upload_dir,  root,  client_body_max_size
 		std::vector < std::pair < std::string, std::vector < std::string > > > serverData(size_t index);
@@ -93,12 +90,12 @@ class Parsing
 		// get the index of the server with a specific server_name
 		int	getServerServerName(const std::string& key, const std::string& val);
 
-
 		//-------------------------------------CGI------------------------------------------------------//
 		CGI			cgi;
 		std::map< std::string, std::string >	cgiENV;
 		std::map<std::string, std::string>		headers;
-		char	**execEnv;
+		std::string								resCGI;
+		char									**execEnv;
 
 		Rawr									CgiResult(CGI &c);
 		std::string								getEnvHeader(const std::string&  s);
@@ -109,6 +106,8 @@ class Parsing
 		void									splitHeaders();
 		void									freeENV();
 		bool									convertMap();
+		void									initCGI();
+
 };
 
 

@@ -109,7 +109,7 @@ bool isValidLocationMethods(std::vector<std::string> &data)
 
 bool isValidLocationCGI (const std::string &cgi, const std::string &cgiFile)
 {
-	if (cgi != "py" && cgi != "php")
+	if (cgi != "py" && cgi != "php" && cgi != "sh" && cgi != "rb")
 		return false;
 
 	if (!isFile(cgiFile, true))

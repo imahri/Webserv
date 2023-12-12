@@ -43,7 +43,7 @@ int		Request::GetExtension()
 			CheckExtension = false;
 	}
 	std::cout << "EX: " << Extension << std::endl;
-	if(Extension == "py" || Extension == "php")
+	if(Extension == "py" || Extension == "php" || Extension == "sh" || Extension == "rb")
 		CheckExtension = true;
 	return(0);
 }
