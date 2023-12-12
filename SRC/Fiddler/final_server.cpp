@@ -78,6 +78,8 @@ int WaitForFullRequest(std::string& buff)
 
         if(vec.size() == 3)
         {
+            // if((vec.begin() + 1)->find("/favicon.ico") != std::string::npos)
+            //     return 0;
             if (*vec.begin() == "GET" || *vec.begin() == "DELETE")
                 return 1;
             else if (*vec.begin() == "POST")
@@ -241,7 +243,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
     while (true)
     {
         struct timeval timeout;
-        timeout.tv_sec = 300000; 
+        timeout.tv_sec = 30; 
         timeout.tv_usec = 1;
         int timeout_ms = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
         int ret = poll(net.data(), net.size(), timeout_ms);
@@ -335,7 +337,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
 
                         if (bytes_sent == -1 || bytes_sent == 0)
                         {
-                            std::cout << "Error: Unable to send response header" << std::endl;
                             if (!re.request_msg[net[j].fd].keepAlive)
                                 close(net[j].fd);
                             clearClinet(net[j].fd, re.request_msg);
@@ -394,3 +395,4 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         }
     }
 }
+
