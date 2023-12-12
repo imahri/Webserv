@@ -156,7 +156,7 @@ int		Request::checkHeader()
 	if(transferEncoding == 0 && ContentLength == 0 && methode == "POST")
 		return(statusCode = 400, 1);
 
-	if(methode != "POST" && body.size() > 0)
+	if((methode != "POST" && body.size() > 0) || (methode == "POST" && body.size() <= 0))
 		return(statusCode = 400, 1);
 
 	return(0);

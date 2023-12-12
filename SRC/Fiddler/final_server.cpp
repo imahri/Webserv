@@ -296,7 +296,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     if ((WaitForFullRequest(re.request_msg[net[j].fd].c_request) == 1))
                     {
                         std::cout << "-------------------------REQUEST------------------------------" << std::endl;
-                        std::cout << re.request_msg[net[j].fd].c_request << std::endl;
+                        // std::cout << re.request_msg[net[j].fd].c_request << std::endl;
                         re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, ps);
                         re.request_msg[net[j].fd].c_request.clear();
 
@@ -319,7 +319,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     re.request_msg[net[j].fd].c_response.erase(0, x_size);
                     if (re.request_msg[net[j].fd].c_response.size() == 0)
                     {
-                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
                         net[j].events = POLLIN;
                         if(!re.request_msg[net[j].fd].keepAlive)
                             close(net[j].fd);
@@ -328,38 +327,20 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                 }
                 else
                 {
-                    if (!re.request_msg[net[j].fd].header)
+                    if (re.request_msg[net[j].fd].header == false)
                     {
-                        std::cout << "Sending header" << std::endl;
-                        std::cout << re.request_msg[net[j].fd].c_response << std::endl;
                         std::string& response = re.request_msg[net[j].fd].c_response;
                         ssize_t bytes_sent = send(net[j].fd, response.c_str(), response.length(), 0);
+                        response.clear();
 
                         if (bytes_sent == -1 || bytes_sent == 0)
-                        {
-                            if (!re.request_msg[net[j].fd].keepAlive)
-                                close(net[j].fd);
-                            clearClinet(net[j].fd, re.request_msg);
-                            net[j].events = POLLIN;
                             continue;
-                        }
 
-                        std::cout << "DONE Sending header" << std::endl;
                         re.request_msg[net[j].fd].header = true;
-                        response.clear();
 
                         re.request_msg[net[j].fd].fd = open(re.request_msg[net[j].fd].path.c_str(), O_RDONLY);
                         if (re.request_msg[net[j].fd].fd == -1)
-                        {
-                            std::cout << "Error: Unable to open the file " << re.request_msg[net[j].fd].path << std::endl;
-                            if (!re.request_msg[net[j].fd].keepAlive)
-                                close(net[j].fd);
-                            clearClinet(net[j].fd, re.request_msg);
-                            net[j].events = POLLIN;
                             continue;
-                        }
-                        else
-                            std::cout << "File opened" << std::endl;
                     }
 
                     char buffer[1024];
@@ -367,19 +348,13 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     ssize_t bytes_read = read(re.request_msg[net[j].fd].fd, buffer, sizeof(buffer));
                     if (bytes_read == -1 || bytes_read == 0)
                     {
-                        std::cout << "Error: Unable to read the file " << re.request_msg[net[j].fd].path << std::endl;
-                        if (!re.request_msg[net[j].fd].keepAlive)
-                            close(net[j].fd);
-                        clearClinet(net[j].fd, re.request_msg);
                         close(re.request_msg[net[j].fd].fd);
-                        net[j].events = POLLIN;
                         continue;
                     }
 
                     ssize_t bytes_sent = send(net[j].fd, buffer, bytes_read, 0);
                     if (bytes_sent == -1 || bytes_sent == 0 || bytes_sent < bytes_read)
                     {
-                        std::cout << "Error: Unable to send the file " << re.request_msg[net[j].fd].path << std::endl;
                         if (!re.request_msg[net[j].fd].keepAlive)
                             close(net[j].fd);
                         clearClinet(net[j].fd, re.request_msg);
