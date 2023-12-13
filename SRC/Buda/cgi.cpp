@@ -114,8 +114,6 @@ void   Parsing::handleCGIres()
 
 	if (respo.size() != 2)
 	{
-		std::cout << "-----------------------------------------------------------------=============>>>>>>> no headers" << std::endl;
-
 		clearCGI("502");
 		return ;
 	}
@@ -175,7 +173,7 @@ void   Parsing::handleCGIres()
 		cgi.ret.header += cgi.ret.mapap[i].first + " " + cgi.ret.mapap[i].second + "\r\n";
 
 	cgi.ret.header += "\r\n";
-	cgi.outFile.close();
+
 }
 
 void	Parsing::freeENV()
@@ -195,8 +193,9 @@ void	Parsing::freeENV()
     std::remove(cgi.outFileName.c_str());
 	cgi.inFileName.clear();
 	cgi.outFileName.clear();
-	cgi.outFile.clear();
+
 	cgi.inFile.clear();
+	resCGI.clear();
 }
 void	Parsing::clearCGI(const std::string& code)
 {
@@ -233,7 +232,7 @@ void	Parsing::initCGI()
 
 	cgi.inFileName.clear();
 	cgi.outFileName.clear();
-	cgi.outFile.clear();
+
 	cgi.inFile.clear();
 }
 
@@ -311,6 +310,7 @@ Rawr  Parsing::CgiResult(CGI &c)
 			int n;
 			while ((n = read(outFileFD, buff, 1024)) > 0)
 				resCGI += std::string(buff, n);
+			std::cout << "----------------------->>>\n" << resCGI  << "\n<<<<<-----------------------"<< std::endl;
 			close(outFileFD);
 		}
 		else
