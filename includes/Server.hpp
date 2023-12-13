@@ -23,7 +23,6 @@ class Client
             c_response.clear();
             path.clear();
         };
-        // ~Client();
 };
 
 class Server
@@ -39,7 +38,7 @@ class Server
         std::vector<Client *> sudo_client;
         Server(){};
         Server(int port, std::string    ip);//set
-        ~Server(){};
+        ~Server();
         static int nbr_srv;
         int index;
         void    start();

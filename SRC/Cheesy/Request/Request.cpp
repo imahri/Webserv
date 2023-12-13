@@ -152,7 +152,7 @@ int		Request::checkHeader()
 	if(methode == "POST" && (isBoundry || isChuncked) && (ContentType == false || (ContentType == true && ContentLength == false) ))
 		return(statusCode = 400, 1);
 
-	if((isBoundry || isChuncked )&& methode != "POST")
+	if((isBoundry || isChuncked ) && methode != "POST")
 		return(statusCode = 400, 1);
 
 	if(transferEncoding == 0 && ContentLength == 0 && methode == "POST")

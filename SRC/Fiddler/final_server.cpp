@@ -9,6 +9,11 @@ Server::Server(int port, std::string ip)
     this->port = port;
 };
 
+Server::~Server()
+{
+    close(serversocket);
+}
+
 void Server::start()
 {
     int ret;
@@ -250,6 +255,8 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     bu.clear();
                     if ((WaitForFullRequest(re.request_msg[net[j].fd].c_request) == 1))
                     {
+                        std::cout << "--------------------Request-------------------" << std::endl;
+                        // std::cout << re.request_msg[net[j].fd].c_request << std::endl;
                         re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, ps);
                         re.request_msg[net[j].fd].c_request.clear();
 
@@ -258,6 +265,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         re.request_msg[net[j].fd].path = rq.RequestPath;
                         re.request_msg[net[j].fd].header = false;
                         net[j].events = POLLOUT;
+                        std::cout << "--------------------END OF Request-------------------" << std::endl;
                     }
                     continue;
                 }

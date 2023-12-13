@@ -89,7 +89,6 @@ class Request
         int                                 FillFromHtmlFile();
         int                                 FillResponseBodyFromFile();
         std::string                         InitRequest(std::string &str, Parsing &ps);
-
         void                                Reset();
         void                                FillCgi();
         int                                 GenerateRedirection();
@@ -97,6 +96,7 @@ class Request
         int                                 GetExtension();
         int                                 FillFromErrorFile();
         int                                 GetFileLength(std::string &fileName);
+        int                                 parseBody();
 };
 
         //extra functions

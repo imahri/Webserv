@@ -84,6 +84,24 @@ int     Request::GetRessource()
     return(0);
 }
 
+int     Request::parseBody()
+{
+    std::string name = URI.substr(1, URI.size());
+    if(name.length() == 0)
+        return(statusCode = 400, 1);
+
+    std::string filename = Loc.upload_dir + name;
+    std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
+    if(file.is_open())
+    {
+        file << body;
+        file.close();
+    }
+    else
+        return(statusCode = 500, 1);
+    return(0);
+}
+
 int		Request::POST()
 {
     if(Loc.CheckUploadDir)
@@ -97,6 +115,11 @@ int		Request::POST()
         else if(isChuncked == true)
         {
             if(parseChuncked())
+                return 1;
+        }
+        else
+        {
+            if(parseBody())
                 return 1;
         }
     }
