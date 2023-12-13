@@ -1,6 +1,6 @@
 CC = c++
 
-CFLAGS = -Wall -Werror -Wextra -std=c++98 #-g -fsanitize=address
+CFLAGS = -Wall -Werror -Wextra -std=c++98 
 
 FRM = rm -rf
 
@@ -46,8 +46,4 @@ clean:
 fclean: clean
 	$(FRM) ${NAME}
 
-re: fclean all
-
-fuck:  fclean
-	$(FRM) Webserv.dSYM .vscode
-    
+re: fclean all    

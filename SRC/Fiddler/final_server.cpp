@@ -206,7 +206,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         timeout.tv_sec = 30; 
         timeout.tv_usec = 1;
         int timeout_ms = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
-        int ret = poll(net.data(), net.size(), timeout_ms);
+        int ret = poll(&net[0], net.size(), timeout_ms);
         if (ret == -1)
         {
             continue;
@@ -255,8 +255,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     bu.clear();
                     if ((WaitForFullRequest(re.request_msg[net[j].fd].c_request) == 1))
                     {
-                        std::cout << "--------------------Request-------------------" << std::endl;
-                        // std::cout << re.request_msg[net[j].fd].c_request << std::endl;
                         re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, ps);
                         re.request_msg[net[j].fd].c_request.clear();
 
@@ -265,7 +263,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         re.request_msg[net[j].fd].path = rq.RequestPath;
                         re.request_msg[net[j].fd].header = false;
                         net[j].events = POLLOUT;
-                        std::cout << "--------------------END OF Request-------------------" << std::endl;
                     }
                     continue;
                 }

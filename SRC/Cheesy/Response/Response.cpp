@@ -172,7 +172,7 @@ int     Request::GenerateResponse()
         }
         else if(statusCode >= 0 && statusCode < 400)
         {
-            if(CheckExtension)
+            if(CheckExtension && methode != "POST")
                 ResponseHeaders += Req.MimeType + "\r\n";
             else
                 ResponseHeaders += "text/html\r\n";

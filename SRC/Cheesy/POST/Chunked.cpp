@@ -1,22 +1,20 @@
 #include "../../../includes/Request.hpp"
 
-int     Request::GetReverseMimeType()
-{
-    std::map < std::string, std::vector < std::string > >::iterator it = Server.responseTypes.begin();
-	for (; it != Server.responseTypes.end(); it++)
-	{
-        if(Req.ContentType == it->first)
-            return(Req.MimeType = it->second[0], 1);
-	}
-    return(0);
-}
-
 int     Request::parseChuncked()
 {
     std::string requestBody = body;
     std::istringstream iss(requestBody);
     std::ostringstream oss;
     
+    std::string name = URI.substr(1, URI.size());
+    if(name.length() == 0)
+        return(statusCode = 400, 1);
+
+    std::string filename = Loc.upload_dir + name;
+    std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
+    if(file.is_open() == false)
+        return(statusCode = 500, 1);
+
     std::string line;
     while (std::getline(iss, line))
     {
@@ -36,13 +34,6 @@ int     Request::parseChuncked()
         std::getline(iss, line);
     }
 
-    if(GetReverseMimeType() == 0)
-        return(1);
-
-    std::string path = Loc.upload_dir + "yyy." + Req.MimeType;
-    std::ofstream file(path, std::ios::binary);
-    if(!file)
-        return(std::cout << "Can't create file" << std::endl, 2);
     std::string str =  oss.str();
     file << str;
 
