@@ -100,8 +100,7 @@ int		Request::GetFile()
 		return(1);
 	else
 	{
-		// std::cout << "======================================================>>>" << this->cgi.callCGI(this->Loc, this->RequestPath) << std::endl;
-		int f = this->cgi.callCGI(this->Loc, this->RequestPath);
+		int f = this->cgi.callCGI(this->Loc, this->Extension);
 		if(Loc.CheckCGI && f != -1)
 		{
 			FillCgi();
@@ -109,7 +108,6 @@ int		Request::GetFile()
 			statusCode = std::atoi(r.code.c_str());
 			if(statusCode == 200)
 			{
-				std::cout << "---------------------------CGI---------------------" << std::endl;
 				ResponseBody =  r.body;
 				ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
 				std::time_t currentTime = std::time(0);
@@ -118,7 +116,6 @@ int		Request::GetFile()
 				ResponseHeaders += r.header;
 				std::cout << ResponseHeaders << std::endl;
 				CgiIsDone = true;
-				std::cout << "---------------------------END OF CGI---------------------" << std::endl;
 			}
 			else
 				return(1);

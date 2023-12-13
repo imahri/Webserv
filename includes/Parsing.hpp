@@ -14,33 +14,26 @@ struct parsingStruct
 
 struct serverConfigData
 {
-	int listen;				  // +
-	int root;				  // +
-	int client_body_max_size; // +
-	int redirect;			  // ~
-	int index;				  // ~
-	int autoindex;			  // ~
-	int upload_dir;			  // ~
+	int listen;				 
+	int root;				 
+	int client_body_max_size;
+	int redirect;			 
+	int index;				 
+	int autoindex;			 
+	int upload_dir;			 
 };
 
 struct locationConfigData
 {
-	int listen;				  // --
-	int root;				  // +
-	int client_body_max_size; // +
-	int mathods;			  // +
-	int redirect;			  // ~
-	int index;				  // ~
-	int autoindex;			  // ~
-	int upload_dir;			  // ~
+	int listen;				 
+	int root;				 
+	int client_body_max_size;
+	int mathods;			 
+	int redirect;			 
+	int index;				 
+	int autoindex;			 
+	int upload_dir;			 
 };
-
-struct resCGI
-{
-	int	status;
-	
-};
-
 
 class Parsing
 {
@@ -67,8 +60,6 @@ class Parsing
 		int checkForLocation(size_t serverIndex, const std::string &);
 
 		bool checkRepetedServers();
-		std::vector < std::string > getAllCGI();
-		std::vector < std::string > getAllCGI();
 
 		// get all of this ==>> listen,  server_name,  autoindex,  upload_dir,  root,  client_body_max_size
 		std::vector < std::pair < std::string, std::vector < std::string > > > serverData(size_t index);
@@ -97,7 +88,7 @@ class Parsing
         std::vector < std::pair < std::string, std::string > > getAllPorts();
 
 		//-------------------------------------CGI------------------------------------------------------//
-		CGI			cgi;
+		CGI										cgi;
 		std::map< std::string, std::string >	cgiENV;
 		std::map<std::string, std::string>		headers;
 		std::string								resCGI;
@@ -136,6 +127,3 @@ bool checkServerData(std::vector<std::string> &data);
 std::string	toString(size_t i);
 std::string	getFileName();
 bool checkForRepetitve(std::string& line);
-
-
-

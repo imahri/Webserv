@@ -2,12 +2,25 @@
 
 int     Request::PostFile()
 {
-    if(Loc.CheckCGI)
+    int f = this->cgi.callCGI(this->Loc, this->Extension);
+    if(Loc.CheckCGI && f != -1)
     {
         FillCgi();
         Rawr r = Server.CgiResult(cgi);
-        ResponseBody =  r.body;
         statusCode = std::atoi(r.code.c_str());
+        if(statusCode == 200)
+        {
+            ResponseBody =  r.body;
+            ResponseHeaders = "HTTP/1.1 " + intToString(statusCode) + " " + GetStatusCode(statusCode) + "\r\n";
+            std::time_t currentTime = std::time(0);
+            std::string str = (std::ctime(&currentTime));
+            ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
+            ResponseHeaders += r.header;
+            std::cout << ResponseHeaders << std::endl;
+            CgiIsDone = true;
+        }
+        else
+            return(1);
     }
     else
         return(statusCode = 403, 1);
