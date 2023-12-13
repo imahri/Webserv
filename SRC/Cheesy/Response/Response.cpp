@@ -168,7 +168,7 @@ int     Request::GenerateResponse()
             else
                 FillFromHtmlFile();
             ResponseBody += "\r\n";
-            ResponseHeaders += "Content-Length: " +  std::to_string(ResponseBody.length() - 2) + "\r\n";
+            ResponseHeaders += "Content-Length: " +  toString(ResponseBody.length() - 2) + "\r\n";
         }
         else if(statusCode >= 0 && statusCode < 400)
         {
@@ -178,9 +178,9 @@ int     Request::GenerateResponse()
                 ResponseHeaders += "text/html\r\n";
                 
             if(ResponseBody.length())
-                ResponseHeaders += "Content-Length: " + std::to_string(ResponseBody.length() - 2) + "\r\n";
+                ResponseHeaders += "Content-Length: " + toString(ResponseBody.length() - 2) + "\r\n";
             else if(SendFile)
-                ResponseHeaders += "Content-Length: " + std::to_string(FileSize) + "\r\n";
+                ResponseHeaders += "Content-Length: " + toString(FileSize) + "\r\n";
             else
                 ResponseHeaders += "Content-Length: 0\r\n";
         }

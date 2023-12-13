@@ -217,4 +217,3 @@ int		Request::parseRequest()
 
 	return(0);
 }
-

@@ -30,7 +30,8 @@
 #include <algorithm>
 #include <map>
 #include <vector>
-
+#include <cstring>
+#include <sys/time.h>
 
 #include "Parsing.hpp"
 #include "Request.hpp"

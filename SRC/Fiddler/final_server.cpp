@@ -1,8 +1,5 @@
 #include "../../includes/Server.hpp"
 
-#include <cstring>
-#include <sys/time.h>
-
 int Server::nbr_srv = 0;
 
 Server::Server(int port, std::string ip)
@@ -18,14 +15,14 @@ void Server::start()
 
     nbr_srv++;
     index = 0;
-    serverName = "server" + std::to_string(nbr_srv);
+    serverName = "server" + toString(nbr_srv);
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
 
-    ret = getaddrinfo(this->ip.c_str(), std::to_string(port).c_str(), &hints, &res);
+    ret = getaddrinfo(this->ip.c_str(), toString(port).c_str(), &hints, &res);
     if (ret != 0)
     {
         std::cerr << "Error: " << gai_strerror(ret) << std::endl;
@@ -78,8 +75,6 @@ int WaitForFullRequest(std::string& buff)
 
         if(vec.size() == 3)
         {
-            // if((vec.begin() + 1)->find("/favicon.ico") != std::string::npos)
-            //     return 0;
             if (*vec.begin() == "GET" || *vec.begin() == "DELETE")
                 return 1;
             else if (*vec.begin() == "POST")
@@ -164,53 +159,6 @@ void    IoMultiplexing::clearClinet(int fd, std::map<int, Client> &request_msg)
         it->second.keepAlive = keepAlive;
     }
 }
-
-int SendSmallPart(std::string& fileName, std::string& ToStore)
-{
-    static std::ifstream fileStream;
-    static size_t currentPosition;
-    static size_t fileSize;
-
-    if (!fileStream.is_open())
-    {
-        fileStream.open(fileName, std::ios::binary);
-        if (!fileStream)
-        {
-            std::cerr << "Error: Unable to open the file " << fileName << std::endl;
-            return 1;
-        }
-
-        fileStream.seekg(0, std::ios::end);
-        fileSize = fileStream.tellg();
-        fileStream.seekg(0, std::ios::beg);
-    }
-
-    const int bufferSize = 50000;
-    char buffer[bufferSize];
-
-    fileStream.seekg(currentPosition, std::ios::beg);
-    fileStream.read(buffer, bufferSize);
-    std::streamsize bytesRead = fileStream.gcount();
-
-    if (bytesRead > 0)
-    {
-        ToStore.assign(buffer, bytesRead);
-        currentPosition += bytesRead;
-        return 0;
-    }
-    else
-    {
-        std::cout << "File sent" << std::endl;
-        std::cout << "currentPosition: " << currentPosition << std::endl;
-        fileStream.close();
-        currentPosition = 0;
-        fileSize = 0;
-        return 1; 
-    }
-    return 0; 
-
-}
-
 
 int IoMultiplexing::StartTheMatrix(Parsing &ps)
 {
