@@ -100,7 +100,9 @@ int		Request::GetFile()
 		return(1);
 	else
 	{
-		if(Loc.CheckCGI)
+		// std::cout << "======================================================>>>" << this->cgi.callCGI(this->Loc, this->RequestPath) << std::endl;
+		int f = this->cgi.callCGI(this->Loc, this->RequestPath);
+		if(Loc.CheckCGI && f != -1)
 		{
 			FillCgi();
 			Rawr r = Server.CgiResult(cgi);

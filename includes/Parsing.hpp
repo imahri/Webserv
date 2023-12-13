@@ -68,6 +68,7 @@ class Parsing
 
 		bool checkRepetedServers();
 		std::vector < std::string > getAllCGI();
+		std::vector < std::string > getAllCGI();
 
 		// get all of this ==>> listen,  server_name,  autoindex,  upload_dir,  root,  client_body_max_size
 		std::vector < std::pair < std::string, std::vector < std::string > > > serverData(size_t index);
@@ -99,7 +100,8 @@ class Parsing
 		CGI			cgi;
 		std::map< std::string, std::string >	cgiENV;
 		std::map<std::string, std::string>		headers;
-		char	**execEnv;
+		std::string								resCGI;
+		char									**execEnv;
 
 		Rawr									CgiResult(CGI &c);
 		std::string								getEnvHeader(const std::string&  s);
@@ -110,6 +112,8 @@ class Parsing
 		void									splitHeaders();
 		void									freeENV();
 		bool									convertMap();
+		void									initCGI();
+
 };
 
 
