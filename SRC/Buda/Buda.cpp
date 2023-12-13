@@ -5,22 +5,24 @@ bool isValidPort(const std::string& port)
 	std::istringstream ss(port);
 	int portNumber;
 	ss >> portNumber;
-	return (!ss.fail() && ss.eof() && portNumber >= 0 && portNumber <= 65535);
-}
-
-bool isValidIPAddress(const std::string& ipAddress)
-{
-	if (ipAddress == "127.0.0.1" || ipAddress == "localhost" || ipAddress == "0.0.0.0")
-		return true;
-	return false;
+	return (!ss.fail() && ss.eof() && portNumber >= 1024 && portNumber <= 65535);
 }
 
 bool isDirectory(const std::string& path)
 {
 	struct stat fileInfo;
 	if (stat(path.c_str(), &fileInfo) != 0)
-		return false;
-	return S_ISDIR(fileInfo.st_mode);
+		return false;  
+
+	if (S_ISDIR(fileInfo.st_mode))
+	{
+		if (access(path.c_str(), R_OK) == 0) 
+			return true;
+		else    
+			return false;
+	}	
+	else 
+    return false;
 }
 
 bool isFile(const std::string& path, bool permission)

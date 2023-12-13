@@ -111,7 +111,7 @@ class Parsing
 
 bool checkOther(const std::string &val);
 bool isValidPort(const std::string &port);
-bool isValidIPAddress(const std::string &ipAddress);
+
 bool isDirectory(const std::string &path);
 bool isFile(const std::string &path, bool permission);
 bool isValidAutoIndex(const std::string &autoindex);

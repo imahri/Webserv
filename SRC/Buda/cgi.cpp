@@ -99,13 +99,13 @@ bool	Parsing::convertMap()
 std::string	getFileName()
 {
 	struct timeval tv;
-    gettimeofday(&tv, NULL);
-    long long milliseconds = static_cast<long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+	gettimeofday(&tv, NULL);
+	long long milliseconds = static_cast<long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
 
 	std::ostringstream oss;
-    oss << milliseconds;
-    
-    return oss.str();
+	oss << milliseconds;
+	
+	return oss.str();
 }
 
 void   Parsing::handleCGIres()
