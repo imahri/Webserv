@@ -205,11 +205,14 @@ void	Parsing::clearCGI(const std::string& code)
 	cgi.ret.body.clear();
 }
 
-int        CGI::callCGI(LOCATION& l, std::string& extention)
+int        CGI::callCGI(LOCATION& l, std::string& reqPath)
 {
+	size_t p = reqPath.find('.');
+    std::string extn = reqPath.substr(p + 1);
+
 	for (size_t i = 0; i < l.cgi.size(); i++)
 	{
-		if (l.cgi[i].first == extention)
+		if (l.cgi[i].first == extn)
 			return i;
 	}
 	return -1;
