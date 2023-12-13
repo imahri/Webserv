@@ -58,7 +58,6 @@ int		Request::DeleteFile()
 			std::string str = (std::ctime(&currentTime));
 			ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
 			ResponseHeaders += r.header;
-			std::cout << ResponseHeaders << std::endl;
 			CgiIsDone = true;
 		}
 		else
@@ -132,7 +131,6 @@ int Request::DeleteDir()
 						std::string str = (std::ctime(&currentTime));
 						ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
 						ResponseHeaders += r.header;
-						std::cout << ResponseHeaders << std::endl;
 						CgiIsDone = true;
 					}
 					else
@@ -153,12 +151,9 @@ int Request::DeleteDir()
 		if (CheckDirectoryFiles(RequestPath, filesToDelete) != 0)
 			return 1;
 
-		std::cout << "filesToDelete.size(): " << filesToDelete.size() << std::endl;
-
 		bool hasWriteAccess = true;
 		for (size_t i = 0; i < filesToDelete.size(); i++)
 		{
-			std::cout << "file1: " << filesToDelete[i] << std::endl;
 			if (access(filesToDelete[i].c_str(), W_OK) != 0)
 			{
 				hasWriteAccess = false;

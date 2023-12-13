@@ -98,8 +98,7 @@ std::string     Request::InitRequest(std::string &str, Parsing &ps)
     this->getRequest(str);
     GenerateResponse();
     std::string ret = ResponseHeaders + ResponseBody;
-    std::cout << "StatusCode: " << statusCode << std::endl;
-
-    // Reset();
+    ResponseHeaders.clear();
+    ResponseBody.clear();
     return(ret);
 }

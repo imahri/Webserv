@@ -114,7 +114,6 @@ int		Request::GetFile()
 				std::string str = (std::ctime(&currentTime));
 				ResponseHeaders += "Date: " + str.substr(0, str.size() - 1) + " GMT\r\n";
 				ResponseHeaders += r.header;
-				std::cout << ResponseHeaders << std::endl;
 				CgiIsDone = true;
 			}
 			else

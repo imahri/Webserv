@@ -37,6 +37,7 @@ void Server::start()
         std::cout << "error" << std::endl;
         exit(1);
     }
+    std::cout << "[+] Server socket created" << std::endl;
     int opt = 1;
     setsockopt(serversocket, SOL_SOCKET, SO_REUSEADDR, (void *)&opt, sizeof(opt));
     if (bind(serversocket, res->ai_addr, res->ai_addrlen) == -1)
@@ -46,9 +47,14 @@ void Server::start()
         close(serversocket);
         exit(1);
     }
+    std::cout << "[+] Bound to port number: " << this->port << std::endl;
     freeaddrinfo(res);
     fcntl(serversocket, F_SETFL, O_NONBLOCK);
-    listen(serversocket, 1000);
+    if (listen(serversocket, 1000) == -1)
+    {
+        std::cout << "FAILED TO LISTEN" << std::endl;
+        exit(1);
+    }
     fd = serversocket;
     index = nbr_srv;
 }
@@ -185,6 +191,7 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
         tmp.events = POLLIN;
         net.push_back(tmp);
     }
+    std::cout << "[+] Listening...." << std::endl;
     std::string sttrr;
     signal(SIGPIPE, SIG_IGN);
     struct pollfd tmp;
@@ -243,8 +250,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                     bu.clear();
                     if ((WaitForFullRequest(re.request_msg[net[j].fd].c_request) == 1))
                     {
-                        std::cout << "-------------------------REQUEST------------------------------" << std::endl;
-                        // std::cout << re.request_msg[net[j].fd].c_request << std::endl;
                         re.request_msg[net[j].fd].c_response = rq.InitRequest(re.request_msg[net[j].fd].c_request, ps);
                         re.request_msg[net[j].fd].c_request.clear();
 
@@ -252,8 +257,6 @@ int IoMultiplexing::StartTheMatrix(Parsing &ps)
                         re.request_msg[net[j].fd].keepAlive = rq.KeepAlive;
                         re.request_msg[net[j].fd].path = rq.RequestPath;
                         re.request_msg[net[j].fd].header = false;
-
-                        std::cout << "-------------------------END OF REQUEST------------------------------" << std::endl;
                         net[j].events = POLLOUT;
                     }
                     continue;

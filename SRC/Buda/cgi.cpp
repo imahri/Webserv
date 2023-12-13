@@ -307,7 +307,6 @@ Rawr  Parsing::CgiResult(CGI &c)
 			int n;
 			while ((n = read(outFileFD, buff, 1024)) > 0)
 				resCGI += std::string(buff, n);
-			std::cout << "----------------------->>>\n" << resCGI  << "\n<<<<<-----------------------"<< std::endl;
 			close(outFileFD);
 		}
 		else
