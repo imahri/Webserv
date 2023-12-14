@@ -44,6 +44,6 @@ clean:
 	$(FRM) ${OBJ}
 
 fclean: clean
-	$(FRM) ${NAME}
+	$(FRM) ${NAME} .vscode
 
 re: fclean all    

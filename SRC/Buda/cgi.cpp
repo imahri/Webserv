@@ -197,6 +197,7 @@ void	Parsing::freeENV()
 	cgi.inFile.clear();
 	resCGI.clear();
 }
+
 void	Parsing::clearCGI(const std::string& code)
 {
 	cgi.ret.code = code;
@@ -205,14 +206,17 @@ void	Parsing::clearCGI(const std::string& code)
 	cgi.ret.body.clear();
 }
 
-int        CGI::callCGI(LOCATION& l, std::string& extention)
+int        CGI::callCGI(LOCATION& l, std::string& reqPath)
 {
-	for (size_t i = 0; i < l.cgi.size(); i++)
-	{
-		if (l.cgi[i].first == extention)
-			return i;
-	}
-	return -1;
+    size_t p = reqPath.find('.');
+    std::string extn = reqPath.substr(p + 1);
+
+    for (size_t i = 0; i < l.cgi.size(); i++)
+    {
+        if (l.cgi[i].first == extn)
+            return i;
+    }
+    return -1;
 }
 
 void	Parsing::initCGI()
