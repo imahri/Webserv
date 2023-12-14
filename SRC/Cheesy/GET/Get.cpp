@@ -100,7 +100,7 @@ int		Request::GetFile()
 		return(1);
 	else
 	{
-		int f = this->cgi.callCGI(this->Loc, this->Extension);
+		int f = this->cgi.callCGI(this->Loc, RequestPath);
 		if(Loc.CheckCGI && f != -1)
 		{
 			FillCgi();

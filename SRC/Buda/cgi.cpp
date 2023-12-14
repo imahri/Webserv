@@ -208,7 +208,8 @@ void	Parsing::clearCGI(const std::string& code)
 
 int        CGI::callCGI(LOCATION& l, std::string& reqPath)
 {
-    size_t p = reqPath.find('.');
+    size_t p = reqPath.find_last_of('.');
+	
     std::string extn = reqPath.substr(p + 1);
 
     for (size_t i = 0; i < l.cgi.size(); i++)

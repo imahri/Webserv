@@ -44,7 +44,7 @@ int		Request::DELETE()
 
 int		Request::DeleteFile()
 {
-	int f = this->cgi.callCGI(this->Loc, this->Extension);
+	int f = this->cgi.callCGI(this->Loc, RequestPath);
 	if(Loc.CheckCGI && f != -1)
 	{
 		FillCgi();
@@ -113,11 +113,7 @@ int Request::DeleteDir()
 			RequestPath = Loc.root + Loc.index;
 			if (isFile(RequestPath, false))
 			{
-				size_t	index =  RequestPath.find_last_of('.');
-				if(index == RequestPath.npos)
-					return (statusCode = 403, 1);
-				Extension = &RequestPath[index + 1];
-				int f = this->cgi.callCGI(this->Loc, this->Extension);
+				int f = this->cgi.callCGI(this->Loc, RequestPath);
 				if(f != -1)
 				{
 					FillCgi();

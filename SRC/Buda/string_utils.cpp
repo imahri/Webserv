@@ -187,17 +187,11 @@ bool	Parsing::fillServerList()
 	{
 		std::string	trimedLine = ft_trim(line, " \t");
 		if ((trimedLine[0] != '#' && trimedLine.find('#') != std::string::npos))
-		{
-			std::cout << "Error corrupted file" << std::endl;
 			return false; 
-		}
 		if (line.empty() || ft_isAllSpace(line) || (!line.empty() && trimedLine[0] == '#'))
 			continue;
 		if (!checkOther(ft_split(line, " \t")[0]))
-		{
-			std::cout << "Error on " << "\033[0;31m"  << line << "\033[0m"  << std::endl;
 			return false; 
-		}
 		size_t i = trimedLine.find('}');
 
 		std::string eos = "_\n";

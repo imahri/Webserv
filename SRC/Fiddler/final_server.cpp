@@ -39,7 +39,7 @@ void Server::start()
     if (serversocket == -1)
     {
         freeaddrinfo(res);
-        std::cout << "error" << std::endl;
+        std::cout << "ERROR IN SOCKET CREATION" << std::endl;
         exit(1);
     }
     std::cout << "[+] Server socket created" << std::endl;

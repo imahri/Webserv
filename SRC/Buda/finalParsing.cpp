@@ -154,15 +154,9 @@ bool Parsing::finalConfigFileParsing()
 		{
 			std::vector<std::string> line = ft_split(servers[i][j]);
 			if (line.size() && line[0] == "location" && line.size() != 2)
-			{
-				std::cout << "Error on " << "\033[0;31m" << servers[i][j] << "\033[0m" << std::endl;
 				return false;
-			}
 			if (!checkServerData(line))
-			{
-				std::cout << "Error on " << "\033[0;31m" << servers[i][j] << "\033[0m" << std::endl;
 				return line.clear(), false;
-			}
 			line.clear();
 		}
 	}
@@ -226,18 +220,12 @@ bool Parsing::finalConfigFileParsing()
 					j++;
 				}
 				if (!isValideLocationCp(locationCp))
-				{
-					std::cout << "Error in " << "\033[0;31m" << "the location config" << "\033[0m" << std::endl;
 					return false;
-				}
 			}
 			line.clear();
 		}
 		if (!isValideServerCp(serverCp))
-		{
-			std::cout << "Error in " << "\033[0;31m" << "the server config" << "\033[0m" << std::endl;
 			return false;
-		}
 	}
 
 	if (!checkRepetedServers())
